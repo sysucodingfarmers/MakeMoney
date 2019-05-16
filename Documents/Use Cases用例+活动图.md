@@ -93,11 +93,12 @@
 任务发布者填写完任务的详细信息后，点击确认发布任务，系统提示是否确认发布任务，点击确定后跳转到微信支付界面，系统提示是否确认支付，确认支付后，任务被成功发布。其他用户可以接受此任务。  
 ##### 交替场景：  
    - 发布任务者发现要修改任务的详细信息，取消支付回到填写任务信息页面，可以进行信息编辑。   
-    - 发布任务者确认发布任务成功后发现信息有问题，选择结束任务，重新编辑信息，再次发布。（对于上次发布的任务，系统会返还剩余的酬金）  
+   - 发布任务者确认发布任务成功后发现信息有问题，选择结束任务，重新编辑信息，再次发布。（对于上次发布的任务，系统会返还剩余的酬金）    
+
 用例图：  
-
+![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/Documents/pictures/%E9%9D%9E%E6%AD%A3%E5%BC%8F%E7%94%A8%E4%BE%8B3.1.png)  
 活动图：  
-
+![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/Documents/pictures/%E9%9D%9E%E6%AD%A3%E5%BC%8F%E7%94%A8%E4%BE%8B3.2.png)  
 ## 简述用例
 #### Use Case3.1 查看新发布任务
 *  Actor: 接单者
