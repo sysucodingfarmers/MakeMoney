@@ -35,6 +35,8 @@
 * 如何规避发布者的任务过期但未撤销问题
 * 如何规避接单者因接受任务后又取消任务而对发布者造成的损失
 
+#### 详细用例 Use Case 2
+
 ## 非正式用例
 #### Use Case 2.1 完成任务
 主成功场景：接单者接受任务后，开始执行任务，等待完成任务后，确认任务完成。等发布者或系统确认完成后，报酬将直接进入接单者的微信钱包。
@@ -43,15 +45,17 @@
 *  如果与微信支付平台通信失败，此时接单者无法拿到报酬，则界面跳转到订单页面，且订单为未完成状态，此时接单者可以再次点击完成订单。
 *  若完成途中发布者请求取消任务，则根据完成情况和进度与发布者进行协商。如果协商未果，可申请服务平台客服介入进行纠纷调解。
 用例图：
-![2e5de9c7361b4fe0a3606b3254274584.png](en-resource://database/512:1)
+![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/Documents/pictures/%E9%9D%9E%E6%AD%A3%E5%BC%8F%E7%94%A8%E4%BE%8B2.1.png)
 
 活动图：
-![022ed570384e1356509235aa693d4899.png](en-resource://database/514:1)
+![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/Documents/pictures/%E9%9D%9E%E6%AD%A3%E5%BC%8F%E7%94%A8%E4%BE%8B2.2.png)
 
-
+#### Use Case 2.2
 
 ## 简述用例
 #### Use Case3.1 查看新发布任务
 *  Actor: 接单者
 *  Type: Primary
 *  Description: 打算接任务的用户进入小程序，切换到任务列表，可以点击分类里选择最新发布，然后在任务主界面即可看到最新发布的任务。
+
+#### Use Case3.2
