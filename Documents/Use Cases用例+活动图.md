@@ -44,10 +44,11 @@
 *  接单者因为某些原因需要取消订单，进入订单界面，点击取消订单。
 *  如果与微信支付平台通信失败，此时接单者无法拿到报酬，则界面跳转到订单页面，且订单为未完成状态，此时接单者可以再次点击完成订单。
 *  若完成途中发布者请求取消任务，则根据完成情况和进度与发布者进行协商。如果协商未果，可申请服务平台客服介入进行纠纷调解。
-用例图：
+
+用例图：                      
 ![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/Documents/pictures/%E9%9D%9E%E6%AD%A3%E5%BC%8F%E7%94%A8%E4%BE%8B2.1.png)
 
-活动图：
+活动图：                         
 ![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/Documents/pictures/%E9%9D%9E%E6%AD%A3%E5%BC%8F%E7%94%A8%E4%BE%8B2.2.png)
 
 #### Use Case 2.2
