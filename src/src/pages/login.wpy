@@ -1,0 +1,66 @@
+<style lang="less">
+  @import '../style/weui.less';
+  .container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+  }
+
+  .button-sp-area {
+      margin: 0 auto;
+      padding-top: 15px;
+      width: 90%;
+  }
+</style>
+
+<template lang="wxml">
+  <view class="container page__bd">
+    <view class="weui-cells weui-cells_after-title">
+
+      <!--用户名-->
+      <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__hd">
+          <view class="weui-label">用户名</view>
+        </view>
+        <view class="weui-cell__bd">
+          <input class="weui-input" placeholder="请输入用户名"/>
+        </view>
+      </view>
+
+      <!--密码-->
+      <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__hd">
+          <view class="weui-label">密码</view>
+        </view>
+        <view class="weui-cell__bd">
+          <input class="weui-input" password="true" placeholder="请输入密码"/>
+        </view>
+      </view>
+    </view>
+
+    <!--按钮组-->
+    <view class="button-sp-area">
+      <button class="weui-btn" type="primary">登录</button>
+      <button class="weui-btn" type="primary" plain="true" @tap="toRegister">注册</button>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Login extends wepy.page {
+    config = {}
+    components = {}
+    data = {}
+    methods = {
+      toRegister () {
+        this.$redirect('./register')
+      }
+    }
+    events = {}
+    onLoad() {}
+  }
+</script>
