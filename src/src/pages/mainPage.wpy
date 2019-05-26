@@ -1,0 +1,166 @@
+<style lang="less">
+  @import '../components/wux/styles/index.wxss';
+  page {
+    height: 100%;
+  }
+  .mainBody {
+    height: 100%;
+    width: 100%;
+  }
+  .taskType {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    flex-direction: row;
+  }
+  .taskTypeButtonView {
+    height: 100%;
+    width: 50%;
+  }
+  .taskTypeButton {
+    width: 100%;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-item: center;
+  }
+  .tasklistboard {
+    width: 100%;
+    height: 80%;
+  }
+  .taskboard {
+    width: 100%;
+    height: 10%;
+    text-align: center;
+  }
+  .divLine{
+    background: blue;
+    width: 100%;
+    height: 5rpx;
+  }
+  .taskboardscroll {
+    scroll-y: true;
+  }
+  .tabbar {
+    height: 10%;
+  }
+</style>
+<template>
+  <van-search
+    value="{{search_keyword}}"
+    placeholder="搜索"
+  ></van-search>
+  <view class="mainBody">
+    <view class="taskType">
+      <view class="taskTypeButtonView">
+        <van-button
+          class="taskTypeButton wux-center"
+          type="info"
+          round
+          hairline
+        >线上任务</van-button>
+      </view>
+      <view class="taskTypeButtonView">
+        <van-button
+          class="taskTypeButton"
+          type="info"
+          round
+          hairline
+        >线下任务</van-button>
+      </view>
+    </view>
+    <view class="divLine wux-center"></view>
+    <view class="tasklistboard">
+      <view class="title taskboard" slot="title">任务广场</view>
+      <scroll-view class="taskboardscroll">
+        <repeat for="{{tasks}}" item="item">
+          <tasklist :tasks="item"></tasklist>
+        </repeat>
+      </scroll-view>
+    </view>
+    <mytabbar></mytabbar>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import TaskList from '../components/tasklist'
+  import MyTabbar from '../components/mytabbar'
+
+  export default class Index extends wepy.page {
+    config = {
+      
+    }
+    components = {
+      tasklist: TaskList,
+      mytabbar: MyTabbar
+    }
+    data = {
+      tasks: [
+        {
+          list: [
+            {
+              id: 0,
+              title: "Task1"
+            },
+            {
+              id: 1,
+              title: "Task2"
+            },
+            {
+              id: 2,
+              title: "Task3"
+            },
+            {
+              id: 3,
+              title: "Task4"
+            },
+            {
+              id: 4,
+              title: "Task5"
+            },
+            {
+              id: 5,
+              title: "Task6"
+            },
+            {
+              id: 6,
+              title: "Task7"
+            },
+            {
+              id: 7,
+              title: "Task8"
+            },
+            {
+              id: 8,
+              title: "Task9"
+            },
+            {
+              id: 9,
+              title: "Task10"
+            },
+            {
+              id: 10,
+              title: "Task11"
+            }
+          ]
+        }
+      ]
+    }
+    computed = {
+
+    }
+    methods = {
+
+    }
+    events = {
+
+    }
+    onLoad() {
+      console.log(wepy.getStorageSync('tab_active') == 0);
+    }
+    onShow() {
+      this.$broadcast('changeActive', "0");
+    }
+  }
+</script>

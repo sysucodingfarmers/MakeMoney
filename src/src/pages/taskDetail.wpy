@@ -1,0 +1,27 @@
+<style lang="less">
+  
+</style>
+<template>
+  <view style="display: flex; flex-direction: column;">
+    <text>任务详情界面</text>
+    <text>id: {{id}}</text>
+    <text>title: {{title}}</text>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class TaskDetail extends wepy.page {
+    data = {
+      id: "",
+      title: ""
+    }
+    components = {
+
+    }
+    onLoad(options) {
+      this.id = options.id;
+      this.title = options.title;
+    }
+  }
+</script>

@@ -1,0 +1,26 @@
+<script>
+  
+</script>
+<template>
+  <view>
+    <text>我的信息界面</text>
+    <mytabbar></mytabbar>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import MyTabbar from '../components/mytabbar'
+
+  export default class MyInfo extends wepy.page {
+    components = {
+      mytabbar: MyTabbar
+    }
+    data = {
+
+    }
+    onShow() {
+      console.log("main show");
+      this.$broadcast('changeActive', "2");
+    }
+  }  
+</script>

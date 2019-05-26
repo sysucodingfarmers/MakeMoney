@@ -1,0 +1,13 @@
+<style>
+  
+</style>
+<template>
+  <text>发布任务界面</text>  
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class NewTask extends wepy.page {
+    
+  }
+</script>
