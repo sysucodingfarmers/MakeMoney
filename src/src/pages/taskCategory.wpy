@@ -1,0 +1,60 @@
+<style lang="less">
+  
+</style>
+<template>
+  <block wx:if="{{type == 0}}">
+    <mynavbar title="线上任务" lefttext="返回" leftarrow="true"></mynavbar>
+  </block>
+  <block wx:elif="{{type == 1}}">
+    <mynavbar title="线下任务" lefttext="返回" leftarrow="true"></mynavbar>
+  </block>
+  <van-tabs active="{{active}}" bind:change="onChange">
+    <repeat for="{{category.list}}" item="item">
+      <van-tab title="{{item}}">
+        <repeat for="{{tasks}}" item="item" style="margin-top: 10px;">
+          <tasklist :tasks="item"></tasklist>
+        </repeat>
+      </van-tab>
+    </repeat>
+  </van-tabs>
+</template>
+<script>
+  import wepy from 'wepy'
+  import TaskCategoryList from '../data/TaskCategory'
+  import TaskList from '../components/tasklist'
+  import MyNavBar from '../components/mynavbar'
+  import TasksData from '../data/TempTaskData'
+
+  export default class TaskCategory extends wepy.page {
+    config = {
+
+    }
+    components = {
+      tasklist: TaskList,
+      mynavbar: MyNavBar
+    }
+    data = {
+      type: 0,
+      category: {},
+      active: 0,
+      tasks: []
+    }
+    methods = {
+      onChange(e) {
+        console.log(e.detail)
+        console.log("change to " + e.detail)
+        console.log("next is the function to get data back from server")
+      }
+    }
+    onLoad(options) {
+      this.type = options.type
+      if (options.type == 0) {
+        this.category.list = TaskCategoryList.online
+      }
+      else {
+        this.category.list = TaskCategoryList.offline
+      }
+      this.tasks = TasksData.data;
+    }
+  }
+</script>

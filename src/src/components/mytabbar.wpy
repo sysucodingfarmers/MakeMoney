@@ -1,7 +1,5 @@
 <style lang="less">
-  .tabbar {
-    height: 10%;
-  }
+  
 </style>
 <template>
   <van-tabbar class="tabbar" active="{{active}}" bind:change="onChange">
