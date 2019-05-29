@@ -2,7 +2,7 @@
 src/dist/
 
 # 忽略npm依赖包
-src/node_modules
+src/node_modules/
 
 
 # 忽略配置文件
