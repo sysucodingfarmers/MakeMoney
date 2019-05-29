@@ -3,17 +3,19 @@
 </script>
 <template>
   <view>
-    <text>我的信息界面</text>
+    <mynavbar title="我的信息" lefttext="" leftarrow="false"></mynavbar>
     <mytabbar></mytabbar>
   </view>
 </template>
 <script>
   import wepy from 'wepy'
   import MyTabbar from '../components/mytabbar'
+  import MyNavBar from '../components/mynavbar'
 
   export default class MyInfo extends wepy.page {
     components = {
-      mytabbar: MyTabbar
+      mytabbar: MyTabbar,
+      mynavbar: MyNavBar
     }
     data = {
 

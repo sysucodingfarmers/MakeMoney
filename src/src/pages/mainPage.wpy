@@ -149,7 +149,7 @@
           qqmapsdk.reverseGeocoder({
             location: mylocation,
             success: function(res) {
-              var res = res.result.address_component
+              res = res.result.address_component
               _this.location.province = res.province
               _this.location.city = res.city
               _this.location.county = res.district

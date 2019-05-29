@@ -2,12 +2,15 @@
   
 </style>
 <template>
-  <text>发布任务界面</text>  
+  <mynavbar title="新任务" lefttext="返回" leftarrow="true"></mynavbar> 
 </template>
 <script>
   import wepy from 'wepy'
+  import MyNavBar from '../components/mynavbar'
 
   export default class NewTask extends wepy.page {
-    
+    components = {
+      mynavbar: MyNavBar
+    }
   }
 </script>

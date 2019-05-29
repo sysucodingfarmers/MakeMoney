@@ -2,12 +2,7 @@
   
 </style>
 <template>
-  <block wx:if="{{type == 0}}">
-    <mynavbar title="线上任务" lefttext="返回" leftarrow="true"></mynavbar>
-  </block>
-  <block wx:elif="{{type == 1}}">
-    <mynavbar title="线下任务" lefttext="返回" leftarrow="true"></mynavbar>
-  </block>
+  <mynavbar lefttext="返回" leftarrow="true"></mynavbar>
   <van-tabs active="{{active}}" bind:change="onChange">
     <repeat for="{{category.list}}" item="item">
       <van-tab title="{{item}}">
@@ -34,6 +29,7 @@
       mynavbar: MyNavBar
     }
     data = {
+      title: "线上任务",
       type: 0,
       category: {},
       active: 0,
@@ -41,7 +37,6 @@
     }
     methods = {
       onChange(e) {
-        console.log(e.detail)
         console.log("change to " + e.detail)
         console.log("next is the function to get data back from server")
       }
@@ -55,6 +50,14 @@
         this.category.list = TaskCategoryList.offline
       }
       this.tasks = TasksData.data;
+    }
+    onShow() {
+      if (this.type == 0) {
+        this.$broadcast("setTitle", '线上任务')
+      }
+      else {
+        this.$broadcast("setTitle", '线下任务')
+      }
     }
   }
 </script>

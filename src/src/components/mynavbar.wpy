@@ -36,5 +36,10 @@
     onLoad() {
 
     }
+    events = {
+      'setTitle': (value) => {
+        this.title = value;
+      }
+    }
   }
 </script>
