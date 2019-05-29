@@ -1,0 +1,213 @@
+<template>
+  <mynavbar title="首页" lefttext="" leftarrow="false"></mynavbar>
+  <van-search
+    class="search"
+    value="{{search_keyword}}"
+    placeholder="搜索"
+    shape="round"
+    bind:search="onSearch"
+    bind:cancel="onCancel"
+  >
+    <view slot="label" @tap="selectLoc">
+      <van-icon name="location-o" size="15px"></van-icon>
+      <text style="font-size: small;">{{location.city}}</text>
+    </view>
+  </van-search>
+  <view class="mainBody">
+    <view class="taskType">
+      <view class="taskTypeButtonView">
+        <van-button
+          class="taskTypeButton wux-center"
+          type="info"
+          round
+          hairline
+          @tap="gotoCategory(0)"
+        >线上任务</van-button>
+      </view>
+      <view class="taskTypeButtonView">
+        <van-button
+          class="taskTypeButton"
+          type="info"
+          round
+          hairline
+          @tap="gotoCategory(1)"
+        >线下任务</van-button>
+      </view>
+    </view>
+    <view class="divLine wux-center"></view>
+    <view class="tasklistboard">
+      <view class="title taskboard" slot="title">任务广场</view>
+      <scroll-view class="taskboardscroll">
+        <repeat for="{{tasks}}" item="item">
+          <tasklist :tasks="item"></tasklist>
+        </repeat>
+      </scroll-view>
+    </view>
+    <mytabbar></mytabbar>
+  </view>
+  <van-popup
+    show="{{showCitySelector}}"
+    position="bottom"
+  >
+    <van-area
+      area-list="{{areaList}}"
+      @confirm="locConfirm"
+      @cancel="locCancel"
+    ></van-area>
+  </van-popup>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import TaskList from '../components/tasklist'
+  import MyTabbar from '../components/mytabbar'
+  import AreaList from '../utility/area'
+  import TasksData from '../data/TempTaskData'
+  import MyNavBar from '../components/mynavbar'
+
+  export default class MainPage extends wepy.page {
+    config = {
+      
+    }
+    components = {
+      tasklist: TaskList,
+      mytabbar: MyTabbar,
+      mynavbar: MyNavBar
+    }
+    data = {
+      tasks: [],
+      location: {},
+      showCitySelector: false,
+      areaList: {},
+      location: {
+        province: "获取定位",
+        city: "获取定位",
+        county: "获取定位"
+      }
+    }
+    computed = {
+
+    }
+    methods = {
+      onSearch(e) {
+        console.log(e.detail);
+        console.log('search');
+        var data = {
+          value: e.detail,
+          location: this.location
+        }
+        console.log(data)
+      },
+      onCancel(e) {
+        console.log(e);
+        console.log('cancel');
+      },
+      onSearchChange(e) {
+        console.log(e);
+        console.log("change");
+      },
+      selectLoc() {
+        this.showCitySelector = true;
+      },
+      locConfirm(e) {
+        var value = e.detail.values;
+        this.location.province = value[0].name;
+        this.location.city = value[1].name;
+        this.location.county = value[2].name;
+        this.showCitySelector = false;
+      },
+      locCancel() {
+        this.showCitySelector = false;
+      },
+      gotoCategory(type) {
+        var myurl = this.$parent.globalData.taskCategoryUrl;
+        myurl += "?type="
+        myurl += type
+        wepy.navigateTo({
+          url: myurl
+        });
+      }
+    }
+    events = {
+
+    }
+    onLoad() {
+      var _this = this
+      this.tasks = TasksData.data;
+      this.areaList = AreaList;
+      wepy.getLocation({
+        type: 'gcj02',
+        success: function(address) {
+          var QQMapWX = require('../qqmap-sdk/qqmap-wx-jssdk.js')
+          var qqmapsdk = new QQMapWX({
+            key: 'Z7ZBZ-INFRD-J2H47-PEF53-KYYYS-GVFEM'
+          })
+          var mylocation = {
+            latitude: address.latitude,
+            longitude: address.longitude
+          }
+          qqmapsdk.reverseGeocoder({
+            location: mylocation,
+            success: function(res) {
+              var res = res.result.address_component
+              _this.location.province = res.province
+              _this.location.city = res.city
+              _this.location.county = res.district
+              _this.$apply()
+            }
+          })
+        }
+      });
+    }
+    onShow() {
+      this.$broadcast('changeActive', "0");
+    }
+  }
+</script>
+<style lang="less">
+  @import '../components/wux/styles/index.wxss';
+  page {
+    height: 100%;
+  }
+  .mainBody {
+    height: 100%;
+    width: 100%;
+  }
+  .taskType {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    flex-direction: row;
+  }
+  .taskTypeButtonView {
+    height: 100%;
+    width: 50%;
+  }
+  .taskTypeButton {
+    width: 100%;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-item: center;
+  }
+  .tasklistboard {
+    width: 100%;
+    height: 80%;
+  }
+  .taskboard {
+    width: 100%;
+    height: 10%;
+    text-align: center;
+  }
+  .divLine{
+    background: blue;
+    width: 100%;
+    height: 5rpx;
+  }
+  .taskboardscroll {
+    scroll-y: true;
+  }
+  .tabbar {
+    height: 10%;
+  }
+</style>

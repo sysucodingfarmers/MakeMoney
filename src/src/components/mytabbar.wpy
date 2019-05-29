@@ -1,0 +1,67 @@
+<style lang="less">
+  
+</style>
+<template>
+  <van-tabbar class="tabbar" active="{{active}}" bind:change="onChange">
+    <repeat for="{{tabbars}}" item="item">
+      <van-tabbar-item icon="{{item.iconname}}">{{item.name}}</van-tabbar-item>
+    </repeat>
+  </van-tabbar>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class MyTabbar extends wepy.component {
+    props = {
+      active: 0
+    }
+    data = {
+      tabbars: [
+        {
+          iconname: "home-o",
+          name: "首页"
+        },
+        {
+          iconname: "add-o",
+          name: "发布"
+        },
+        {
+          iconname: "user-o",
+          name: "我的"
+        }
+      ],
+      index: {}
+    }
+    methods = {
+      onChange(e) {
+
+        this.active = e.detail;
+        var myurl;
+        if (e.detail == 0) {
+          myurl = this.$root.$parent.globalData.mainPageUrl;
+          wepy.switchTab({
+            url: myurl   
+          });
+        }
+        else if (e.detail == 1) {
+          myurl = this.$root.$parent.globalData.newTaskUrl;
+          wepy.navigateTo({
+            url: myurl
+          });
+        }
+        else {
+          myurl = this.$root.$parent.globalData.myInfoUrl;
+          wepy.switchTab({
+            url: myurl 
+          });
+        }
+        this.$apply();
+      }
+    }
+    events = {
+      'changeActive': (activeValue) => {
+        this.active = activeValue;
+      }
+    }
+  }
+</script>

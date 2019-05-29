@@ -1,0 +1,32 @@
+<style>
+  @import '../components/wux/styles/index.wxss';
+</style>
+<template>
+  <view @tap="showDetail">
+    <text>{{titem.title}}</text>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class Taskitem extends wepy.component {
+    props = {
+      titem: {}
+    }
+    data = {
+
+    }
+    methods = {
+      showDetail() {
+        var myurl = this.$root.$parent.globalData.taskDetailUrl;
+        myurl += "?id="
+        myurl += this.titem.id
+        myurl += "&title="
+        myurl += this.titem.title
+        wepy.navigateTo({
+          url: myurl
+        });
+      }
+    }
+  }
+</script>

@@ -1,0 +1,127 @@
+<style lang="less">
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+</style>
+
+<script>
+import wepy from 'wepy'
+import 'wepy-async-function'
+
+import { setStore } from 'wepy-redux'
+import configStore from './store'
+
+const store = configStore()
+setStore(store)
+
+export default class extends wepy.app {
+  config = {
+    pages: [
+      'pages/mainPage',
+      'pages/myInfo',
+      'pages/newTask',
+      'pages/taskDetail',
+      'pages/taskCategory',
+      'pages/login',
+      'pages/register'
+    ],
+    window: {
+      backgroundTextStyle: 'light',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTitleText: 'WeChat',
+      navigationBarTextStyle: 'black',
+      navigationStyle: "custom"
+    },
+    usingComponents: {
+      'van-button': '../components/van/button/index',
+      'van-cell-group': '../components/van/cell-group/index',
+      'van-row': '../components/van/row/index',
+      'van-col': '../components/van/col/index',
+      'van-field': '../components/van/field/index',
+      'van-popup': '../components/van/popup/index',
+      'van-toast': '../components/van/toast/index',
+      'van-search': '../components/van/search/index',
+      'van-tabbar': '../components/van/tabbar/index',
+      'van-tabbar-item': '../components/van/tabbar-item/index',
+      'wux-button': '../components/wux/button/index',
+      'wux-icon': '../components/wux/icon/index',
+      'van-icon': '../components/van/icon/index',
+      'van-area': '../components/van/area/index',
+      'van-tab': '../components/van/tab/index',
+      'van-tabs': '../components/van/tabs/index',
+      'van-nav-bar': '../components/van/nav-bar/index'
+    },
+    tabBar: {
+      backgroundColor: '#fff',
+      borderStyle: 'white',
+      color: '#333',
+      selectedColor: '#333',
+      list: [
+        {
+          pagePath: 'pages/mainPage',
+          text: '首页'
+        },
+        {
+          pagePath: 'pages/myInfo',
+          text: '我的'
+        }
+      ]
+    },
+    "permission": {
+      "scope.userLocation": {
+  　　  "desc":"你的位置信息将用于为你推荐你附近的任务"
+  　　}
+    }
+  }
+
+  globalData = {
+    userInfo: null,
+    mainPageUrl: 'mainPage',
+    newTaskUrl: 'newTask',
+    myInfoUrl: 'myInfo',
+    taskDetailUrl: 'taskDetail',
+    taskCategoryUrl: 'taskCategory'
+  }
+
+  constructor () {
+    super()
+    this.use('requestfix')
+  }
+
+  onLaunch() {
+    this.testAsync()
+    wepy.hideTabBar();
+  }
+
+  sleep (s) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('promise resolved')
+      }, s * 1000)
+    })
+  }
+
+  async testAsync () {
+    const data = await this.sleep(3)
+    console.log(data)
+  }
+
+  getUserInfo(cb) {
+    const that = this
+    if (this.globalData.userInfo) {
+      return this.globalData.userInfo
+    }
+    wepy.getUserInfo({
+      success (res) {
+        that.globalData.userInfo = res.userInfo
+        cb && cb(res.userInfo)
+      }
+    })
+  }
+}
+</script>

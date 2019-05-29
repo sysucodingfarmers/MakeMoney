@@ -1,0 +1,14 @@
+# 忽略wepy自动生成的小程序文件
+src/dist/
+
+# 忽略npm依赖包
+src/node_modules
+
+
+# 忽略配置文件
+.editorconfig
+.eslintignore
+.eslintrc.js
+.prettierrc
+.wepycache
+.wepyignore
