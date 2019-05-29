@@ -1,0 +1,40 @@
+<style lang="less">
+
+</style>
+<template>
+  <block wx:if="{{leftarrow == 'true'}}">
+    <van-nav-bar
+      title="{{title}}"
+      left-text="{{lefttext}}"
+      left-arrow
+      bind:click-left="goBack"
+    />
+  </block>
+  <block wx:else>
+    <van-nav-bar
+      title="{{title}}"
+    />
+  </block>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class MyNavBar extends wepy.component {
+    props = {
+      title: String,
+      lefttext: String,
+      leftarrow: String
+    }
+    data = {
+
+    }
+    methods = {
+      goBack(e) {
+        wepy.navigateBack();
+      }
+    }
+    onLoad() {
+
+    }
+  }
+</script>
