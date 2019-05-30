@@ -1,0 +1,27 @@
+<style lang="less">
+ 
+</style>
+<template>  
+    <mynavbar title="普通任务" lefttext="返回" leftarrow="true"></mynavbar> 
+    <normalnewtask></normalnewtask>
+</template>
+<script>
+  import wepy from 'wepy'
+  import MyNavBar from '../components/mynavbar'
+  import NormalNewTask from '../components/normalnewtask'
+
+  export default class NormalTask extends wepy.page {
+    components = {
+      mynavbar: MyNavBar,
+      normalnewtask: NormalNewTask
+    }
+    data = {
+    	
+    }
+    methods = {
+    	
+    }
+    events = {}
+    OnLoad() {}
+  }
+</script>
