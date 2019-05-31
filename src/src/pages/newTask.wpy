@@ -4,7 +4,7 @@
 <template>  
     <mynavbar title="任务类型" lefttext="返回" leftarrow="true"></mynavbar> 
     <button @tap="bindToNormal">normal</button>
-    <button>query</button>
+    <button @tap="bindToQuery">query</button>
 </template>
 <script>
   import wepy from 'wepy'
@@ -20,7 +20,10 @@
     methods = {
     	bindToNormal() {
     		this.$redirect('normalTask');
-    	}
+    	},
+      bindToQuery() {
+        this.$redirect('queryTask');
+      }
     }
     events = {}
     OnLoad() {}
