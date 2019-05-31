@@ -27,8 +27,7 @@ export default class extends wepy.app {
       'pages/newTask',
       'pages/taskDetail',
       'pages/taskCategory',
-      'pages/login',
-      'pages/register'
+      'pages/normalTask'
     ],
     window: {
       backgroundTextStyle: 'light',

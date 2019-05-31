@@ -1,14 +1,38 @@
 <style lang="less">
-  
+  @import '../style/weui.less';
 </style>
 <template>
   <mynavbar title="任务详情" lefttext="返回" leftarrow="true"></mynavbar>
-  <view style="display: flex; flex-direction: column;">
-    <text>任务详情界面</text>
-    <text>id: {{id}}</text>
-    <text>title: {{title}}</text>
+  <view class="weui-form-preview">
+    <view class="weui-form-preview__hd">
+        <view class="weui-form-preview__label">任务名称</view>
+        <view class="weui-form-preview__value_in-hd">{{title}}</view>
+    </view>
+    <view class="weui-form-preview__bd">
+        <view class="weui-form-preview__item">
+            <view class="weui-form-preview__label">发起作者</view>
+            <view class="weui-form-preview__value">{{author}}</view>
+        </view>
+        <view class="weui-form-preview__item">
+            <view class="weui-form-preview__label">开始日期</view>
+            <view class="weui-form-preview__value">{{start_data}}</view>
+        </view>
+        <view class="weui-form-preview__item">
+            <view class="weui-form-preview__label">结束日期</view>
+            <view class="weui-form-preview__value">{{end_data}}</view>
+        </view>
+        <view class="weui-form-preview__item">
+            <view class="weui-form-preview__label">任务叙述</view>
+            <view class="weui-form-preview__value">{{details}}</view>
+        </view>
+    </view>
+    <view class="weui-form-preview__ft">
+        <navigator class="weui-form-preview__btn weui-form-preview__btn_default" hover-class="weui-form-preview__btn_active">选择</navigator>
+        <navigator class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active">收藏</navigator>
+    </view>
   </view>
 </template>
+
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
@@ -16,7 +40,11 @@
   export default class TaskDetail extends wepy.page {
     data = {
       id: "",
-      title: ""
+      title: "",
+      author: "",
+      start_data: "",
+      end_data: "",
+      details: ""
     }
     components = {
       mynavbar: MyNavBar
@@ -24,6 +52,10 @@
     onLoad(options) {
       this.id = options.id;
       this.title = options.title;
+      this.author = "蔡徐坤";
+      this.start_data = "1990";
+      this.end_data = "2019";
+      this.details = "我喜欢唱、跳、rap，更热爱篮球。";
     }
   }
 </script>
