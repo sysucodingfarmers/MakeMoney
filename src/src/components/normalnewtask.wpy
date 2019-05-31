@@ -3,6 +3,16 @@
   .tip_red {
   	color:red;
   }
+  .pic {
+    height:200rpx;
+    width:200rpx;
+    position:relative;
+    margin-left:60rpx;
+    margin-right:0;
+    box-sizing: border-box;
+    border-right: 1rpx solid #D9D9D9;
+    border-bottom: 1rpx solid #D9D9D9;
+  }
 </style>
 <template>
 		<view class="weui-cells__title">基础</view>
@@ -74,6 +84,30 @@
             </view>
         </view>
         <view class="weui-cells__tips tip_red">{{tips}}</view>
+        <view class="weui-cells">
+            <view class="weui-cell">
+                <view class="weui-cell__bd">
+                    <view class="weui-uploader">
+                        <view class="weui-uploader__hd">
+                            <view class="weui-uploader__title">图片上传</view>
+                            <view class="weui-uploader__info">{{files.length}}/9</view>
+                        </view>
+                        <view class="weui-uploader__bd">
+                            <view class="weui-uploader__files" id="uploaderFiles">
+                                <block  wx:for="{{files}}" wx:key="*this">
+                                    <view class="weui-uploader__file" bindtap="previewImage" id="{{item}}">
+                                        <image class="weui-uploader__img" src="{{item}}" mode="aspectFill"/>
+                                    </view>
+                                </block>
+                            </view>
+                            <view class="weui-uploader__input-box" wx:if="{{files.length<9}}">
+                                <view class="weui-uploader__input" bindtap="chooseImage"/>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+            </view>
+        </view>
         <view class="weui-btn-area">
             <button class="weui-btn" type="primary" bindtap="showTopTips">提交</button>
         </view>
@@ -91,7 +125,8 @@
     	end_date:"",
     	font_length:0,
     	pay:0,
-    	tips:""
+    	tips:"",
+        files:[]
     }
     methods = {
     	bindBDChange(e) {
@@ -123,7 +158,26 @@
     		else
     			this.tips = "";
     		this.$apply();
-    	}
+    	},
+        chooseImage() {
+            const that = this;
+            wepy.chooseImage({
+                count: 1,
+                sizeType: ['original', 'compressed'],
+                sourceType: ['album', 'camera'],
+                success(res) {
+                    that.files = that.files.concat([res.tempFilePaths[0]]);
+                    console.log(that.files);
+                    that.$apply();
+                }
+            });
+        },
+        previewImage(e) {
+            wepy.previewImage({
+                current: e.currentTarget.id, // 当前显示图片的http链接
+                urls: this.files // 需要预览的图片http链接列表
+            });
+        }
     }
     events = {}
   }
