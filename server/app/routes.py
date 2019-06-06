@@ -65,11 +65,11 @@ def logout():
 # def require():
 
 #测试
-@app.route('/test', methods=['POST'])
-def test():
-	data = request.data
-	json_data = json.loads(data)
-	print(data)
-	print(json_data)
-	r_json = json.dumps({'key1': 'value1', 'key2': 'value2'})
-	return r_json
+# @app.route('/test', methods=['POST'])
+# def test():
+# 	data = request.data
+# 	json_data = json.loads(data)
+# 	print(data)
+# 	print(json_data)
+# 	r_json = json.dumps({'key1': 'value1', 'key2': 'value2'})
+# 	return r_json
