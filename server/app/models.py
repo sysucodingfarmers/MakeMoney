@@ -39,12 +39,16 @@ class Task(db.Model):
 	#题目
 	title = db.Column(db.String(20))
 	#任务类型
-	task_type = db.Column(db.String(20))
+	type = db.Column(db.String(20))
+	#时间
+	strat_time = db()
 	#任务详情
 	detail = db.Column(db.String(100))
 	
 	def __repr__(self):
 		return '<Task {} {}>'.format(self.id, self.title)
+
+#login的配置，使login生效
 @login.user_loader
 def load_user(id):
 	return User.query.get(int(id))
