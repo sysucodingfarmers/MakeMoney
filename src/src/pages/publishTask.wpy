@@ -1,0 +1,430 @@
+<style lang="less">
+  .NormTitle{
+    float:left;
+  }
+  .NormData{
+    float:left;
+    margin-left:72rpx;
+  }
+  .page{
+    line-height: 1.6;
+    background-color: #f8f8f8;
+  }
+  .imgBlock{
+    position:relative;
+    display: block;
+    float:left;
+    width: 140rpx;
+    height: 140rpx;
+    margin:10rpx 10rpx 10rpx 10rpx;
+    padding:0 0 0 0;
+    border: 1px solid #D9D9D9;
+  }
+  .img{
+    position:absolute;
+    z-index:5;
+    height:100%;
+    width:100%;
+  }
+  .imgAdd{
+    position:relative;
+    display: block;
+    float:left;
+    width: 140rpx;
+    height: 140rpx;
+    margin:10rpx 10rpx 10rpx 10rpx;
+    border: 1px solid #D9D9D9;
+  }
+  .imgTip{
+    position:absolute;
+    bottom:10rpx;
+    right:28rpx;
+    color: #888;
+    font-size: 28rpx;
+  }
+  .deleteIcon{
+    position:absolute;
+    z-index:10;
+    top:-5px;
+    right:0;
+  }
+  .imgAddLine:before,
+  .imgAddLine:after {
+    content: " ";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #D9D9D9;
+  }
+  .imgAddLine:before {
+    width: 2px;
+    height: 39.5px;
+  }
+  .imgAddLine:after {
+    width: 39.5px;
+    height: 2px;
+  }
+  .imgAdd:active {
+    border-color: #999999;
+  }
+  .imgAddLine:active:before,
+  .imgAddLine:active:after {
+    background-color: #999999;
+  }
+  .alert{
+    float:right;
+    margin-right:10px;
+  }
+</style>
+<template>  
+    <mynavbar title="发布任务" lefttext="返回" leftarrow="true"></mynavbar> 
+    <view class="page">
+      <wux-cell-group title="基本信息">
+        <wux-cell>
+          <wux-input label="任务名称" placeholder="请输入任务名称" bindchange="EditName"></wux-input>
+          <wux-icon type="ios-alert" color="red" size="20" class="alert" hidden="{{alert_hidden[0]}}"></wux-icon>
+        </wux-cell>
+        <picker mode="date" value="{{tempdata.start_date}}" bindchange="ChooseStartDate">
+          <wux-cell>
+            <view class="NormTitle">开始日期</view>
+            <view class="NormData">{{tempdata.start_date}}</view>
+            <wux-icon type="ios-alert" color="red" size="20" class="alert" hidden="{{alert_hidden[1]}}"></wux-icon>
+          </wux-cell>
+        </picker>
+        <picker mode="time" value="{{tempdata.start_time}}" bindchange="ChooseStartTime">
+          <wux-cell>
+            <view class="NormTitle">开始时间</view>
+            <view class="NormData">{{tempdata.start_time}}</view>
+            <wux-icon type="ios-alert" color="red" size="20" class="alert" hidden="{{alert_hidden[2]}}"></wux-icon>
+          </wux-cell>
+        </picker>
+        <picker mode="date" value="{{tempdata.end_date}}" bindchange="ChooseEndDate">
+          <wux-cell>
+            <view class="NormTitle">结束日期</view>
+            <view class="NormData">{{tempdata.end_date}}</view>
+            <wux-icon type="ios-alert" color="red" size="20" class="alert" hidden="{{alert_hidden[3]}}"></wux-icon>
+          </wux-cell>
+        </picker>
+        <picker mode="time" value="{{tempdata.end_time}}" bindchange="ChooseEndTime">
+          <wux-cell>
+            <view class="NormTitle">结束时间</view>
+            <view class="NormData">{{tempdata.end_time}}</view>
+            <wux-icon type="ios-alert" color="red" size="20" class="alert" hidden="{{alert_hidden[4]}}"></wux-icon>
+          </wux-cell>
+        </picker>
+        <wux-cell title="每人报酬">
+           <wux-input-number longpress slot="footer" disabled="{{ true }}" min="{{ 0 }}" max="{{ 500 }}" bindchange="EditPay"/>
+        </wux-cell>
+        <wux-cell title="允许人数">
+           <wux-input-number longpress slot="footer" disabled="{{ true }}" min="{{ 0 }}" max="{{ 200 }}" bindchange="EditReceiverLimit"/>
+        </wux-cell>
+      </wux-cell-group>
+      <wux-cell-group title="额外信息">
+          <picker mode="selector" value="{{taskInfo.type}}" bindchange="SelectType" range="{{types}}">
+            <wux-cell>
+              <view class="NormTitle">任务类型</view>
+              <view class="NormData">{{taskInfo.type}}</view>
+              <wux-icon type="ios-alert" color="red" size="20" class="alert" hidden="{{alert_hidden[5]}}"></wux-icon>
+            </wux-cell>
+          </picker>
+          <wux-cell>
+            <wux-textarea label="任务详情" maxlength="200" hasCount rows="3" placeholder="请输入详情" bindchange="InputDetail"></wux-textarea>
+            <wux-icon type="ios-alert" color="red" size="20" class="alert" hidden="{{alert_hidden[6]}}"></wux-icon>
+          </wux-cell>
+      </wux-cell-group>
+      <wux-cell-group title="图片上传">
+        <wux-cell>
+          <view wx:for="{{files}}">
+            <view id="{{item}}" class="imgBlock">
+              <wux-icon type="ios-close-circle-outline" class="deleteIcon" size="20" @tap="deleteImage({{index}})"></wux-icon>
+              <image src="{{item}}" mode="aspectFill" class="img" bindtap="previewImage({{item}})"></image>
+            </view>
+          </view>
+          <view bindtap="chooseImage" class="imgAdd" wx:if="{{files.length<8}}">
+            <view class="imgAddLine"></view>
+          </view>
+          <view class="imgTip">{{files.length}}/8</view>
+        </wux-cell>
+      </wux-cell-group>
+      <wux-cell-group title="问卷" wx:if="{{taskInfo.type === types[0]}}">
+        <wux-cell>
+          <button bindtap="createNewQuery">编辑问卷</button>
+        </wux-cell>
+      </wux-cell-group>
+      <wux-cell-group>
+        <wux-button block outline type="stable" @tap="subbmit">
+          <wux-icon type="ios-send" size="16"></wux-icon>
+          发布
+        </wux-button>
+      </wux-cell-group>
+    </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import MyNavBar from '../components/mynavbar'
+
+  export default class PublishTask extends wepy.page {
+    components = {
+      mynavbar: MyNavBar
+    }
+    data = {
+      //辅助数组
+      query: [],
+      //本地图片上传路径
+      files: [
+        'http://tmp/wxed1a3c67a498a660.o6zAJs_LUE5mmc2sV4UI2qQNbP70.1F3BOkFfUask6e4418e2aedd5b9270eb900e01bac2cd.jpg'
+      ],
+      //辅助参数，用于判断输入是否空白
+      alert_hidden: [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      //辅助参数，用于选择任务类型
+      types: [
+        '问卷调查',
+        '寻物启事',
+        '跑腿任务',
+        '实验调查'
+      ],
+      //辅助参数，用于记录日期时间
+      tempdata: {
+        start_date: '',
+        start_time: '',
+        end_date: '',
+        end_time: ''
+      },
+      //任务
+    	taskInfo: {
+        id: '',             //用于辨别任务的id
+        name: '',           //任务名称
+        publisher: '',      //任务发起者
+        type: '',           //任务类型
+        start_time: '',     //任务开始时间:xxxx-xx-xx xx:xx
+        end_time: '',       //任务结束时间:xxxx-xx-xx xx:xx
+        pay: 0,             //每人报酬
+        detail: '',         //任务详情
+        receiver: [         //任务接收者
+          // { 
+          //   name: '',           //接收者名字
+          //   id: '',             //接受者id，用于识别
+          //   isfinished: false,  //是否完成该任务
+          //   ispaid: false       //是否给予报酬
+          // }
+        ],
+        receiver_limit: 0,  //接收者人数限制
+        finish_rate: 0,     //完成程度
+        extra_content:{     //额外内容：包括图片数据以及问卷数据
+          query: [],        //问卷
+          images:[]         //图片
+        }    
+      }
+    }
+    methods = {
+      //选择开始日期
+    	ChooseStartDate(e) {
+        this.tempdata.start_date = e.detail.value;
+        this.alert_hidden[1] = true;
+        this.$apply();
+      },
+      //选择开始时间
+      ChooseStartTime(e) {
+        this.tempdata.start_time = e.detail.value;
+        this.alert_hidden[2] = true;
+        this.$apply();
+      },
+      //选择结束日期
+      ChooseEndDate(e) {
+        this.tempdata.end_date = e.detail.value;
+        this.alert_hidden[3] = true;
+        this.$apply();
+      },
+      //选择结束时间
+      ChooseEndTime(e) {
+        this.tempdata.end_time = e.detail.value;
+        this.alert_hidden[4] = true;
+        this.$apply();
+      },
+      //编辑任务名称
+      EditName(e) {
+        this.taskInfo.name = e.detail.value;
+        this.alert_hidden[0] = true;
+      },
+      //编辑限制人数
+      EditReceiverLimit(e) {
+        this.taskInfo.receiver_limit = e.detail.value;
+      },
+      //选择任务类型
+      SelectType(e) {
+        this.taskInfo.type = this.types[e.detail.value];
+        this.alert_hidden[5] = true;
+        this.$apply();
+      },
+      //填写任务详情
+      InputDetail(e) {
+        this.taskInfo.detail = e.detail.value;
+        this.alert_hidden[6] = true;
+      },
+      //填写任务每人报酬
+      EditPay(e) {
+        this.taskInfo.pay = e.detail.value;
+      },
+      //选择本地图片
+      chooseImage() {
+          const that = this;
+          wx.chooseImage({
+              count: 1,
+              sizeType: ['original', 'compressed'],
+              sourceType: ['album', 'camera'],
+              success(res) {
+                that.files = that.files.concat([res.tempFilePaths[0]]);
+                console.log(that.files);
+                that.$apply();
+              },
+              fail(res) {
+                console.log("fail");
+              }
+          });
+      },
+      //预览本地图片
+      previewImage(item) {
+          wepy.previewImage({
+              current: item, // 当前显示图片的http链接
+              urls: this.files // 需要预览的图片http链接列表
+          });
+      },
+      //删除上传的图片
+      deleteImage(index) {
+        var that = this;
+        wepy.showModal({
+          title: '是否删除',
+          content: '删除将无法复原'
+        }).then(res => {
+          if (res.confirm) {
+            that.files.splice(index,1);
+            that.$apply();
+          }
+          else {
+            console.log("用户取消删除");
+          }
+        });
+      },
+      //编辑问卷
+      createNewQuery(e) {
+        var query = JSON.stringify(this.taskInfo.extra_content.query);
+        wepy.navigateTo({
+          url: "createQuery?query=" + query
+        });
+      },
+      //提交数据
+      subbmit(e) {
+        var canSubmmit = true;
+        //判断任务名称是否空白
+        if (canSubmmit && this.taskInfo.name === '') {
+          canSubmmit = false;
+          this.alert_hidden[0] = false;
+        }
+        //判断日期是否填完
+        if (canSubmmit && this.tempdata.start_date === '') {
+          canSubmmit = false;
+          this.alert_hidden[1] = false;
+        }
+        if (canSubmmit && this.tempdata.start_time === '') {
+          canSubmmit = false;
+          this.alert_hidden[2] = false;
+        }
+        if (canSubmmit && this.tempdata.end_date === '') {
+          canSubmmit = false;
+          this.alert_hidden[3] = false;
+        }
+        if (canSubmmit && this.tempdata.end_time === '') {
+          canSubmmit = false;
+          this.alert_hidden[4] = false;
+        }
+        //判断结束日期是否大于开始日期
+        if (canSubmmit && this.tempdata.start_date > this.tempdata.end_date) {
+          canSubmmit = false;
+          wepy.showModal({
+            title: '错误',
+            content: '开始时间迟于结束时间'
+          });
+        }
+        if (canSubmmit && this.tempdata.start_date === this.tempdata.end_date && this.tempdata.start_time >= this.tempdata.end_time) {
+          canSubmmit = false;
+          wepy.showModal({
+            title: '错误',
+            content: '开始时间不可超过结束时间'
+          });
+        }
+        //判断报酬是否为零
+        if (canSubmmit && this.taskInfo.pay === 0) {
+          canSubmmit = false;
+          wepy.showModal({
+            title: '错误',
+            content: '每人报酬为零'
+          });
+        }
+        //判断允许人数是否为零
+        if (canSubmmit && this.taskInfo.receiver_limit === 0) {
+          canSubmmit = false;
+          wepy.showModal({
+            title: '错误',
+            content: '允许人数为零'
+          });
+        }
+        //判断任务类型是否为空
+        if (canSubmmit && (this.taskInfo.type === '' || this.taskInfo.type === undefined)) {
+          canSubmmit = false;
+          this.alert_hidden[5] = false;
+        }
+        //判断任务详情是否为空
+        if (canSubmmit && this.taskInfo.detail === '') {
+          canSubmmit = false;
+          this.alert_hidden[6] = false;
+        }
+        //判断问卷任务是否为空
+        if (canSubmmit && this.taskInfo.type === this.types[0] && this.taskInfo.extra_content.query.length === 0) {
+          canSubmmit = false;
+          wepy.showModal({
+            title: '错误',
+            content: '问卷为空'
+          });
+        }
+        //填写日期
+        if (canSubmmit) {
+          this.taskInfo.start_time = this.tempdata.start_date + " " + this.tempdata.start_time;
+          this.taskInfo.end_time = this.tempdata.end_date + " " + this.tempdata.end_time;
+        }
+        // //填写问卷信息
+        // if (canSubmmit && this.taskInfo.type === this.types[0]) {
+        //   this.taskInfo.extra_content.push(this.query);
+        // }
+        //提交任务并关闭页面
+        if (canSubmmit) {
+          var task = JSON.stringify(this.taskInfo);
+          var mes = JSON.stringify(["修改","删除"]);
+          wepy.redirectTo({
+            url: 'taskDetail?task=' + task + '&mes=' + mes
+          });
+        }
+      }
+    }
+    events = {}
+    onLoad(options) {
+      this.taskInfo.publisher = options.publisher;
+      this.taskInfo.type = options.type;
+      console.log("PublishTask onload");
+    }
+    onShow() {
+      var pages = getCurrentPages();
+      var currPage = pages[pages.length - 1];   //当前页面
+      this.taskInfo.extra_content.query = currPage.data.query;
+      console.log("PublishTask onshow");
+    }
+  }
+</script>

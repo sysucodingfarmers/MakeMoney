@@ -1,35 +1,79 @@
 <style lang="less">
-  @import '../style/weui.less';
+  .page{
+    line-height: 1.6;
+    background-color: #f8f8f8;
+  }
+  .content{
+    margin-left:5px;
+  }
+  .ssp {
+
+  }
+  .mmp {
+
+  }
+  .aap {
+
+  }
 </style>
 <template>
   <mynavbar title="任务详情" lefttext="返回" leftarrow="true"></mynavbar>
-  <view class="weui-form-preview">
-    <view class="weui-form-preview__hd">
-        <view class="weui-form-preview__label">任务名称</view>
-        <view class="weui-form-preview__value_in-hd">{{title}}</view>
-    </view>
-    <view class="weui-form-preview__bd">
-        <view class="weui-form-preview__item">
-            <view class="weui-form-preview__label">发起作者</view>
-            <view class="weui-form-preview__value">{{author}}</view>
+  <view class="page">
+    <wux-accordion-group title="基本信息">
+      <wux-accordion title="任务名称">
+        <view class="content">{{taskInfo.name}}</view>
+      </wux-accordion>
+      <wux-accordion title="任务发起者">
+        <view class="content">{{taskInfo.publisher}}</view>
+      </wux-accordion>
+      <wux-accordion title="任务类型">
+        <view class="content">{{taskInfo.type}}</view>
+      </wux-accordion>
+      <wux-accordion title="任务详情">
+        <view class="content">{{taskInfo.detail}}</view>
+      </wux-accordion>
+      <wux-accordion title="任务时间">
+        <view class="content">开始时间： {{taskInfo.start_time}}</view>
+        <view class="content">结束时间： {{taskInfo.end_time}}</view>
+      </wux-accordion>
+      <wux-accordion title="任务情况">
+        <view class="content">限制人数: {{taskInfo.receiver_limit}}</view>
+        <view class="content">领取人数: {{taskInfo.receiver.length}}</view>
+        <view class="content">完成情况: {{taskInfo.finish_rate}}</view>
+      </wux-accordion>
+    </wux-accordion-group>
+    <wux-accordion-group title="额外信息">
+      <wux-accordion title="问卷链接" wx:if="{{taskInfo.type === '问卷调查'}}">
+        <view wx:for="{{taskInfo.extra_content.query}}" wx:key="*this" class="content">
+          <view wx:if="{{item.type === 'SSP'}}">
+            <view>问题{{index}}: {{item.content.question}}</view>
+            <view wx:for="{{item.content.option}}" wx:key="*this">
+              <view>选项{{index}}: {{item.ans}}</view>
+            </view>
+          </view>
+          <view wx:if="{{item.type === 'MSP'}}">
+            <view>问题{{index}}: {{item.content.question}}</view>
+            <view wx:for="{{item.content.option}}" wx:key="*this">
+              <view>选项{{index}}: {{item.ans}}</view>
+            </view>
+          </view>
+          <view wx:if="{{item.type === 'AAP'}}">
+            <view>问题{{index}}: {{item.content.question}}</view>
+            <view>回答 : {{item.content.answer}}</view>
+          </view>
         </view>
-        <view class="weui-form-preview__item">
-            <view class="weui-form-preview__label">开始日期</view>
-            <view class="weui-form-preview__value">{{start_data}}</view>
-        </view>
-        <view class="weui-form-preview__item">
-            <view class="weui-form-preview__label">结束日期</view>
-            <view class="weui-form-preview__value">{{end_data}}</view>
-        </view>
-        <view class="weui-form-preview__item">
-            <view class="weui-form-preview__label">任务叙述</view>
-            <view class="weui-form-preview__value">{{details}}</view>
-        </view>
-    </view>
-    <view class="weui-form-preview__ft">
-        <navigator class="weui-form-preview__btn weui-form-preview__btn_default" hover-class="weui-form-preview__btn_active">选择</navigator>
-        <navigator class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active">收藏</navigator>
-    </view>
+      </wux-accordion>
+      <wux-accordion title="更多" wx:if="{{taskInfo.extra_content.query.length === 0}}">
+      </wux-accordion>
+    </wux-accordion-group>
+    <wux-row>
+      <wux-col span="6">
+        <wux-button block type="stable" @tap="ControlType">{{button_left}}</wux-button>
+      </wux-col>
+      <wux-col span="6">
+        <wux-button block type="stable" @tap="ControlType">{{button_right}}</wux-button>
+      </wux-col>
+    </wux-row>
   </view>
 </template>
 
@@ -39,23 +83,41 @@
 
   export default class TaskDetail extends wepy.page {
     data = {
-      id: "",
-      title: "",
-      author: "",
-      start_data: "",
-      end_data: "",
-      details: ""
+      taskInfo:[],
+      buton_left:"",
+      button_right:""
     }
     components = {
       mynavbar: MyNavBar
     }
+    methods = {
+      ControlType(e) {
+        var type = e.detail.value;
+        console.log(type);
+        if (type === '修改') {
+          //...
+        }
+        else if (type === '删除') {
+          //...
+        }
+        else if (type === '取消') {
+          //...
+        }
+        else if (type === '完成') {
+          //...
+        }
+        else if (type === '接收') {
+          //...
+        }
+      }
+    }
     onLoad(options) {
-      this.id = options.id;
-      this.title = options.title;
-      this.author = "蔡徐坤";
-      this.start_data = "1990";
-      this.end_data = "2019";
-      this.details = "我喜欢唱、跳、rap，更热爱篮球。";
+      this.taskInfo = JSON.parse(options.task);
+      var buttons = JSON.parse(options.mes);
+      this.button_left = buttons[0];
+      this.button_right = buttons[1];
+      console.log(this.taskInfo);
+      console.log(buttons);
     }
   }
 </script>
