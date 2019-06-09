@@ -109,8 +109,36 @@
             </view>
         </view>
         <view class="weui-btn-area">
-            <button class="weui-btn" type="primary" bindtap="showTopTips">提交</button>
+            <button class="weui-btn" type="primary" bindtap="subbmitMes">提交</button>
         </view>
+        <view class="weui-form-preview">
+    <view class="weui-form-preview__hd">
+        <view class="weui-form-preview__label">任务名称</view>
+        <view class="weui-form-preview__value_in-hd">{{title}}</view>
+    </view>
+    <view class="weui-form-preview__bd">
+        <view class="weui-form-preview__item">
+            <view class="weui-form-preview__label">发起作者</view>
+            <view class="weui-form-preview__value">{{author}}</view>
+        </view>
+        <view class="weui-form-preview__item">
+            <view class="weui-form-preview__label">开始日期</view>
+            <view class="weui-form-preview__value">{{start_data}}</view>
+        </view>
+        <view class="weui-form-preview__item">
+            <view class="weui-form-preview__label">结束日期</view>
+            <view class="weui-form-preview__value">{{end_data}}</view>
+        </view>
+        <view class="weui-form-preview__item">
+            <view class="weui-form-preview__label">任务叙述</view>
+            <view class="weui-form-preview__value">{{details}}</view>
+        </view>
+    </view>
+    <view class="weui-form-preview__ft">
+        <navigator class="weui-form-preview__btn weui-form-preview__btn_default" hover-class="weui-form-preview__btn_active">选择</navigator>
+        <navigator class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active">收藏</navigator>
+    </view>
+  </view>
 </template>
 <script>
   import wepy from 'wepy'
@@ -177,6 +205,13 @@
                 current: e.currentTarget.id, // 当前显示图片的http链接
                 urls: this.files // 需要预览的图片http链接列表
             });
+        },
+        subbmitMes() {
+            var query = JSON.stringify(this.data);
+            console.log(query);
+            wepy.navigateTo({
+                url: 'taskDetail?query=' + query
+            })
         }
     }
     events = {}

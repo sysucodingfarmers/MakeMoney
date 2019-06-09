@@ -44,7 +44,7 @@
           });
         }
         else if (e.detail == 1) {
-          myurl = this.$root.$parent.globalData.newTaskUrl;
+          myurl = this.$root.$parent.globalData.publishTaskUrl;
           wepy.navigateTo({
             url: myurl
           });
