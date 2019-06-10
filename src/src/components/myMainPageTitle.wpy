@@ -1,0 +1,36 @@
+<style lang="less">
+  .recommend {
+    text-align: center;
+    height: 50rpx;
+    margin-bottom: 10rpx;
+  }
+
+  .recommend-title {
+    display: table;
+    width: 100%;
+    line-height: 50rpx;
+    white-space: nowrap;
+    border-spacing: 2rem 0;
+    font-size: 30rpx;
+    color: gray
+  }
+
+  .recommend-title::before, .recommend-title::after {
+    display: table-cell;
+    content: "";
+    width: 50%;
+    background: linear-gradient(#eee, #eee) repeat-x center;
+    background-size: 0.1rem 0.1rem;
+  }
+</style>
+<template>
+  <view class='recommend'>
+    <text class='recommend-title'>热门推荐</text>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class MyMainPageTitle extends wepy.component {
+  }
+</script>

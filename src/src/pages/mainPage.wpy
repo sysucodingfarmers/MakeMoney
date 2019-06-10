@@ -1,49 +1,44 @@
 <template>
-  <mynavbar title="首页" lefttext="" leftarrow="false"></mynavbar>
-  <van-search
-    class="search"
-    value="{{search_keyword}}"
-    placeholder="搜索"
-    shape="round"
-    bind:search="onSearch"
-    bind:cancel="onCancel"
-  >
-    <view slot="label" @tap="selectLoc">
-      <van-icon name="location-o" size="15px"></van-icon>
-      <text style="font-size: small;">{{location.city}}</text>
-    </view>
-  </van-search>
-  <view class="mainBody">
-    <view class="taskType">
-      <view class="taskTypeButtonView">
-        <van-button
-          class="taskTypeButton wux-center"
-          type="info"
-          round
-          hairline
-          @tap="gotoCategory(0)"
-        >线上任务</van-button>
+  <view style="position: fixed; width: 100%; height: 100%;">
+    <!-- 标题栏 -->
+    <mynavbar title="首页" lefttext="" leftarrow="false"></mynavbar>
+    <!-- 搜索栏 -->
+    <van-search
+      class="search"
+      value="{{search_keyword}}"
+      placeholder="搜索"
+      shape="round"
+      bind:search="onSearch"
+      bind:cancel="onCancel"
+    >
+      <view slot="label" @tap="selectLoc">
+        <van-icon name="location-o" size="15px"></van-icon>
+        <text style="font-size: small;">{{location.city}}</text>
       </view>
-      <view class="taskTypeButtonView">
-        <van-button
-          class="taskTypeButton"
-          type="info"
-          round
-          hairline
-          @tap="gotoCategory(1)"
-        >线下任务</van-button>
+    </van-search>
+    <!-- 页面主体 -->
+    <view class="mainBody">
+      <!-- 分类按钮 -->
+      <view class="taskType">
+        <view class="taskTypeButtonView">
+          <CategoryBtnOnline icon="graphic" text="线上任务"></CategoryBtnOnline>
+        </view>
+        <view class="taskTypeButtonView">
+          <CategoryBtnOffline icon="shop" text="线下任务"></CategoryBtnOffline>
+        </view>
       </view>
+      <!-- 任务列表 -->
+      <view class="tasklistboard">
+        <myMainPageTitle></myMainPageTitle>
+        <scroll-view scroll-y="true" style="height: 87%;">
+          <repeat for="{{tasks}}" item="item">
+            <tasklist :tasks="item"></tasklist>
+          </repeat>
+        </scroll-view>
+      </view>
+      <!--  底部导航栏 -->
+      <mytabbar></mytabbar>
     </view>
-    <view class="divLine wux-center"></view>
-    <view class="tasklistboard">
-      <view class="title taskboard" slot="title">任务广场</view>
-      <scroll-view class="taskboardscroll">
-        <repeat for="{{tasks}}" item="item">
-          <tasklist :tasks="item"></tasklist>
-        </repeat>
-      </scroll-view>
-    </view>
-    <mytabbar></mytabbar>
   </view>
   <van-popup
     show="{{showCitySelector}}"
@@ -64,6 +59,8 @@
   import AreaList from '../utility/area'
   import TasksData from '../data/TempTaskData'
   import MyNavBar from '../components/mynavbar'
+  import MyMainPageTitle from '../components/myMainPageTitle'
+  import MyMainPageCategoryBtn from '../components/myMainPageCategoryBtn'
 
   export default class MainPage extends wepy.page {
     config = {
@@ -72,7 +69,10 @@
     components = {
       tasklist: TaskList,
       mytabbar: MyTabbar,
-      mynavbar: MyNavBar
+      mynavbar: MyNavBar,
+      myMainPageTitle: MyMainPageTitle,
+      CategoryBtnOnline: MyMainPageCategoryBtn,
+      CategoryBtnOffline: MyMainPageCategoryBtn
     }
     data = {
       tasks: [],
@@ -118,14 +118,6 @@
       },
       locCancel() {
         this.showCitySelector = false;
-      },
-      gotoCategory(type) {
-        var myurl = this.$parent.globalData.taskCategoryUrl;
-        myurl += "?type="
-        myurl += type
-        wepy.navigateTo({
-          url: myurl
-        });
       }
     }
     events = {
@@ -165,10 +157,6 @@
   }
 </script>
 <style lang="less">
-  @import '../components/wux/styles/index.wxss';
-  page {
-    height: 100%;
-  }
   .mainBody {
     height: 100%;
     width: 100%;
@@ -192,22 +180,22 @@
   }
   .tasklistboard {
     width: 100%;
-    height: 80%;
+    height: 66.8%;
   }
   .taskboard {
-    width: 100%;
-    height: 10%;
-    text-align: center;
-  }
-  .divLine{
-    background: blue;
-    width: 100%;
-    height: 5rpx;
-  }
-  .taskboardscroll {
-    scroll-y: true;
+    width: 90%;
+    height: 5%;
+    text-align: left;
+    margin-top: 2.5%;
+    margin-left: 2%;
+    font-size: small; 
   }
   .tabbar {
     height: 10%;
+  }
+  ::-webkit-scrollbar{
+    width: 0;
+    height: 0;
+    color: transparent;
   }
 </style>

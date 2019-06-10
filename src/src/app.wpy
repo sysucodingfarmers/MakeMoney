@@ -1,4 +1,4 @@
-<style lang="less">
+<style lang='less'>
 .container {
   height: 100%;
   display: flex;
@@ -24,22 +24,23 @@ export default class extends wepy.app {
     pages: [
       'pages/mainPage',
       'pages/myInfo',
-      'pages/newTask',
-      'pages/taskDetail',
       'pages/taskCategory',
-      'pages/normalTask',
-      'pages/queryTask'
+      'pages/createQuery',
+      'pages/queryDetail',
+      'pages/taskDetail',
+      'pages/publishTask'
     ],
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
       navigationBarTitleText: 'WeChat',
       navigationBarTextStyle: 'black',
-      navigationStyle: "custom"
+      navigationStyle: 'custom'
     },
     usingComponents: {
       'van-button': '../components/van/button/index',
       'van-cell-group': '../components/van/cell-group/index',
+      'van-cell': '../components/van/cell/index',
       'van-row': '../components/van/row/index',
       'van-col': '../components/van/col/index',
       'van-field': '../components/van/field/index',
@@ -54,7 +55,9 @@ export default class extends wepy.app {
       'van-area': '../components/van/area/index',
       'van-tab': '../components/van/tab/index',
       'van-tabs': '../components/van/tabs/index',
-      'van-nav-bar': '../components/van/nav-bar/index'
+      'van-nav-bar': '../components/van/nav-bar/index',
+      "van-swipe-cell": '../components/van/swipe-cell/index',
+      'van-cell-for-taskItem': '../components/van/cell_for_TaskItem/index'
     },
     tabBar: {
       backgroundColor: '#fff',
@@ -72,9 +75,9 @@ export default class extends wepy.app {
         }
       ]
     },
-    "permission": {
-      "scope.userLocation": {
-  　　  "desc":"你的位置信息将用于为你推荐你附近的任务"
+    'permission': {
+      'scope.userLocation': {
+  　　  'desc':'你的位置信息将用于为你推荐你附近的任务'
   　　}
     }
   }
@@ -82,15 +85,16 @@ export default class extends wepy.app {
   globalData = {
     userInfo: null,
     mainPageUrl: 'mainPage',
-    newTaskUrl: 'newTask',
-    myInfoUrl: 'myInfo',
     taskDetailUrl: 'taskDetail',
+    myInfoUrl: 'myInfo',
+    publishTaskUrl: 'publishTask',
     taskCategoryUrl: 'taskCategory'
   }
 
   constructor () {
     super()
     this.use('requestfix')
+    this.use('promisify')
   }
 
   onLaunch() {

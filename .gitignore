@@ -12,3 +12,5 @@ src/node_modules/
 .prettierrc
 .wepycache
 .wepyignore
+src/project.config.json
+src/null

@@ -1,0 +1,26 @@
+<style lang="less">
+  
+</style>
+<template>
+  <mynavbar title="问卷详情" lefttext="返回" leftarrow="true"></mynavbar>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import MyNavBar from '../components/mynavbar'
+
+  export default class QueryDetail extends wepy.page {
+    data = {
+      
+    }
+    components = {
+      mynavbar: MyNavBar
+    }
+    onLoad(options) {
+      // var query = JSON.parse(options.query);
+      // var info = JSON.parse(options.info);
+      // console.log(query);
+      // console.log(info);
+    }
+  }
+</script>

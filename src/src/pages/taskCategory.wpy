@@ -1,17 +1,26 @@
 <style lang="less">
-  
+  ::-webkit-scrollbar{
+    width: 0;
+    height: 0;
+    color: transparent;
+  }
 </style>
 <template>
-  <mynavbar lefttext="返回" leftarrow="true"></mynavbar>
-  <van-tabs active="{{active}}" bind:change="onChange">
-    <repeat for="{{category.list}}" item="item">
-      <van-tab title="{{item}}">
-        <repeat for="{{tasks}}" item="item" style="margin-top: 10px;">
-          <tasklist :tasks="item"></tasklist>
-        </repeat>
-      </van-tab>
-    </repeat>
-  </van-tabs>
+  <view style="height: 100%; width: 100%; position: fixed;">
+    <mynavbar lefttext="返回" leftarrow="true"></mynavbar>
+    <van-tabs active="{{active}}" bind:change="onChange">
+      <repeat for="{{category.list}}" item="item">
+        <van-tab title="{{item}}">
+          <view></view>
+        </van-tab>
+      </repeat>
+    </van-tabs>
+    <scroll-view scroll-y="true" style="height: 80%; margin-top: 5%;">
+      <repeat for="{{tasks}}" item="item" style="margin-top: 10px;">
+        <tasklist :tasks="item"></tasklist>
+      </repeat>
+    </scroll-view>
+  </view>
 </template>
 <script>
   import wepy from 'wepy'

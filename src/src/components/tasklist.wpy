@@ -5,23 +5,14 @@
     flex-direction: column;
   }
   .taskitem {
-    width: 80%;
+    width: 100%;
     height: 200rpx;
-    background: blue;
-    margin-bottom: 50rpx;
-    margin-left: 10%;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
 </style>
 <template>
-  <view class="tasklist">
-    <repeat for="{{tasks.list}}" item="item">
-      <taskitem class="taskitem" :titem="item"></taskitem>
-    </repeat>
-  </view>
+  <repeat for="{{tasks.list}}" item="item">
+    <taskitem class="taskitem" :titem="item"></taskitem>
+  </repeat>
 </template>
 <script>
   import wepy from 'wepy'

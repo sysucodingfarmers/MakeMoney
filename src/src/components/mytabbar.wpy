@@ -1,8 +1,8 @@
 <style lang="less">
-  
+
 </style>
 <template>
-  <van-tabbar class="tabbar" active="{{active}}" bind:change="onChange">
+  <van-tabbar custom-class="tabbar" style="z-index: 1" active="{{active}}" bind:change="onChange">
     <repeat for="{{tabbars}}" item="item">
       <van-tabbar-item icon="{{item.iconname}}">{{item.name}}</van-tabbar-item>
     </repeat>
@@ -44,7 +44,7 @@
           });
         }
         else if (e.detail == 1) {
-          myurl = this.$root.$parent.globalData.newTaskUrl;
+          myurl = this.$root.$parent.globalData.publishTaskUrl;
           wepy.navigateTo({
             url: myurl
           });

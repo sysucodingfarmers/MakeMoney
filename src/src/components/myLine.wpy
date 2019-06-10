@@ -1,0 +1,17 @@
+<style lang="less">
+  .myline {
+    height: 1px;
+    background: gray;
+    width: 90%;
+    margin-left: 5%;
+  }
+</style>
+<template>
+  <view class="myline"></view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class MyLine extends wepy.component {
+  }
+</script>

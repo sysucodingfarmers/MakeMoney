@@ -1,0 +1,404 @@
+<style lang="less">
+  .ssp {
+    font-size:30rpx;
+    box-sizing: border-box;
+    border: 1rpx solid #D9D9D9;
+    margin-left:20rpx;
+    margin-top:10rpx;
+    margin-right:20rpx;
+    padding: 10rpx 10rpx 10rpx 10rpx;
+  }
+  .msp {
+    font-size:30rpx;
+    box-sizing: border-box;
+    border: 1rpx solid #D9D9D9;
+    margin-left:20rpx;
+    margin-top:10rpx;
+    margin-right:20rpx;
+    padding: 10rpx 10rpx 10rpx 10rpx;
+  }
+  .question-input {
+    border: 1rpx solid #D9D9D9;
+    margin-bottom: 15rpx;
+    margin-left:60rpx;
+  }
+  .answer-input {
+    border: 1rpx solid #D9D9D9;
+    width:95%;   
+    margin-bottom:4rpx;
+    margin-top:4rpx;
+  }
+  .left-text {
+    position: absolute;
+  }
+  .ques-title {
+    margin-bottom:12rpx;
+  }
+  .end {
+    text-align:center;
+    margin-top:30rpx;
+    margin-bottom: 20rpx;
+  }
+  .subbmit {
+    height: 90rpx;
+    width: 150rpx;
+  }
+  .more {
+    cursor:point;
+    float:right;
+    position:relative;
+    top:-60rpx;
+    right:20rpx;
+  }
+  .remove {
+    position:absolute;
+    top:-15rpx;
+  }
+  .A-menu {
+    margin-top:-10rpx;
+    margin-left:-28rpx;
+    text-align:center;
+  }
+  .menu-items {
+    position:fixed;
+    right:25rpx;
+    height:40rpx;
+    width:120rpx;
+    background:grey;
+  }
+  .item1 {
+    margin-top:-10rpx;
+    color:red;
+  }
+  .item2 {
+    margin-top:30rpx;
+    color:blue;
+  }
+  .top-menu {
+    
+  }
+  .question {
+    
+  }
+  .answer {
+    
+  }
+  .closeQ {
+    position:relative;
+    top:-3rpx;
+    left:-10rpx;
+    cursor:point;
+  }
+  .addO {
+    position:relative;
+    top:-3rpx;
+    left:-10rpx;
+    cursor:point;
+  }
+
+</style>
+<template>  
+    <mynavbar title="问卷任务" lefttext="返回" leftarrow="true"></mynavbar>
+    <wux-fab-button position="bottomRight" theme="calm" direction="vertical" spaceBetween="10" sAngle="0" eAngle="360" buttons="{{buttons}}" bind:click="bindAddQuery({{item}})"/>
+    <view wx:for="{{query}}" wx:for-index="idx" wx:key="id">
+      <!-- 单选题  -->
+      <view wx:if="{{item.type==='SSP'}}" class="ssp">
+        <view class="top-menu">
+          <wux-row>
+            <wux-col span="10">
+              <view class="ques-title">单选题</view>
+            </wux-col>
+            <wux-col span="1">
+              <wux-icon class="addO" type="ios-add-circle-outline" color="blue" size="30" @tap="addOption({{idx}})"></wux-icon>
+            </wux-col>
+            <wux-col span="1">
+              <wux-icon class="closeQ" type="ios-close-circle-outline" color="blue" size="30" @tap="deleteQuery({{idx}})"></wux-icon>
+            </wux-col>
+          </wux-row>
+        </view>
+        <view class="question">
+          <view class="left-text">Q{{idx}}:</view>
+          <textarea auto-height='true' value="{{item.content.question}}" class="question-input" bindinput="questionChange({{idx}})"></textarea>
+        </view>
+        <!-- <radio-group bindchange="radioChange"> -->
+        <view wx:for="{{item.content.option}}"  class="answer" wx:for-index="index">
+          <wux-row>
+            <wux-col span="1"><view>A{{index}}:</view></wux-col>
+            <wux-col span="10">
+              <textarea value="{{item.ans}}" auto-height='true' class="answer-input" bindinput="answerChange({{index}},{{idx}},'SSP')"></textarea>
+            </wux-col>
+            <wux-col span="1">
+              <wux-icon type="ios-remove" class="remove" color="red" size="34" @tap="deleteAns({{index}},{{idx}})"></wux-icon>
+            </wux-col>
+          </wux-row>
+        </view>
+        <!-- </radio-group> -->
+        <!-- <view class="addOption">
+          <wux-row>
+            <wux-col span="2" push="5">
+              <wux-icon type="ios-add-circle-outline" color="blue" size="30"></wux-icon>
+            </wux-col>
+          </wux-row>
+        </view> -->
+      </view>
+      <!-- 多选题  -->
+      <view wx:if="{{item.type==='MSP'}}" class="msp">
+        <view class="top-menu">
+          <wux-row>
+            <wux-col span="10">
+              <view class="ques-title">多选题</view>
+            </wux-col>
+            <wux-col span="1">
+              <wux-icon class="addO" type="ios-add-circle-outline" color="blue" size="30" @tap="addOption({{idx}})"></wux-icon>
+            </wux-col>
+            <wux-col span="1">
+              <wux-icon class="closeQ" type="ios-close-circle-outline" color="blue" size="30" @tap="deleteQuery({{idx}})"></wux-icon>
+            </wux-col>
+          </wux-row>
+        </view>
+        <view class="question">
+          <view class="left-text">Q{{idx}}:</view>
+          <textarea auto-height='true' value="{{item.content.question}}" class="question-input" bindinput="questionChange({{idx}})"></textarea>
+        </view>
+        <view wx:for="{{item.content.option}}" class="answer" wx:for-index="index">
+          <wux-row>
+            <wux-col span="1"><view>A{{index}}:</view></wux-col>
+            <wux-col span="10">
+              <textarea value="{{item.ans}}" auto-height='true' class="answer-input" bindinput="answerChange({{index}},{{idx}},'MSP')"></textarea>
+            </wux-col>
+            <wux-col span="1">
+              <wux-icon type="ios-remove" class="remove" color="red" size="34" @tap="deleteAns({{index}},{{idx}})"></wux-icon>
+            </wux-col>
+          </wux-row>
+        </view>
+      </view>
+      <!-- 问答题  -->
+      <view wx:if="{{item.type==='AAP'}}" class="msp">
+        <view class="top-menu">
+          <wux-row>
+            <wux-col span="7">
+              <view class="ques-title">问答题</view>
+            </wux-col>
+            <wux-col span="3">
+              <view class="ques-limit">{{item.limit}}</view>
+            </wux-col>
+            <wux-col span="1">
+              <wux-icon class="addO" type="ios-add-circle-outline" color="blue" size="30" @tap="changelimit({{idx}})"></wux-icon>
+            </wux-col>
+            <wux-col span="1">
+              <wux-icon class="closeQ" type="ios-close-circle-outline" color="blue" size="30" @tap="deleteQuery({{idx}})"></wux-icon>
+            </wux-col>
+          </wux-row>
+        </view>
+        <view class="question">
+          <view class="left-text">Q{{idx}}:</view>
+          <textarea auto-height='true' value="{{item.content.question}}" class="question-input" bindinput="questionChange({{idx}})"></textarea>
+        </view>
+        <view class="answer">
+          <wux-row>
+            <wux-col span="1"><view>A0:</view></wux-col>
+            <wux-col span="11">
+              <textarea value="{{item.content.answer}}" auto-height='true' class="answer-input" bindinput="answerChange(0, {{idx}}, {{item.type}})"></textarea>
+            </wux-col>
+          </wux-row>
+        </view>
+      </view>
+      <!-- 其他题 -->
+    </view>
+    <view class="end">
+      <button class="subbmit" @tap="bindToSubbmit">提交</button>
+    </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import MyNavBar from '../components/mynavbar'
+
+  export default class CreateQuery extends wepy.page {
+    components = {
+      mynavbar: MyNavBar
+    }
+    data = {
+      limit_type: [
+        "text",
+        "number",
+        "phone",
+        "none"
+      ],
+    	buttons: [
+        {
+          label: '单选题',
+        },
+        {
+          label: '多选题',
+        },
+        {
+          label: '问答题',
+        },
+        {
+          label: 'so on',
+        },
+      ],
+      query: [
+        
+      ]
+    }
+    methods = {
+      //添加问卷问题
+      bindAddQuery(e) {
+        var val = e.detail.index;
+        var len = this.query.length;
+        if (val == 0) {
+          var ssp = {
+            id: len,
+            type: "SSP",           //单选题
+            content: {
+              question: "",
+              option: [
+                {ans: "", isSelected: false},
+                {ans: "", isSelected: false}
+              ]
+            }
+          };
+          this.query.push(ssp);
+        }
+        else if (val == 1) {
+          var msp = {
+            id: len,
+            type: "MSP",           //多选题
+            content: {
+              question: "",
+              option: [
+                {ans: "", isSelected: false},
+                {ans: "", isSelected: false},
+                {ans: "", isSelected: false},
+                {ans: "", isSelected: false},
+              ]
+            }
+          };
+          this.query.push(msp);
+        }
+        else if (val == 2) {
+          var aap = {
+            id: len,
+            type: "AAP",           //问答题
+            content: {
+              question: "",
+              answer: ""
+            },
+            limit: "none"
+          };
+          this.query.push(aap);
+        }
+      },
+      //问卷问题题目修改
+      questionChange(idx, e) {
+        this.query[idx].content.question = e.detail.value;
+      },
+      //问卷问题答案修改
+      answerChange(id, idx, type, e) {
+        if (type === "MSP" || type === "SSP")  {
+          this.query[idx].content.option[id].ans = e.detail.value;
+        }
+        else if (type === "AAP") {
+          this.query[idx].content.answer = e.detail.value;
+        }
+      },
+      //删除问卷问题中答案
+      deleteAns(id, idx) {
+        var that = this;
+        wepy.showModal({
+          title: '是否删除',
+          content: '删除将无法复原'
+        }).then(res => {
+          if (res.confirm) {
+            that.query[idx].content.option.splice(id,1);
+            that.$apply();
+          }
+          else {
+            console.log("用户取消删除");
+          }
+        });
+      },
+      //删除问卷问题
+      deleteQuery(idx) {
+        var that = this;
+        wepy.showModal({
+          title: '是否删除',
+          content: '删除将无法复原'
+        }).then(res => {
+          if (res.confirm) {
+            that.query.splice(idx,1);
+            that.$apply();
+          }
+          else {
+            console.log("用户取消删除");
+          }
+        });
+      },
+      //添加问题答案选项
+      addOption(idx) {
+        this.query[idx].content.option.push({
+          ans: "", isSelected: false
+        });
+      },
+      //修改问答题输入格式
+      changelimit(idx) {
+        var normalLimit = this.query[idx].limit;
+        for (var i = this.limit_type.length - 1; i >= 0; i--) {
+          if (this.limit_type[i] === normalLimit) {
+            var pos = (i+1>=this.limit_type.length) ? 0 : i+1;
+            this.query[idx].limit = this.limit_type[pos];
+            this.$apply();
+          }
+        }
+      },
+      //提交数据
+      bindToSubbmit() {
+        var canSubbmit = true;
+        //判断是否有空白输入
+        this.query.forEach(item=>{
+          if (item.content.question === '') {
+            canSubbmit = false;
+          }
+          if (item.type === 'AAP' && item.content.answer === '') {
+            canSubbmit = false;
+          }
+          if (item.type === 'SSP' || item.type == 'MSP') {
+            item.content.option.forEach(i=>{
+              if (i.ans === '') {
+                canSubbmit = false;
+              }
+            });
+          }
+        });
+        if (canSubbmit) {
+          //数据库JSON
+          var query = JSON.stringify(this.query);
+          //将数据返回发布任务
+          var that = this;
+          var pages = getCurrentPages();
+          var prevPage = pages[pages.length - 2];  //上一个页面
+          prevPage.setData({
+            query: that.query
+          });
+          wepy.navigateBack({
+            delta: 1
+          });
+        }
+        else {
+          wepy.showModal({
+            title: '错误',
+            content: '不可输入空白'
+          });
+        }
+        
+      }
+    }
+    events = {}
+    onLoad(options) {
+      console.log("CreateQuery onload");
+      var query = JSON.parse(options.query);
+      this.query = query;
+    }
+  }
+</script>

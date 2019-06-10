@@ -1,8 +1,11 @@
 <style lang="less">
-
+  .nav {
+    position: fix;
+    top: 0;
+  }
 </style>
 <template>
-  <block wx:if="{{leftarrow == 'true'}}">
+  <block wx:if="{{leftarrow == 'true'}}" custom-class="nav">
     <van-nav-bar
       title="{{title}}"
       left-text="{{lefttext}}"
@@ -10,7 +13,7 @@
       bind:click-left="goBack"
     />
   </block>
-  <block wx:else>
+  <block wx:else class="nav">
     <van-nav-bar
       title="{{title}}"
     />
