@@ -1,0 +1,59 @@
+<style lang="less">
+  .categorybtn {
+    width: 60%;
+    height: 80%;
+    margin-left: 20%;
+    display: flex;
+    flex-direction: column;
+  }
+  .categorypart1 {
+    width: 100%;
+    height: 30%;
+    padding-top: 10px;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+  }
+  .btntext {
+    width: 100%;
+    height: 70%;
+    font-size: medium;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+  }
+</style>
+<template>
+  <button class="categorybtn" @tap="gotoCategory">
+    <view class="categorypart1">
+      <van-icon name="{{icon}}" size="20px"></van-icon>
+    </view>
+    <view class="btntext">
+      <text>{{text}}</text>
+    </view>
+  </button>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class MyMainPageCategoryBtn extends wepy.component {
+    props = {
+      icon: String,
+      text: String
+    }
+    methods = {
+      gotoCategory() {
+        console.log("click!");
+        var myurl = this.$root.$parent.globalData.taskCategoryUrl;
+        myurl += "?type="
+        if (this.text == "线上任务")
+          myurl += "0"
+        else if (this.text == "线下任务")
+          myurl += "1"
+        wepy.navigateTo({
+          url: myurl
+        });
+      }
+    }
+  }
+</script>

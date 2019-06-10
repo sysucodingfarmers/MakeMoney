@@ -1,43 +1,121 @@
 <style>
-  @import '../components/wux/styles/index.wxss';
+  .taskitem {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+  }
+  .pic {
+    width: 30%;
+    height: 100%;
+  }
+  .taskImage {
+    height: 90%;
+    width: 90%;
+    padding-left: 8%;
+    padding-top: 5%;
+    border-radius: 20px;
+  }
+  .text {
+    width: 70%;
+    height: 95%;
+    padding-bottom: 5%;
+  }
+  .detail {
+    width: 90%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .part {
+    width: 100%;
+    height: 30%;
+    display: flex;
+    flex-direction: row;
+  }
+  .titleText{
+    width: 70%;
+    height: 100%;
+    font-weight: bold;
+    font-size: 50rpx;
+  }
+  .locText {
+    width: 30%;
+    height: 100%;
+    font-size: small;
+  }
+  .descripText {
+    width: 100%;
+    height: 50%;
+    padding-top: 10rpx;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: medium;
+  }
+  .publisherText {
+    width: 100%;
+    height: 20%;
+    font-size: small;
+  }
 </style>
 <template>
-  <view @tap="showDetail">
-    <text>{{titem.title}}</text>
+  <view @tap="showDetail" class="taskitem">
+    <view class="pic">
+      <image
+        src="http://pic.sc.chinaz.com/files/pic/pic9/201610/apic23847.jpg"
+        class="taskImage"
+      ></image>
+    </view>
+    <view class="text">
+      <view class="detail">
+        <view class="part">
+          <text class="titleText">{{titem.title}}</text>
+          <text class="locText">小于100m</text>
+        </view>
+        <view class="descripText">{{titem.description}}</view>
+        <text class="publisherText">发布者：{{titem.publisher}}</text>
+      </view>
+    </view>
   </view>
+  <myLine></myLine>
 </template>
 <script>
   import wepy from 'wepy'
+  import MyLine from '../components/myLine'
 
   export default class Taskitem extends wepy.component {
     props = {
       titem: {}
     }
+    components = {
+      myLine: MyLine
+    }
     data = {
-      task: {
-        id: '',             //用于辨别任务的id
-        name: '',           //任务名称
-        publisher: '',      //任务发起者
-        type: '',           //任务类型
-        start_time: '',     //任务开始时间:xxxx-xx-xx xx:xx
-        end_time: '',       //任务结束时间:xxxx-xx-xx xx:xx
-        pay: 0,             //每人报酬
-        detail: '',         //任务详情
-        receiver: [         //任务接收者
-          // { 
-          //   name: '',           //接收者名字
-          //   id: '',             //接受者id，用于识别
-          //   isfinished: false,  //是否完成该任务
-          //   ispaid: false       //是否给予报酬
-          // }
-        ],
-        receiver_limit: 0,  //接收者人数限制
-        finish_rate: 0,     //完成程度
-        extra_content:{     //额外内容：包括图片数据以及问卷数据
-          query: [],        //问卷
-          images:[]         //图片
-        }    
-      }
+      // task: {
+      //   id: '',             //用于辨别任务的id
+      //   name: '',           //任务名称
+      //   publisher: '',      //任务发起者
+      //   type: '',           //任务类型
+      //   start_time: '',     //任务开始时间:xxxx-xx-xx xx:xx
+      //   end_time: '',       //任务结束时间:xxxx-xx-xx xx:xx
+      //   pay: 0,             //每人报酬
+      //   detail: '',         //任务详情
+      //   receiver: [         //任务接收者
+      //     // { 
+      //     //   name: '',           //接收者名字
+      //     //   id: '',             //接受者id，用于识别
+      //     //   isfinished: false,  //是否完成该任务
+      //     //   ispaid: false       //是否给予报酬
+      //     // }
+      //   ],
+      //   receiver_limit: 0,  //接收者人数限制
+      //   finish_rate: 0,     //完成程度
+      //   extra_content:{     //额外内容：包括图片数据以及问卷数据
+      //     query: [],        //问卷
+      //     images:[]         //图片
+      //   }    
+      // }
     }
     methods = {
       showDetail() {
