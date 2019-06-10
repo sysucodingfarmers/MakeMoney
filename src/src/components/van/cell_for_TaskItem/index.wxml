@@ -1,0 +1,24 @@
+<wxs src="../wxs/utils.wxs" module="utils" />
+
+<view
+  class="custom-class {{ utils.bem('cell', [size, { center, required, borderless: !border, clickable: isLink || clickable }]) }}"
+  hover-class="van-cell--hover hover-class"
+  hover-stay-time="70"
+  style="{{ customStyle }}"
+  bind:tap="onClick"
+>
+  <view class="van-cell_image">
+    <image class="myimage" src="http://pic.sc.chinaz.com/files/pic/pic9/201610/apic23847.jpg" mode="scaleToFill" />
+  </view>
+  <view style="display: flex; flex-direction: column; -webkit-flex: 4; flex: 4;">
+    <view class="van-cell__title" wx:if="{{ title }}">{{ title }}</view>
+    <view class="van-cell_label">
+      {{ label }}
+    </view>
+  </view>
+
+  <view class="van-cell__value value-class">
+    <block wx:if="{{ value || value === 0 }}">{{ value }}</block>
+    <slot wx:else />
+  </view>
+</view>

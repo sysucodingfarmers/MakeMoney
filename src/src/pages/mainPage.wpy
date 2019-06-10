@@ -30,7 +30,7 @@
       <!-- 任务列表 -->
       <view class="tasklistboard">
         <myMainPageTitle></myMainPageTitle>
-        <scroll-view scroll-y="true" style="height: 90%;">
+        <scroll-view scroll-y="true" style="height: 87%;">
           <repeat for="{{tasks}}" item="item">
             <tasklist :tasks="item"></tasklist>
           </repeat>
@@ -192,5 +192,10 @@
   }
   .tabbar {
     height: 10%;
+  }
+  ::-webkit-scrollbar{
+    width: 0;
+    height: 0;
+    color: transparent;
   }
 </style>

@@ -10,10 +10,8 @@
     height: 100%;
   }
   .taskImage {
-    height: 90%;
-    width: 90%;
-    padding-left: 8%;
-    padding-top: 5%;
+    height: 100rpx;
+    width: 100rpx;
     border-radius: 20px;
   }
   .text {
@@ -33,52 +31,73 @@
     display: flex;
     flex-direction: row;
   }
-  .titleText{
+  .titleView {
     width: 70%;
     height: 100%;
+  }
+  .titleText{
+    height: 100%;
     font-weight: bold;
-    font-size: 50rpx;
+    font-size: 40rpx;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin-top: 10rpx;
+  }
+  .locView {
+    width: 30%;
+    height: 100%;
   }
   .locText {
     width: 30%;
     height: 100%;
-    font-size: small;
+    padding-top: 10rpx;
+    
+    text-align: right;
   }
   .descripText {
     width: 100%;
-    height: 50%;
+    height: 78rpx;
     padding-top: 10rpx;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     overflow: hidden;
+    display: -webkit-box;
+    word-break: break-all;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
     font-size: medium;
   }
   .publisherText {
     width: 100%;
     height: 20%;
-    font-size: small;
+    padding-top: 10rpx;
+  }
+  .smallfont {
+    width: 100%;
+    white-space: nowrap;
+    font-size: 30rpx;
+    color: gray
+  }
+  .getTask {
+    background: blue;
+    height: 100%;
+    width: 65rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 </style>
 <template>
-  <view @tap="showDetail" class="taskitem">
-    <view class="pic">
-      <image
-        src="http://pic.sc.chinaz.com/files/pic/pic9/201610/apic23847.jpg"
-        class="taskImage"
-      ></image>
-    </view>
-    <view class="text">
-      <view class="detail">
-        <view class="part">
-          <text class="titleText">{{titem.title}}</text>
-          <text class="locText">小于100m</text>
-        </view>
-        <view class="descripText">{{titem.description}}</view>
-        <text class="publisherText">发布者：{{titem.publisher}}</text>
+  <van-swipe-cell right-width="{{65}}">
+    <van-cell-group>
+      <view style="display: flex; flex-direction: column;">
+        <van-cell-for-taskItem title="{{titem.title}}" value="\<100m" label="{{titem.description}}"/>
       </view>
+    </van-cell-group>
+    <view class="getTask" slot="right">
+      <text>接单</text>
     </view>
-  </view>
-  <myLine></myLine>
+  </van-swipe-cell>
 </template>
 <script>
   import wepy from 'wepy'

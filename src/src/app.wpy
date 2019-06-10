@@ -40,6 +40,7 @@ export default class extends wepy.app {
     usingComponents: {
       'van-button': '../components/van/button/index',
       'van-cell-group': '../components/van/cell-group/index',
+      'van-cell': '../components/van/cell/index',
       'van-row': '../components/van/row/index',
       'van-col': '../components/van/col/index',
       'van-field': '../components/van/field/index',
@@ -55,16 +56,8 @@ export default class extends wepy.app {
       'van-tab': '../components/van/tab/index',
       'van-tabs': '../components/van/tabs/index',
       'van-nav-bar': '../components/van/nav-bar/index',
-      'wux-fab-button': '../components/wux/fab-button/index',
-      'wux-col': '../components/wux/col/index',
-      'wux-row': '../components/wux/row/index',
-      'wux-cell-group': '../components/wux/cell-group/index',
-      'wux-cell': '../components/wux/cell/index',
-      'wux-input': '../components/wux/input/index',
-      'wux-input-number': '../components/wux/input-number/index',
-      'wux-textarea': '../components/wux/textarea/index',
-      'wux-accordion-group': '../components/wux/accordion-group/index',
-      'wux-accordion': '../components/wux/accordion/index'
+      "van-swipe-cell": '../components/van/swipe-cell/index',
+      'van-cell-for-taskItem': '../components/van/cell_for_TaskItem/index'
     },
     tabBar: {
       backgroundColor: '#fff',
