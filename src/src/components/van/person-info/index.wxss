@@ -1,0 +1,137 @@
+@import '../common/index.wxss';
+.van-cell {
+  position: relative;
+  display: -webkit-flex;
+  display: flex;
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 14px;
+  line-height: 24px;
+  color: #333;
+  background-color: #fff;
+  box-sizing: border-box
+}
+
+.van-cell:after {
+  content: " ";
+  position: absolute;
+  pointer-events: none;
+  box-sizing: border-box;
+  -webkit-transform-origin: center;
+  transform-origin: center;
+  top: auto;
+  left: 15px;
+  right: 0;
+  bottom: 0;
+  -webkit-transform: scaleY(.5);
+  transform: scaleY(.5);
+  border-bottom: 1px solid #eee
+}
+
+.van-cell--borderless:after {
+  display: none
+}
+
+.van-cell-group {
+  background-color: #fff
+}
+
+.van-cell_image {
+  flex: 2;
+  width: 100%;
+  height: 100%;
+}
+.myimage {
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 100%;
+}
+.van-cell_label {
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 18px;
+  color: #999;
+
+  width: 100%;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  word-break: break-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  text-align: left;
+}
+
+.van-cell__value {
+  overflow: hidden;
+  color: #999;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.van-cell__title {
+  width: 100%;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  word-break: break-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.van-cell__value {
+  webkit-flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.van-cell__arrow {
+  flex: 2;
+  display: flex;
+  flex-direction: row;
+}
+
+.arrow_text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 25rpx;
+  color: #ACB1CC;
+}
+
+.arrow_img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.van-cell--clickable.van-cell--hover {
+  background-color: #f2f3f5
+}
+
+.van-cell--required:before {
+  position: absolute;
+  left: 7px;
+  font-size: 14px;
+  color: #f44;
+  content: "*"
+}
+
+.van-cell--center {
+  -webkit-align-items: center;
+  align-items: center
+}
+
+.van-cell--large {
+  padding-top: 12px;
+  padding-bottom: 12px
+}
+
+.van-cell--large .van-cell__title {
+  font-size: 16px
+}
+
+.van-cell--large .van-cell__label {
+  font-size: 14px
+}

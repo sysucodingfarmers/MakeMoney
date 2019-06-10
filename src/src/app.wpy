@@ -28,7 +28,11 @@ export default class extends wepy.app {
       'pages/createQuery',
       'pages/queryDetail',
       'pages/taskDetail',
-      'pages/publishTask'
+      'pages/publishTask',
+      'pages/myTask',
+      'pages/myWallet',
+      'pages/mySetting',
+      'pages/myInfoDetail'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -57,7 +61,9 @@ export default class extends wepy.app {
       'van-tabs': '../components/van/tabs/index',
       'van-nav-bar': '../components/van/nav-bar/index',
       "van-swipe-cell": '../components/van/swipe-cell/index',
-      'van-cell-for-taskItem': '../components/van/cell_for_TaskItem/index'
+      'van-cell-for-taskItem': '../components/van/cell_for_TaskItem/index',
+      'van-person-info': '../components/van/person-info/index',
+      'van-picker': '../components/van/picker/index'
     },
     tabBar: {
       backgroundColor: '#fff',
@@ -88,7 +94,8 @@ export default class extends wepy.app {
     taskDetailUrl: 'taskDetail',
     myInfoUrl: 'myInfo',
     publishTaskUrl: 'publishTask',
-    taskCategoryUrl: 'taskCategory'
+    taskCategoryUrl: 'taskCategory',
+    myTaskUrl: 'myTask'
   }
 
   constructor () {

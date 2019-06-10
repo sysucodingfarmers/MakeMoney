@@ -29,7 +29,7 @@
       leftarrow: String
     }
     data = {
-
+      
     }
     methods = {
       goBack(e) {

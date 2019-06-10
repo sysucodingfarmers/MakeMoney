@@ -1,0 +1,41 @@
+<style lang="less">
+  
+</style>
+<template>
+  <view style="position: fixed; height: 100%; width: 100%;">
+    <mynavbar lefttext="返回" leftarrow="true"></mynavbar>
+    <!-- 主体 -->
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import MyNavBar from '../components/mynavbar'
+
+  export default class MyTask extends wepy.page {
+    data = {
+      title: "默认",
+      type: 0
+    }
+    components = {
+      mynavbar: MyNavBar
+    }
+    methods = {
+
+    }
+    onLoad(options) {
+      console.log(options.type);
+      if (options.type == "publish") {
+        this.type = 0;
+        this.title = "我的发布";
+      }
+      else if (options.type == "receive") {
+        this.type = 1;
+        this.title = "我的接单"
+      }
+      console.log(this.title)
+    }
+    onShow() {
+      this.$broadcast("setTitle", this.title)
+    }
+  }
+</script>

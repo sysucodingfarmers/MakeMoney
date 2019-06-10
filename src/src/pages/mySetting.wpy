@@ -1,0 +1,25 @@
+<style lang="less">
+  
+</style>
+<template>
+  <view style="position: fixed; height: 100%; width: 100%;">
+    <mynavbar title="我的设置" lefttext="返回" leftarrow="true"></mynavbar>
+    <!-- 主体 -->
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import MyNavBar from '../components/mynavbar'
+
+  export default class MySetting extends wepy.page {
+    data = {
+
+    }
+    components = {
+      mynavbar: MyNavBar
+    }
+    methods = {
+
+    }
+  }
+</script>

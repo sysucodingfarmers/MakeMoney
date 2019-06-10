@@ -7,9 +7,29 @@
       <van-tabbar-item icon="{{item.iconname}}">{{item.name}}</van-tabbar-item>
     </repeat>
   </van-tabbar>
+  <van-popup
+    show="{{showTaskCategorySelector}}"
+    position="bottom"
+  >
+    <van-picker 
+      columns="{{categoryColumn}}"
+      bind:change="selectCategory"
+      show-toolbar
+      confirm-button-text="确认"
+      cancel-button-text="取消"
+      title="任务类型"
+      bind:confirm="cateConfirm"
+      bind:cancel="cateCancel"
+    />
+  </van-popup>
 </template>
 <script>
   import wepy from 'wepy'
+
+  const categories = {
+    '线上任务': ["问卷调查", "信息标注", "其他"],
+    '线下任务': ["快递代取", "课程实验，访谈", "跑腿", "单次兼职", "其他"]
+  };
 
   export default class MyTabbar extends wepy.component {
     props = {
@@ -30,11 +50,24 @@
           name: "我的"
         }
       ],
-      index: {}
+      categoryColumn: [
+        {
+          values: Object.keys(categories),
+          className: 'column1'
+        },
+        {
+          values: categories['线上任务'],
+          className: 'column2',
+          defaultIndex: 0
+        }
+      ],
+      index: {},
+      showTaskCategorySelector: false,
+      selectedType: [],
+      activeValue: 0
     }
     methods = {
       onChange(e) {
-
         this.active = e.detail;
         var myurl;
         if (e.detail == 0) {
@@ -44,10 +77,7 @@
           });
         }
         else if (e.detail == 1) {
-          myurl = this.$root.$parent.globalData.publishTaskUrl;
-          wepy.navigateTo({
-            url: myurl
-          });
+          this.showTaskCategorySelector = true;
         }
         else {
           myurl = this.$root.$parent.globalData.myInfoUrl;
@@ -56,12 +86,38 @@
           });
         }
         this.$apply();
+      },
+      cateConfirm() {
+        this.showTaskCategorySelector = false;
+        console.log("选择了" + this.selectedType[0] + "里面的" + this.selectedType[1]);
+        // 根据需要修改
+        var myurl = this.$root.$parent.globalData.publishTaskUrl;
+        myurl += "?type1="
+        myurl += this.selectedType[0]
+        myurl += "&type2="
+        myurl += this.selectedType[1]
+        wepy.navigateTo({
+          url: myurl
+        });
+      },
+      cateCancel() {
+        this.showTaskCategorySelector = false;
+        this.active = this.activeValue;
+      },
+      selectCategory(event) {
+        const { picker, value, index } = event.detail;
+        picker.setColumnValues(1, categories[value[0]]);
+        this.selectedType = event.detail.value;
       }
     }
     events = {
       'changeActive': (activeValue) => {
         this.active = activeValue;
+        this.activeValue = activeValue;
       }
+    }
+    onLoad() {
+
     }
   }
 </script>

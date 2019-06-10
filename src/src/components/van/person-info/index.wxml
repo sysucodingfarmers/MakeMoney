@@ -1,0 +1,27 @@
+<wxs src="../wxs/utils.wxs" module="utils" />
+
+<view
+  class="custom-class {{ utils.bem('cell', [size, { center, required, borderless: !border, clickable: isLink || clickable }]) }}"
+  hover-class="van-cell--hover hover-class"
+  hover-stay-time="70"
+  style="{{ customStyle }}"
+  bind:tap="onClick"
+>
+  <view class="van-cell_image">
+    <image class="myimage" src="{{avatarurl}}" mode="scaleToFill" />
+  </view>
+  <view style="display: flex; flex-direction: column; flex: 5; padding-left: 20rpx;">
+    <view class="van-cell__title" wx:if="{{ username }}">{{ username }}</view>
+    <view class="van-cell_label">
+      {{ studentID }}
+    </view>
+    <view class="van-cell__value value-class">
+      <block wx:if="{{ school }}">{{ school }}</block>
+      <slot wx:else />
+    </view>
+  </view>
+  <view class="van-cell__arrow">
+    <view class="arrow_text">详细信息</view>
+    <van-icon name="arrow" class="arrow_img" size="20px" color="#ACB1CC"/>
+  </view>
+</view>
