@@ -7,15 +7,15 @@ from datetime import datetime, timedelta
 #User和Task之间的多对多关系
 receivers = db.Table('receivers',
     db.Column('task_id', db.Integer, db.ForeignKey('task.id'), primary_key=True),
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    db.Column('receiver_id', db.Integer, db.ForeignKey('receiver.id'), primary_key=True)
 )
 
 class User(UserMixin, db.Model):
 	#初始化方法，或者在routes.py 中email = json_data['email'] if 'email' in json_data else None
-	def __init__(self, **kwargs):
-		if 'email' not in kwargs:
-			kwargs['email'] = self.__table__.c.email.default.arg
-		super(User, self).__init__(**kwargs)
+	# def __init__(self, **kwargs):
+	# 	if 'email' not in kwargs:
+	# 		kwargs['email'] = self.__table__.c.email.default.arg
+	# 	super(User, self).__init__(**kwargs)
 	#学号(账号)
 	id = db.Column(db.Integer, primary_key=True)
 	#用户名
@@ -23,16 +23,16 @@ class User(UserMixin, db.Model):
 	#密码hash
 	password_hash = db.Column(db.String(128))
 	#邮箱
-	email = db.Column(db.String(20), default='.com')
+	email = db.Column(db.String(20))
 	#学院及专业
 	school = db.Column(db.String(20))
 	major = db.Column(db.String(20))
 	#手机号
 	phone = db.Column(db.Integer)
 	#微信号
-	wx_number = db.Column(db.Integer)
+	wx_number = db.Column(db.String(20))
 	#兴趣爱好
-	hobit = db.Column(db.String(20))
+	hobit = db.Column(db.String(100))
 
 	def set_password(self, password):
 		self.password_hash = generate_password_hash(password)
@@ -42,30 +42,22 @@ class User(UserMixin, db.Model):
 		return '<User {} {}>'.format(self.id, self.username)
 
 
-class Receiver(User):
+class Receiver(db.Model):
 	'''
 	只提供 继承User 一种初始化方法，如
 	receiver = Receiver(user, finished=True, paid=False)
 	'''
-	def __init__(self, User, **kwargs):
-		super(Receiver, self).__init__(
-			id = User.id,
-			username = User.username,
-			password_hash = User.password_hash,
-			email = User.email,
-			school = User.school,
-			major = User.major,
-			phone = User.phone,
-			wx_number = User.wx_number,
-			hobit = User.hobit)
-		# print(kwargs['finished'])
+	def __init__(self, **kwargs):
+		self.id = kwargs['id']
 		self.finished = self.__table__.c.finished.default.arg if 'finished' not in kwargs else kwargs['finished']
 		self.paid = self.__table__.c.paid.default.arg if 'paid' not in kwargs else kwargs['paid']
-
+	id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, primary_key=True)
+	#该id用户的任务是否完成
 	finished = db.Column(db.Boolean, default=False)
+	#该id用户的报酬是否支付
 	paid = db.Column(db.Boolean, default=False)
 	def __repr__(self):
-		return '<Receiver {} {} {} {}>'.format(self.id, self.username, self.finished, self.paid)
+		return '<Receiver {} {} {}>'.format(self.id, self.finished, self.paid)
 
 class Task(db.Model):
 	#初始化
@@ -91,7 +83,7 @@ class Task(db.Model):
 	start_time = db.Column(db.DateTime, nullable=False, default=datetime.now())
 	end_time = db.Column(db.DateTime, nullable=False, default=datetime.now()+timedelta(days=10))
 	#报酬
-	pay = db.Column(db.Integer, nullable=False)
+	pay = db.Column(db.Integer)
 	#任务详情
 	detail = db.Column(db.Text)
 	#任务人数上限
@@ -110,7 +102,7 @@ class Task(db.Model):
 		backref=db.backref('receive_tasks', lazy=True))
 
 	def __repr__(self):
-		return '<Task {} {}>'.format(self.id, self.title)
+		return '<Task {} {} sponsor:{}>'.format(self.id, self.title, self.sponsor_id)
 
 
 #login的配置，使login生效
