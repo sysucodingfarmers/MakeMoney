@@ -1,0 +1,79 @@
+<style lang="less">
+
+</style>
+<template>
+  <view style="position: fixed; height: 100%; width: 100%;">
+    <mynavbar lefttext="返回" leftarrow="true"></mynavbar>
+    <!-- 主体 -->
+    <van-field
+      class="inputField"
+      value="{{value}}"
+      placeholder="{{placeholder}}"
+      border="{{true}}"
+      bind:change="onChange"
+      use-button-slot
+    >
+      <van-button slot="button" size="small" type="info" @tap="saveValue()">保存</van-button>
+    </van-field>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import MyNavBar from '../components/mynavbar'
+
+  export default class MyEditInfo extends wepy.page {
+    data = {
+      type: "",
+      value: "",
+      title: "",
+      placeholder: ""
+    }
+    components = {
+      mynavbar: MyNavBar
+    }
+    methods = {
+      onChange(e) {
+        this.value = e.detail
+      },
+      saveValue() {
+        console.log(this.value);
+        if (this.type == 0) {
+          this.$parent.globalData.userInfo.username = this.value;
+        }
+        else if (this.type == 1) {
+          this.$parent.globalData.userInfo.studentID = this.value;
+        }
+        else if (this.type == 2) {
+          this.$parent.globalData.userInfo.school = this.value;
+        }
+        // 上传到后端
+        
+        wepy.navigateBack();
+      }
+    }
+    onLoad(options) {
+      this.type = options.type;
+      this.value = options.value;
+      console.log(options)
+      if (this.type == 0) {
+        // 更改用户名
+        this.title = "更改用户名"
+        this.placeholder = "请输入用户名"
+      }
+      else if (this.type == 1) {
+        // 更改学号
+        this.title = "更改学号"
+        this.placeholder = "请输入学号"
+      }
+      else if (this.type == 2) {
+        // 更改学校
+        this.title = "更改学校"
+        this.placeholder = "请输入学校"
+      }
+      console.log(this.title);
+    }
+    onShow() {
+      this.$broadcast("setTitle", this.title)
+    }
+  }
+</script>

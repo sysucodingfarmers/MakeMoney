@@ -32,7 +32,8 @@ export default class extends wepy.app {
       'pages/myTask',
       'pages/myWallet',
       'pages/mySetting',
-      'pages/myInfoDetail'
+      'pages/myInfoDetail',
+      'pages/myEditInfo'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -63,7 +64,18 @@ export default class extends wepy.app {
       "van-swipe-cell": '../components/van/swipe-cell/index',
       'van-cell-for-taskItem': '../components/van/cell_for_TaskItem/index',
       'van-person-info': '../components/van/person-info/index',
-      'van-picker': '../components/van/picker/index'
+      'van-picker': '../components/van/picker/index',
+      'van-cell-for-infodetail': '../components/van/cell_for_InfoDetail/index',
+      'wux-fab-button': '../components/wux/fab-button/index',
+      'wux-col': '../components/wux/col/index',
+      'wux-row': '../components/wux/row/index',
+      'wux-cell-group': '../components/wux/cell-group/index',
+      'wux-cell': '../components/wux/cell/index',
+      'wux-input': '../components/wux/input/index',
+      'wux-input-number': '../components/wux/input-number/index',
+      'wux-textarea': '../components/wux/textarea/index',
+      'wux-accordion-group': '../components/wux/accordion-group/index',
+      'wux-accordion': '../components/wux/accordion/index'
     },
     tabBar: {
       backgroundColor: '#fff',
@@ -89,7 +101,16 @@ export default class extends wepy.app {
   }
 
   globalData = {
-    userInfo: null,
+    userInfo: {
+      avatar: "http://pic.sc.chinaz.com/files/pic/pic9/201610/apic23847.jpg",
+      username: "Hello world",
+      studentID: "16340054",
+      school: "中山大学",
+      interests: [
+        "快递代取",
+        "问卷调查"
+      ]
+    },
     mainPageUrl: 'mainPage',
     taskDetailUrl: 'taskDetail',
     myInfoUrl: 'myInfo',

@@ -3,8 +3,12 @@
 </style>
 <template>
   <view style="position: fixed; height: 100%; width: 100%;">
-    <mynavbar title="我的详情" lefttext="返回" leftarrow="true"></mynavbar>
+    <mynavbar lefttext="返回" leftarrow="true"></mynavbar>
     <!-- 主体 -->
+    <van-cell-for-infodetail title="头像" is-link imgurl="{{userinfo.avatar}}" @tap="chooseAvatar()" />
+    <van-cell-for-infodetail title="用户名" is-link value="{{userinfo.username}}" url="{{titleurl}}"/>
+    <van-cell-for-infodetail title="学号" is-link value="{{userinfo.studentID}}" url="{{idurl}}"/>
+    <van-cell-for-infodetail title="学校" is-link value="{{userinfo.school}}" url="{{schoolurl}}"/>
   </view>
 </template>
 <script>
@@ -13,13 +17,52 @@
 
   export default class MyInfoDetail extends wepy.page {
     data = {
-
+      userinfo: {},
+      interests: {
+        list: []
+      },
+      titleurl: "",
+      idurl: "",
+      schoolurl: ""
     }
     components = {
       mynavbar: MyNavBar
     }
     methods = {
-
+      chooseAvatar() {
+        var that = this;
+        wx.chooseImage({
+          count: 1,
+          sizeType: ['original', 'compressed'],
+          sourceType: ['album', 'camera'],
+          success: function(res) {
+            console.log(res);
+            console.log(res.tempFilePaths);
+            var tempFilePaths = res.tempFilePaths;
+            // uploadFile上传头像
+            that.userinfo.avatar = tempFilePaths;
+            that.$parent.globalData.userInfo.avatar = tempFilePaths;
+            that.$apply();
+          },
+          fail: function(e) {
+            console.log(e);
+          },
+          complete: function(e) {
+            console.log(e)
+          }
+        });
+      }
+    }
+    onLoad() {
+      
+    }
+    onShow() {
+      this.userinfo = this.$parent.globalData.userInfo;
+      this.titleurl = "myEditInfo?type=0&value=" + this.userinfo.username
+      this.idurl = "myEditInfo?type=1&value=" + this.userinfo.studentID
+      this.schoolurl = "myEditInfo?type=2&value=" + this.userinfo.school
+      this.interests.list = this.userinfo.interests;
+      this.$broadcast('setTitle', this.userinfo.username + " 的信息")
     }
   }
 </script>
