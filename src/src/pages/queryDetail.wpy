@@ -1,8 +1,141 @@
 <style lang="less">
-  
+  .slide{
+    float:top;
+    margin-top:20px;
+    margin-right:15px;
+    margin-left:15px;
+  }
+  .page{
+    padding-top:20px;
+    margin-top:15px;
+    background-color:#f8f8f8;
+    padding-bottom:20px;
+    height:100vh;
+    font-family: 'PingFang SC', Helvetica, 'STHeiti STXihei', 'Microsoft YaHei', Tohoma, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-size: 16px;
+  }
+  .block{
+    margin-right:15px;
+    margin-left:15px;
+    background-color:white;
+    margin-bottom:20px;
+    padding-top:5px;
+    padding-bottom:5px;
+    padding-right:10px;
+    padding-left:10px;
+  }
+  .block-title{
+    
+  }
+  .title-id{
+    margin-left:4px;
+    margin-top:0px;
+  }
+  .title-type{
+    margin-top:0px;
+    color:blue;
+  }
+  .question{
+    margin-top:3px;
+    margin-left:7px;
+    margin-right:7px;
+    margin-bottom:3px;
+  }
+  radio,
+  checkbox{
+    margin-left:5px;
+    margin-top:2px;
+    margin-bottom:2px;
+  }
+  radio .wx-radio-input,
+  checkbox .wx-checkbox-input{
+    border-radius: 50%; 
+    width: 28rpx;
+    height: 28rpx;
+  }
+  radio .wx-radio-input.wx-radio-input-checked::before,
+  checkbox .wx-checkbox-input.wx-checkbox-input-checked::before{
+    border-radius: 50%;
+    width: 44rpx; 
+    height: 44rpx; 
+    line-height: 44rpx;
+    text-align: center;
+    font-size: 26rpx; 
+    color:#fff; 
+    /* background: #2facff; */
+    background: blue;
+    border-color: #2facff;
+  }
+  .text{
+    height:80px;
+    background-color:#f8f8f8;
+    margin-top:5px;
+    margin-left:5px;
+    margin-bottom:5px;
+  }
+
 </style>
 <template>
   <mynavbar title="问卷详情" lefttext="返回" leftarrow="true"></mynavbar>
+  <view class="slide">
+    <van-progress
+      custom-class="progress"
+      percentage="{{finish_rate}}"
+      pivot-text="{{finish_rate}}%"
+    ></van-progress>
+  </view>
+  <view class="page">
+    <view wx:for="{{query}}">
+      <view class="block">
+        <van-row>
+          <van-col span="1">
+            <van-icon
+              name="label"
+              size="20px"
+              custom-class="icon"
+              color="blue"
+            ></van-icon>
+          </van-col>
+          <van-col span="4">
+            <view class="title-id">第{{index+1}}题</view>
+          </van-col>
+          <van-col span="5" offset="14">
+            <view class="title-type" wx:if="{{item.type === 'SSP'}}">单选题</view>
+            <view class="title-type" wx:if="{{item.type === 'MSP'}}">多选题</view>
+            <view class="title-type" wx:if="{{item.type === 'AAP'}}">问答题</view>
+          </van-col>
+        </van-row>
+        <van-row>
+          <view class="question">{{item.content.question}}</view>
+        </van-row>
+        <!-- 单选题 -->
+        <view wx:if="{{item.type === 'SSP'}}">
+          <radio-group bindchange="radioChange({{index}})">
+            <view wx:for="{{item.content.option}}">
+              <radio value="{{index}}" checked="{{item.isSelected}}" color="blue"/>{{item.ans}}
+            </view>
+          </radio-group>
+        </view>
+        <!-- 多选题 -->
+        <view wx:if="{{item.type === 'MSP'}}">
+          <checkbox-group bindchange="checkboxChange({{index}})">
+            <view wx:for="{{item.content.option}}">
+              <checkbox value="{{index}}" checked="{{item.isSelected}}" color="blue"/>{{item.ans}}
+            </view>
+          </checkbox-group>
+        </view>
+        <!-- 问答题 -->
+        <view wx:if="{{item.type === 'AAP'}}">
+          <textarea 
+            placeholder="请输入答案" 
+            class="text"
+            bindinput="textChange({{index}})"></textarea>
+        </view>
+      </view>
+    </view>
+    <button @tap="Subbmit">完成</button>
+  </view>
 </template>
 
 <script>
@@ -11,16 +144,125 @@
 
   export default class QueryDetail extends wepy.page {
     data = {
-      
+      query: [],
+      finish: [],
+      finish_rate: 0
     }
     components = {
       mynavbar: MyNavBar
+    }
+    methods = {
+      radioChange(index, e) {
+        this.query[index].content.option.forEach(item=>{
+          item.isSelected = false;
+        });
+        this.query[index].content.option[e.detail.value].isSelected = true;
+        var isFinish = false;
+        this.finish.forEach(item=>{
+          if (item === index) 
+            isFinish = true;
+        });
+        if (!isFinish) {
+          this.finish.push(index);
+          this.finish_rate = this.finish.length * 100 / this.query.length;
+          this.finish_rate = this.finish_rate.toFixed(0);
+          this.$apply();
+        }
+      },
+      checkboxChange(index, e) {
+        this.query[index].content.option.forEach(item=>{
+          item.isSelected = false;
+        });
+        e.detail.value.forEach(item=>{
+          this.query[index].content.option[item].isSelected = true;
+        });
+        var isFinish = false;
+        var pos = 0, i = 0;
+        for (i = 0; i < this.finish.length; ++i) {
+          if (this.finish[i] === index) {
+            isFinish = true;
+            pos = i;
+          }
+        }
+        if (e.detail.value.length === 0 && isFinish) {
+          this.finish.splice(pos, 1);
+          this.finish_rate = this.finish.length * 100 / this.query.length;
+          this.finish_rate = this.finish_rate.toFixed(0);
+          this.$apply();
+        }
+        else if (e.detail.value.length != 0 && !isFinish) {
+          this.finish.push(index);
+          this.finish_rate = this.finish.length * 100 / this.query.length;
+          this.finish_rate = this.finish_rate.toFixed(0);
+          this.$apply();
+        }
+      },
+      textChange(index, e) {
+        this.query[index].content.answer = e.detail.value;
+        var isFinish = false;
+        var pos = 0, i = 0;
+        for (i = 0; i < this.finish.length; ++i) {
+          if (this.finish[i] === index) {
+            isFinish = true;
+            pos = i;
+          }
+        }
+        if (this.query[index].content.answer != '' && !isFinish) {
+          this.finish.push(index);
+          this.finish_rate = this.finish.length * 100 / this.query.length;
+          this.finish_rate = this.finish_rate.toFixed(0);
+          this.$apply();
+        }
+        else if (this.query[index].content.answer === '' && isFinish) {
+          this.finish.splice(pos, 1);
+          this.finish_rate = this.finish.length * 100 / this.query.length;
+          this.finish_rate = this.finish_rate.toFixed(0);
+          this.$apply();
+        }
+      },
+      Subbmit() {
+        console.log(this.query);
+      }
     }
     onLoad(options) {
       // var query = JSON.parse(options.query);
       // var info = JSON.parse(options.info);
       // console.log(query);
       // console.log(info);
+      this.query = [
+        {
+          id: 0,
+          type: "SSP",           //单选题
+          content: {
+            question: "你打球像蔡徐坤吗",
+            option: [
+              {ans: "对", isSelected: false},
+              {ans: "错", isSelected: false}
+            ]
+          }
+        },
+        {
+          id: 1,
+          type: "MSP",           //多选题
+          content: {
+            question: "谁打球像蔡徐坤",
+            option: [
+              {ans: "戴馨乐", isSelected: false},
+              {ans: "陈咏强", isSelected: false},
+              {ans: "陈梓峰", isSelected: false}
+            ]
+          }
+        },
+        {
+          id: 2,
+          type: "AAP",           //问答题
+          content: {
+            question: "如何评价打球像蔡徐坤这句话",
+            answer: ""
+          },
+          limit: "none"
+        }
+      ]
     }
   }
 </script>

@@ -22,13 +22,13 @@ setStore(store)
 export default class extends wepy.app {
   config = {
     pages: [
+      'pages/publishTask',
       'pages/mainPage',
+      'pages/queryDetail',
+      'pages/createQuery',
       'pages/myInfo',
       'pages/taskCategory',
-      'pages/createQuery',
-      'pages/queryDetail',
       'pages/taskDetail',
-      'pages/publishTask',
       'pages/myTask',
       'pages/myWallet',
       'pages/mySetting',
@@ -66,6 +66,8 @@ export default class extends wepy.app {
       'van-person-info': '../components/van/person-info/index',
       'van-picker': '../components/van/picker/index',
       'van-cell-for-infodetail': '../components/van/cell_for_InfoDetail/index',
+      'van-progress': '../components/van/progress/index',
+      'van-datetime-picker': '../components/van/datetime-picker/index',
       'wux-fab-button': '../components/wux/fab-button/index',
       'wux-col': '../components/wux/col/index',
       'wux-row': '../components/wux/row/index',
