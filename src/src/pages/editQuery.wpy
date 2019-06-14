@@ -1,0 +1,223 @@
+<style lang="less">
+  ::-webkit-scrollbar{
+    width: 0;
+    height: 0;
+    color: transparent;
+  }
+  .page{
+    line-height: 1.6;
+    background-color: #f8f8f8;
+    height:100%;
+  }
+  .subbmit-button{
+    margin-left:20px;
+    margin-right:20px;
+    margin-top:25px;
+    justify-content: center;
+    align-item: center;
+  }
+</style>
+<template>
+  <view style="position: fixed; height: 100%; width: 100%;">
+    <mynavbar title="编辑问卷" lefttext="返回" leftarrow="true"></mynavbar>
+    <!-- 主体 -->
+    <view class="page">
+      <scroll-view scroll-y="true" style="height: 87%;">
+        <van-cell-group title="单选题" wx:if="{{query.type === '单选题'}}">
+          <van-field
+            value="{{query.content.question}}"
+            label="题目"
+            type="textarea"
+            placeholder="请输入题目"
+            clearable
+            autosize
+            error-message="{{query.content.question != '' ? '' : '题目不能为空'}}"
+            bind:input="EditQuestion"
+          >
+            <van-icon slot="right-icon" name="plus" color="blue" bind:tap="AddOption"></van-icon>
+          </van-field>
+          <repeat for="{{query.content.option}}" item="item" index="index">
+            <van-field
+            value="{{item.ans}}"
+            label="选项{{index+1}}"
+            type="textarea"
+            placeholder="请输入选项"
+            clearable
+            autosize
+            error-message="{{item.ans != '' ? '' : '选项不能为空'}}"
+            bind:input="EditOption({{index}})"
+          >
+            <van-icon slot="right-icon" name="cross" color="red" bind:tap="DeleteOption({{index}})"></van-icon>
+          </van-field>
+          </repeat>
+        </van-cell-group>
+        <van-cell-group title="多选题" wx:if="{{query.type === '多选题'}}">
+          <van-field
+            value="{{query.content.question}}"
+            label="题目"
+            type="textarea"
+            placeholder="请输入题目"
+            clearable
+            autosize
+            error-message="{{query.content.question != '' ? '' : '题目不能为空'}}"
+            bind:input="EditQuestion"
+          >
+            <van-icon slot="right-icon" name="plus" color="blue" bind:tap="AddOption"></van-icon>
+          </van-field>
+          <repeat for="{{query.content.option}}" item="item" index="index">
+            <van-field
+            value="{{item.ans}}"
+            label="选项{{index+1}}"
+            type="textarea"
+            placeholder="请输入选项"
+            clearable
+            autosize
+            error-message="{{item.ans != '' ? '' : '选项不能为空'}}"
+            bind:input="EditOption({{index}})"
+          >
+            <van-icon slot="right-icon" name="cross" color="red" bind:tap="DeleteOption({{index}})"></van-icon>
+          </van-field>
+          </repeat>
+        </van-cell-group>
+        <van-cell-group title="回答题" wx:if="{{query.type === '问答题'}}">
+          <van-field
+            value="{{query.content.question}}"
+            label="题目"
+            type="textarea"
+            placeholder="请输入题目"
+            clearable
+            autosize
+            error-message="{{query.content.question != '' ? '' : '题目不能为空'}}"
+            bind:input="EditQuestion"
+          ></van-field>
+          <van-field
+            value="{{query.limit}}"
+            label="输入格式"
+            bind:tap="ShowLimitSelection"
+          ></van-field>
+        </van-cell-group>
+        <view class="subbmit-button">
+          <van-button type="primary" round size="large" bindtap="subbmit">完成</van-button>
+        </view>
+      </scroll-view>
+      <van-popup
+        show="{{showLimitSelection}}"
+        position="bottom"
+      >
+        <van-picker
+          columns="{{columns}}"
+          show-toolbar
+          confirm-button-text="确认"
+          cancel-button-text="取消"
+          title="输入格式"
+          bind:confirm="ConfirmLimit"
+          bind:cancel="CancelLimit"
+        ></van-picker>
+      </van-popup>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import MyNavBar from '../components/mynavbar'
+
+  export default class EditQuery extends wepy.page {
+    data = {
+      query: [],
+      eIndex: 0,
+      showLimitSelection: false,
+      columns: [
+        "text",
+        "number"
+      ]
+    }
+    components = {
+      mynavbar: MyNavBar
+    }
+    methods = {
+      //修改问题
+      EditQuestion(e) {
+        this.query.content.question = e.detail;
+      },
+      //修改选项
+      EditOption(idx, e) {
+        this.query.content.option[idx].ans = e.detail;
+      },
+      //删除选项
+      DeleteOption(idx) {
+        var that = this;
+        wepy.showModal({
+          title: '是否删除',
+          content: '删除将无法复原'
+        }).then(res => {
+          if (res.confirm) {
+            that.query.content.option.splice(idx,1);
+            that.$apply();
+          }
+          else {
+            console.log("用户取消删除");
+          }
+        });
+      },
+      //添加选项
+      AddOption() {
+        this.query.content.option.push({
+          ans: "", isSelected: false
+        });
+      },
+      //展示限制
+      ShowLimitSelection() {
+        this.showLimitSelection = true;
+      },
+      //修改限制
+      ConfirmLimit(e) {
+        this.query.limit = e.detail.value;
+        this.showLimitSelection = false;
+        this.$apply();
+      },
+      //取消修改限制
+      CancelLimit() {
+        this.showLimitSelection = false;
+      },
+      //提交修改
+      subbmit() {
+        var canSubbmit = true;
+        //判断是否有空白输入
+        canSubbmit = this.query.content.question === '' ? false : canSubbmit;
+        if (this.query.type === '单选题' || this.query.type === '多选题') {
+          if (this.query.content.option.length === 0) {
+            canSubbmit = false;
+            wepy.showModal({
+              title: '错误',
+              content: '选项为空'
+            });
+          }
+          else {
+            this.query.content.option.forEach(item=>{
+              canSubbmit = item.ans === '' ? false : canSubbmit;
+            });
+          }
+        }
+        if (canSubbmit) {
+          var that = this;
+          var pages = getCurrentPages();
+          var prevPage = pages[pages.length - 2];  //上一个页面
+          prevPage.setData({
+            eQuery: that.query,
+            eIndex: that.eIndex
+          });
+          wepy.navigateBack({
+            delta: 1
+          });
+        }
+      }
+    }
+    onLoad(options) {
+      console.log("EditQuery onload");
+      var query = JSON.parse(options.query);
+      var index = JSON.parse(options.index);
+      this.query = query;
+      this.eIndex = index;
+    }
+  }
+</script>
