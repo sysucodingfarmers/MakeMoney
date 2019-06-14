@@ -1,213 +1,117 @@
 <style lang="less">
-  .ssp {
-    font-size:30rpx;
-    box-sizing: border-box;
-    border: 1rpx solid #D9D9D9;
-    margin-left:20rpx;
-    margin-top:10rpx;
-    margin-right:20rpx;
-    padding: 10rpx 10rpx 10rpx 10rpx;
+  .page{
+    line-height: 1.6;
+    background-color: #f8f8f8;
+    height:100%;
   }
-  .msp {
-    font-size:30rpx;
-    box-sizing: border-box;
-    border: 1rpx solid #D9D9D9;
-    margin-left:20rpx;
-    margin-top:10rpx;
-    margin-right:20rpx;
-    padding: 10rpx 10rpx 10rpx 10rpx;
+  ::-webkit-scrollbar{
+    width: 0;
+    height: 0;
+    color: transparent;
   }
-  .question-input {
-    border: 1rpx solid #D9D9D9;
-    margin-bottom: 15rpx;
-    margin-left:60rpx;
+  .query-block {
+    margin:10px 10px 10px 10px;
+    padding:20px 20px 20px 20px;
+    font-family: KaiTi;
+    font-size: 13px;
+    color: grey;
+    background-color: white;
   }
-  .answer-input {
-    border: 1rpx solid #D9D9D9;
-    width:95%;   
-    margin-bottom:4rpx;
-    margin-top:4rpx;
-  }
-  .left-text {
-    position: absolute;
-  }
-  .ques-title {
-    margin-bottom:12rpx;
-  }
-  .end {
-    text-align:center;
-    margin-top:30rpx;
-    margin-bottom: 20rpx;
-  }
-  .subbmit {
-    height: 90rpx;
-    width: 150rpx;
-  }
-  .more {
-    cursor:point;
+  .delete-icon{
     float:right;
-    position:relative;
-    top:-60rpx;
-    right:20rpx;
+    margin-top:-5px;
+    margin-right:-5px;
   }
-  .remove {
-    position:absolute;
-    top:-15rpx;
+  .edit-icon{
+    float:right;
+    margin-top:-5px;
+    margin-right:5px;
   }
-  .A-menu {
-    margin-top:-10rpx;
-    margin-left:-28rpx;
-    text-align:center;
+  radio {
+    transform:scale(0.5);
+    margin-left:-3px;
   }
-  .menu-items {
-    position:fixed;
-    right:25rpx;
-    height:40rpx;
-    width:120rpx;
-    background:grey;
+  .query-block-ans{
+    margin-top:2px;
+    display:flex;
   }
-  .item1 {
-    margin-top:-10rpx;
-    color:red;
+  .subbmit-button{
+    margin-left:20px;
+    margin-right:20px;
+    margin-top:25px;
+    justify-content: center;
+    align-item: center;
   }
-  .item2 {
-    margin-top:30rpx;
-    color:blue;
-  }
-  .top-menu {
-    
-  }
-  .question {
-    
-  }
-  .answer {
-    
-  }
-  .closeQ {
-    position:relative;
-    top:-3rpx;
-    left:-10rpx;
-    cursor:point;
-  }
-  .addO {
-    position:relative;
-    top:-3rpx;
-    left:-10rpx;
-    cursor:point;
-  }
-
 </style>
 <template>  
+  <view style="position: fixed; width: 100%; height: 100%;">
     <mynavbar title="问卷任务" lefttext="返回" leftarrow="true"></mynavbar>
-    <wux-fab-button position="bottomRight" theme="calm" direction="vertical" spaceBetween="10" sAngle="0" eAngle="360" buttons="{{buttons}}" bind:click="bindAddQuery({{item}})"/>
-    <view wx:for="{{query}}" wx:for-index="idx" wx:key="id">
-      <!-- 单选题  -->
-      <view wx:if="{{item.type==='SSP'}}" class="ssp">
-        <view class="top-menu">
-          <wux-row>
-            <wux-col span="10">
-              <view class="ques-title">单选题</view>
-            </wux-col>
-            <wux-col span="1">
-              <wux-icon class="addO" type="ios-add-circle-outline" color="blue" size="30" @tap="addOption({{idx}})"></wux-icon>
-            </wux-col>
-            <wux-col span="1">
-              <wux-icon class="closeQ" type="ios-close-circle-outline" color="blue" size="30" @tap="deleteQuery({{idx}})"></wux-icon>
-            </wux-col>
-          </wux-row>
+    <view class="page">
+      <scroll-view scroll-y="true" style="height: 87%;">
+        <wux-fab-button position="bottomRight" theme="calm" direction="vertical" spaceBetween="10" sAngle="0" eAngle="360" buttons="{{buttons}}" bind:click="AddQuery({{item}})"></wux-fab-button>
+        <view wx:for="{{query}}" wx:for-index="idx">
+          <!-- 单选题 -->
+          <view wx:if="{{item.type ==='单选题'}}" class="query-block">
+            <van-row>
+              <van-col>单选题</van-col>
+              <van-icon name="close" size="20px" color="red" class="delete-icon" @tap="DeleteQuery({{idx}})"></van-icon>
+              <van-icon name="edit" size="20px" color="blue" class="edit-icon" @tap="EditQuery({{idx}})"></van-icon>
+            </van-row>
+            <van-row>
+              <van-col>{{idx+1}}.{{item.content.question}}</van-col>
+            </van-row>
+            <repeat for="{{item.content.option}}" item="item" index="index">
+              <van-row>
+                <van-col>
+                  <radio disabled style="float:left;"></radio>
+                  <view class="query-block-ans">{{item.ans}}</view>
+                </van-col>
+              </van-row>
+            </repeat>
+          </view>
+          <!-- 多选题 -->
+          <view wx:if="{{item.type ==='多选题'}}" class="query-block">
+            <van-row>
+              <van-col>多选题</van-col>
+              <van-icon name="close" size="20px" color="red" class="delete-icon" @tap="DeleteQuery({{idx}})"></van-icon>
+              <van-icon name="edit" size="20px" color="blue" class="edit-icon" @tap="EditQuery({{idx}})"></van-icon>
+            </van-row>
+            <van-row>
+              <van-col>{{idx+1}}.{{item.content.question}}</van-col>
+            </van-row>
+            <repeat for="{{item.content.option}}" item="item" index="index">
+              <van-row>
+                <van-col>
+                  <radio disabled style="float:left;"></radio>
+                  <view class="query-block-ans">{{item.ans}}</view>
+                </van-col>
+              </van-row>
+            </repeat>
+          </view>
+          <!-- 问答题 -->
+          <view wx:if="{{item.type ==='问答题'}}" class="query-block">
+            <van-row>
+              <van-col>问答题</van-col>
+              <van-icon name="close" size="20px" color="red" class="delete-icon" @tap="DeleteQuery({{idx}})"></van-icon>
+              <van-icon name="edit" size="20px" color="blue" class="edit-icon" @tap="EditQuery({{idx}})"></van-icon>
+            </van-row>
+            <van-row>
+              <van-col>{{idx+1}}.{{item.content.question}}</van-col>
+            </van-row>
+            <van-row>
+              <van-col><view class="query-block-ans">答:</view></van-col>
+            </van-row>
+            <van-row>
+              <van-col>(答案格式:{{item.limit}})</van-col>
+            </van-row>
+          </view>
         </view>
-        <view class="question">
-          <view class="left-text">Q{{idx}}:</view>
-          <textarea auto-height='true' value="{{item.content.question}}" class="question-input" bindinput="questionChange({{idx}})"></textarea>
+        <view class="subbmit-button">
+          <van-button type="primary" round size="large" bindtap="subbmit">完成</van-button>
         </view>
-        <!-- <radio-group bindchange="radioChange"> -->
-        <view wx:for="{{item.content.option}}"  class="answer" wx:for-index="index">
-          <wux-row>
-            <wux-col span="1"><view>A{{index}}:</view></wux-col>
-            <wux-col span="10">
-              <textarea value="{{item.ans}}" auto-height='true' class="answer-input" bindinput="answerChange({{index}},{{idx}},'SSP')"></textarea>
-            </wux-col>
-            <wux-col span="1">
-              <wux-icon type="ios-remove" class="remove" color="red" size="34" @tap="deleteAns({{index}},{{idx}})"></wux-icon>
-            </wux-col>
-          </wux-row>
-        </view>
-        <!-- </radio-group> -->
-        <!-- <view class="addOption">
-          <wux-row>
-            <wux-col span="2" push="5">
-              <wux-icon type="ios-add-circle-outline" color="blue" size="30"></wux-icon>
-            </wux-col>
-          </wux-row>
-        </view> -->
-      </view>
-      <!-- 多选题  -->
-      <view wx:if="{{item.type==='MSP'}}" class="msp">
-        <view class="top-menu">
-          <wux-row>
-            <wux-col span="10">
-              <view class="ques-title">多选题</view>
-            </wux-col>
-            <wux-col span="1">
-              <wux-icon class="addO" type="ios-add-circle-outline" color="blue" size="30" @tap="addOption({{idx}})"></wux-icon>
-            </wux-col>
-            <wux-col span="1">
-              <wux-icon class="closeQ" type="ios-close-circle-outline" color="blue" size="30" @tap="deleteQuery({{idx}})"></wux-icon>
-            </wux-col>
-          </wux-row>
-        </view>
-        <view class="question">
-          <view class="left-text">Q{{idx}}:</view>
-          <textarea auto-height='true' value="{{item.content.question}}" class="question-input" bindinput="questionChange({{idx}})"></textarea>
-        </view>
-        <view wx:for="{{item.content.option}}" class="answer" wx:for-index="index">
-          <wux-row>
-            <wux-col span="1"><view>A{{index}}:</view></wux-col>
-            <wux-col span="10">
-              <textarea value="{{item.ans}}" auto-height='true' class="answer-input" bindinput="answerChange({{index}},{{idx}},'MSP')"></textarea>
-            </wux-col>
-            <wux-col span="1">
-              <wux-icon type="ios-remove" class="remove" color="red" size="34" @tap="deleteAns({{index}},{{idx}})"></wux-icon>
-            </wux-col>
-          </wux-row>
-        </view>
-      </view>
-      <!-- 问答题  -->
-      <view wx:if="{{item.type==='AAP'}}" class="msp">
-        <view class="top-menu">
-          <wux-row>
-            <wux-col span="7">
-              <view class="ques-title">问答题</view>
-            </wux-col>
-            <wux-col span="3">
-              <view class="ques-limit">{{item.limit}}</view>
-            </wux-col>
-            <wux-col span="1">
-              <wux-icon class="addO" type="ios-add-circle-outline" color="blue" size="30" @tap="changelimit({{idx}})"></wux-icon>
-            </wux-col>
-            <wux-col span="1">
-              <wux-icon class="closeQ" type="ios-close-circle-outline" color="blue" size="30" @tap="deleteQuery({{idx}})"></wux-icon>
-            </wux-col>
-          </wux-row>
-        </view>
-        <view class="question">
-          <view class="left-text">Q{{idx}}:</view>
-          <textarea auto-height='true' value="{{item.content.question}}" class="question-input" bindinput="questionChange({{idx}})"></textarea>
-        </view>
-        <view class="answer">
-          <wux-row>
-            <wux-col span="1"><view>A0:</view></wux-col>
-            <wux-col span="11">
-              <textarea value="{{item.content.answer}}" auto-height='true' class="answer-input" bindinput="answerChange(0, {{idx}}, {{item.type}})"></textarea>
-            </wux-col>
-          </wux-row>
-        </view>
-      </view>
-      <!-- 其他题 -->
+      </scroll-view>
     </view>
-    <view class="end">
-      <button class="subbmit" @tap="bindToSubbmit">提交</button>
-    </view>
+  </view>
 </template>
 <script>
   import wepy from 'wepy'
@@ -220,107 +124,82 @@
     data = {
       limit_type: [
         "text",
-        "number",
-        "phone",
-        "none"
+        "number"
       ],
     	buttons: [
-        {
-          label: '单选题',
-        },
-        {
-          label: '多选题',
-        },
-        {
-          label: '问答题',
-        },
-        {
-          label: 'so on',
-        },
+        {label: '单选题'},
+        {label: '多选题'},
+        {label: '问答题'}
       ],
       query: [
-        
+        // {
+        //   id: 0,
+        //   type: "单选题",           //单选题
+        //   content: {
+        //     question: "你打球像蔡徐坤吗",
+        //     option: [
+        //       {ans: "对", isSelected: false},
+        //       {ans: "错", isSelected: false}
+        //     ]
+        //   }
+        // },
+        // {
+        //   id: 1,
+        //   type: "多选题",           //多选题
+        //   content: {
+        //     question: "谁打球像蔡徐坤",
+        //     option: [
+        //       {ans: "戴馨乐", isSelected: false},
+        //       {ans: "陈咏强", isSelected: false},
+        //       {ans: "陈梓峰", isSelected: false}
+        //     ]
+        //   }
+        // },
+        // {
+        //   id: 2,
+        //   type: "问答题",           //问答题
+        //   content: {
+        //     question: "如何评价打球像蔡徐坤这句话",
+        //     answer: ""
+        //   },
+        //   limit: "text"
+        // }
       ]
     }
     methods = {
       //添加问卷问题
-      bindAddQuery(e) {
+      AddQuery(e) {
         var val = e.detail.index;
-        var len = this.query.length;
-        if (val == 0) {
-          var ssp = {
-            id: len,
-            type: "SSP",           //单选题
+        var item;
+        if (val === 0 || val === 1) {
+          item = {
+            id: 0,
+            type: this.buttons[val].label,
             content: {
-              question: "",
-              option: [
-                {ans: "", isSelected: false},
-                {ans: "", isSelected: false}
-              ]
+              question:'',
+              option: []
             }
           };
-          this.query.push(ssp);
         }
-        else if (val == 1) {
-          var msp = {
-            id: len,
-            type: "MSP",           //多选题
+        else if (val === 2) {
+          item = {
+            id: 0,
+            type: this.buttons[val].label,
             content: {
-              question: "",
-              option: [
-                {ans: "", isSelected: false},
-                {ans: "", isSelected: false},
-                {ans: "", isSelected: false},
-                {ans: "", isSelected: false},
-              ]
-            }
-          };
-          this.query.push(msp);
-        }
-        else if (val == 2) {
-          var aap = {
-            id: len,
-            type: "AAP",           //问答题
-            content: {
-              question: "",
-              answer: ""
+              question:'',
+              ans:''
             },
-            limit: "none"
+            limit: "text"
           };
-          this.query.push(aap);
         }
-      },
-      //问卷问题题目修改
-      questionChange(idx, e) {
-        this.query[idx].content.question = e.detail.value;
-      },
-      //问卷问题答案修改
-      answerChange(id, idx, type, e) {
-        if (type === "MSP" || type === "SSP")  {
-          this.query[idx].content.option[id].ans = e.detail.value;
-        }
-        else if (type === "AAP") {
-          this.query[idx].content.answer = e.detail.value;
-        }
-      },
-      //删除问卷问题中答案
-      deleteAns(id, idx) {
-        var that = this;
-        wepy.showModal({
-          title: '是否删除',
-          content: '删除将无法复原'
-        }).then(res => {
-          if (res.confirm) {
-            that.query[idx].content.option.splice(id,1);
-            that.$apply();
-          }
-          else {
-            console.log("用户取消删除");
-          }
+        var new_len = this.query.length;
+        var query = JSON.stringify(item);
+        wepy.navigateTo({
+          url: "editQuery?query=" + query + '&index=' + new_len 
         });
       },
       //删除问卷问题
-      deleteQuery(idx) {
+      DeleteQuery(idx) {
         var that = this;
         wepy.showModal({
           title: '是否删除',
@@ -335,63 +214,27 @@
           }
         });
       },
-      //添加问题答案选项
-      addOption(idx) {
-        this.query[idx].content.option.push({
-          ans: "", isSelected: false
+      //编辑题目
+      EditQuery(idx) {
+        var query = JSON.stringify(this.query[idx]);
+        wepy.navigateTo({
+          url: "editQuery?query=" + query + '&index=' + idx
         });
-      },
-      //修改问答题输入格式
-      changelimit(idx) {
-        var normalLimit = this.query[idx].limit;
-        for (var i = this.limit_type.length - 1; i >= 0; i--) {
-          if (this.limit_type[i] === normalLimit) {
-            var pos = (i+1>=this.limit_type.length) ? 0 : i+1;
-            this.query[idx].limit = this.limit_type[pos];
-            this.$apply();
-          }
-        }
       },
       //提交数据
-      bindToSubbmit() {
-        var canSubbmit = true;
-        //判断是否有空白输入
-        this.query.forEach(item=>{
-          if (item.content.question === '') {
-            canSubbmit = false;
-          }
-          if (item.type === 'AAP' && item.content.answer === '') {
-            canSubbmit = false;
-          }
-          if (item.type === 'SSP' || item.type == 'MSP') {
-            item.content.option.forEach(i=>{
-              if (i.ans === '') {
-                canSubbmit = false;
-              }
-            });
-          }
+      subbmit() {
+        //数据库JSON
+        var query = JSON.stringify(this.query);
+        //将数据返回发布任务
+        var that = this;
+        var pages = getCurrentPages();
+        var prevPage = pages[pages.length - 2];  //上一个页面
+        prevPage.setData({
+          query: that.query
         });
-        if (canSubbmit) {
-          //数据库JSON
-          var query = JSON.stringify(this.query);
-          //将数据返回发布任务
-          var that = this;
-          var pages = getCurrentPages();
-          var prevPage = pages[pages.length - 2];  //上一个页面
-          prevPage.setData({
-            query: that.query
-          });
-          wepy.navigateBack({
-            delta: 1
-          });
-        }
-        else {
-          wepy.showModal({
-            title: '错误',
-            content: '不可输入空白'
-          });
-        }
-        
+        wepy.navigateBack({
+          delta: 1
+        });
       }
     }
     events = {}
@@ -399,6 +242,18 @@
       console.log("CreateQuery onload");
       var query = JSON.parse(options.query);
       this.query = query;
+    }
+    onShow() {
+      var pages = getCurrentPages();
+      var currPage = pages[pages.length - 1];   //当前页面
+      console.log("CreateQuery onShow");
+      console.log(currPage.data);
+      if (currPage.data.eIndex === this.query.length) {
+        this.query.push(currPage.data.eQuery);
+      }
+      else {
+        this.query[currPage.data.eIndex] = currPage.data.eQuery;
+      }
     }
   }
 </script>
