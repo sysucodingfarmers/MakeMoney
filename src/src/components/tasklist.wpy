@@ -10,7 +10,7 @@
   }
 </style>
 <template>
-  <repeat for="{{tasks.list}}" item="item">
+  <repeat for="{{tasks}}" item="item">
     <taskitem class="taskitem" :titem="item"></taskitem>
   </repeat>
 </template>
@@ -20,7 +20,7 @@
 
   export default class TaskList extends wepy.component {
     props = {
-      tasks: {}
+      tasks: []
     }
     components = {
       taskitem: Taskitem

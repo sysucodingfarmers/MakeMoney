@@ -188,6 +188,7 @@
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
   import caculateDate from '../data/CaculateDate'
+  import TasksData from '../data/TempTaskData'
 
   export default class PublishTask extends wepy.page {
     components = {
@@ -216,7 +217,7 @@
       ],
       //任务
     	taskInfo: {
-        id: '',             //用于辨别任务的id
+        id: 0,             //用于辨别任务的id
         name: '',           //任务名称
         publisher: '',      //任务发起者
         type: '',           //任务类型
@@ -421,6 +422,7 @@
         if (canSubmmit) {
           var task = JSON.stringify(this.taskInfo);
           var mes = JSON.stringify(["修改","删除"]);
+          // TasksData.data.push(this.taskInfo);
           wepy.redirectTo({
             url: 'taskDetail?task=' + task + '&mes=' + mes
           });

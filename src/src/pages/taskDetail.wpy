@@ -2,95 +2,83 @@
   .page{
     line-height: 1.6;
     background-color: #f8f8f8;
+    height:100%;
   }
-  .content{
-    margin-left:5px;
+  ::-webkit-scrollbar{
+    width: 0;
+    height: 0;
+    color: transparent;
   }
-  .ssp {
-
+  .button-left {
+    width:50%;
+    float:left;
+    background-color:#07c160;
+    color:#fff;
+    border-radius:0;
+    font-weight:bold;
+    border: 1px solid #07c160;
   }
-  .mmp {
-
-  }
-  .aap {
-
+  .button-right {
+    width:50%;
+    float:right;
+    background-color:#f44;
+    color:#fff;
+    border-radius:0;
+    font-weight:bold;
+    border: 1px solid #f44;
   }
 </style>
 <template>
-  <mynavbar title="任务详情" lefttext="返回" leftarrow="true"></mynavbar>
-  <view class="page">
-    <wux-accordion-group title="基本信息">
-      <wux-accordion title="任务名称">
-        <view class="content">{{taskInfo.name}}</view>
-      </wux-accordion>
-      <wux-accordion title="任务发起者">
-        <view class="content">{{taskInfo.publisher}}</view>
-      </wux-accordion>
-      <wux-accordion title="任务类型">
-        <view class="content">{{taskInfo.type}}</view>
-      </wux-accordion>
-      <wux-accordion title="任务详情">
-        <view class="content">{{taskInfo.detail}}</view>
-      </wux-accordion>
-      <wux-accordion title="任务时间">
-        <view class="content">开始时间： {{taskInfo.start_time}}</view>
-        <view class="content">结束时间： {{taskInfo.end_time}}</view>
-      </wux-accordion>
-      <wux-accordion title="任务情况">
-        <view class="content">限制人数: {{taskInfo.receiver_limit}}</view>
-        <view class="content">领取人数: {{taskInfo.receiver.length}}</view>
-        <view class="content">完成情况: {{taskInfo.finish_rate}}</view>
-      </wux-accordion>
-    </wux-accordion-group>
-    <wux-accordion-group title="额外信息">
-      <wux-accordion title="问卷链接" wx:if="{{taskInfo.type === '问卷调查'}}">
-        <view wx:for="{{taskInfo.extra_content.query}}" wx:key="*this" class="content">
-          <view wx:if="{{item.type === 'SSP'}}">
-            <view>问题{{index}}: {{item.content.question}}</view>
-            <view wx:for="{{item.content.option}}" wx:key="*this">
-              <view>选项{{index}}: {{item.ans}}</view>
-            </view>
-          </view>
-          <view wx:if="{{item.type === 'MSP'}}">
-            <view>问题{{index}}: {{item.content.question}}</view>
-            <view wx:for="{{item.content.option}}" wx:key="*this">
-              <view>选项{{index}}: {{item.ans}}</view>
-            </view>
-          </view>
-          <view wx:if="{{item.type === 'AAP'}}">
-            <view>问题{{index}}: {{item.content.question}}</view>
-            <view>回答 : {{item.content.answer}}</view>
-          </view>
+  <view style="position: fixed; width: 100%; height: 100%;">
+    <mynavbar title="任务详情" lefttext="返回" leftarrow="true"></mynavbar>
+    <view class="page">
+      <scroll-view scroll-y="true" style="height: 87%;">
+        <van-cell-group title="基本内容">
+          <van-cell title="任务名称" value="{{taskInfo.name}}" ></van-cell>
+          <van-cell title="任务详情" value="{{taskInfo.detail}}" ></van-cell>
+          <van-cell title="发起者" value="{{taskInfo.publisher}}"></van-cell>
+          <van-cell title="任务报酬" value="{{taskInfo.pay}}元" ></van-cell>
+          <van-cell title="任务限制" value="{{taskInfo.receiver_limit}}人" ></van-cell>
+          <van-cell title="开始时间" value="{{taskInfo.start_time}}" ></van-cell>
+          <van-cell title="结束时间" value="{{taskInfo.end_time}}" ></van-cell>
+          <van-cell title="任务类型" value="{{taskInfo.type}}" ></van-cell>
+        </van-cell-group>
+        <van-cell-group title="额外内容">
+          <van-cell title="任务图片"></van-cell>
+          <van-cell title="问卷链接" is-link bind:click="EditQuery"></van-cell>
+        </van-cell-group>
+        <view style="margin-top:30px; width:100%;">
+          <button class="button-left">{{button_left}}</button>
+          <button class="button-right">{{button_right}}</button>
         </view>
-      </wux-accordion>
-      <wux-accordion title="更多" wx:if="{{taskInfo.extra_content.query.length === 0}}">
-      </wux-accordion>
-    </wux-accordion-group>
-    <wux-row>
-      <wux-col span="6">
-        <wux-button block type="stable" @tap="ControlType">{{button_left}}</wux-button>
-      </wux-col>
-      <wux-col span="6">
-        <wux-button block type="stable" @tap="ControlType">{{button_right}}</wux-button>
-      </wux-col>
-    </wux-row>
+      </scroll-view>
+    </view>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
+  import testTaskData from '../data/TestTaskData'
+  import TasksData from '../data/TempTaskData'
 
   export default class TaskDetail extends wepy.page {
     data = {
       taskInfo:[],
-      buton_left:"",
+      button_left:"",
       button_right:""
     }
     components = {
       mynavbar: MyNavBar
     }
     methods = {
+      //问卷
+      EditQuery() {
+        var query = JSON.stringify(this.taskInfo.extra_content.query);
+        wepy.navigateTo({
+          url: 'queryDetail?query=' + query
+        });
+      },
       ControlType(e) {
         var type = e.detail.value;
         console.log(type);
@@ -112,12 +100,26 @@
       }
     }
     onLoad(options) {
-      this.taskInfo = JSON.parse(options.task);
+      console.log("taskDetail onLoad");
+      var id = JSON.parse(options.id);
       var buttons = JSON.parse(options.mes);
+      console.log(id);
       this.button_left = buttons[0];
       this.button_right = buttons[1];
+      this.taskInfo = TasksData.data.tasks[id];
       console.log(this.taskInfo);
-      console.log(buttons);
+      console.log(this.button_left);
+      console.log(this.button_right);
+      // console.log(TasksData.data.tasks);
+    }
+    onShow() {
+      console.log("taskDetail onShow");
+      var pages = getCurrentPages();
+      var currPage = pages[pages.length - 1];   //当前页面
+      if (currPage.data.eQuery != undefined) {
+        this.taskInfo.extra_content.query = currPage.data.eQuery
+      }
+      console.log(this.taskInfo.extra_content.query);
     }
   }
 </script>
