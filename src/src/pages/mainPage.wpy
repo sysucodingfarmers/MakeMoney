@@ -31,9 +31,9 @@
       <view class="tasklistboard">
         <myMainPageTitle></myMainPageTitle>
         <scroll-view scroll-y="true" style="height: 87%;">
-          <repeat for="{{tasks}}" item="item">
-            <tasklist :tasks="item"></tasklist>
-          </repeat>
+          <!-- <repeat for="{{tasks}}" item="item"> -->
+            <tasklist :tasks.sync="tasks"></tasklist>
+          <!-- </repeat> -->
         </scroll-view>
       </view>
       <!--  底部导航栏 -->
@@ -125,7 +125,8 @@
     }
     onLoad() {
       var _this = this
-      this.tasks = TasksData.data;
+      this.tasks = TasksData.data.tasks;
+      console.log(this.tasks);
       this.areaList = AreaList;
       wepy.getLocation({
         type: 'gcj02',

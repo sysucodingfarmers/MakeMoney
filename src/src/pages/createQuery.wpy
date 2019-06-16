@@ -247,9 +247,12 @@
       var pages = getCurrentPages();
       var currPage = pages[pages.length - 1];   //当前页面
       console.log("CreateQuery onShow");
-      console.log(currPage.data);
+      console.log(typeof this.query);
       if (currPage.data.eIndex === this.query.length) {
         this.query.push(currPage.data.eQuery);
+      }
+      else if (currPage.data.eIndex === undefined) {
+        console.log("eIndex undefined");
       }
       else {
         this.query[currPage.data.eIndex] = currPage.data.eQuery;

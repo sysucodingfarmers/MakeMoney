@@ -23,13 +23,13 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/mainPage',
+      'pages/taskDetail',
       'pages/publishTask',
       'pages/createQuery',
       'pages/editQuery',
       'pages/queryDetail',
       'pages/myInfo',
       'pages/taskCategory',
-      'pages/taskDetail',
       'pages/myTask',
       'pages/myWallet',
       'pages/mySetting',
