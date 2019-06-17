@@ -1,0 +1,183 @@
+<style type="less">
+  .fab{
+    position:fixed;
+    right:30rpx;
+    bottom:30rpx;
+    transition: All 0.4s ease; 
+    -webkit-transition: All 0.4s ease;
+  }
+  .fab-icon{
+    width:100rpx;
+    height:100rpx;
+    border-radius:50%;
+    z-index:1500;
+    box-shadow:2rpx 2rpx 8rpx rgba(0, 0, 0, 0.14), 2rpx 2rpx 8rpx rgba(0, 0, 0, 0.28);
+    position:relative;
+    right:0;
+    bottom:0;
+    background-color:#11c1f3!important;
+    justify-content: center;
+    align-items: center;
+    display:flex;
+    transition: inherit;
+  }
+  .fab-icon-rotate{
+    transform: rotate(135deg);
+  }
+  .fab-button1{
+    width:100rpx;
+    height:100rpx;
+    border-radius:50%;
+    position:relative;
+    top:150px;
+    background-color:#11c1f3!important;
+    transition: inherit;
+    box-shadow:0rpx 0rpx 8rpx rgba(0, 0, 0, 0.14), 0rpx 8rpx 16rpx rgba(0, 0, 0, 0.28);
+    font-size:25rpx;
+    padding:0;
+    padding-top:17rpx;
+    color:#fff;
+  }
+  .fab-button2{
+    width:100rpx;
+    height:100rpx;
+    border-radius:50%;
+    position:relative;
+    top:100px;
+    background-color:#11c1f3!important;
+    transition: inherit;
+    box-shadow:0rpx 0rpx 8rpx rgba(0, 0, 0, 0.14), 0rpx 8rpx 16rpx rgba(0, 0, 0, 0.28);
+    font-size:25rpx;
+    padding:0;
+    padding-top:17rpx;
+    color:#fff;
+  }
+  .fab-button3{
+    width:100rpx;
+    height:100rpx;
+    border-radius:50%;
+    position:relative;
+    top:50px;
+    background-color:#11c1f3!important;
+    transition: inherit;
+    box-shadow:0rpx 0rpx 8rpx rgba(0, 0, 0, 0.14), 0rpx 8rpx 16rpx rgba(0, 0, 0, 0.28);
+    font-size:25rpx;
+    padding:0;
+    padding-top:17rpx;
+    color:#fff;
+  }
+  .fab-button-title{
+    position:relative;
+    left:50px;
+    font-size:24rpx;
+    background-color:rgba(0,0,0,.4);
+    padding: 8rpx 20rpx;
+  }
+  .fab-button-opacity{
+    opacity:0;
+  }
+  .fab-button1-move{
+    transform:translateY(-180px);
+  }
+  .fab-button2-move{
+    transform:translateY(-120px);
+  }
+  .fab-button3-move{
+    transform:translateY(-60px);
+  }
+</style>
+<template>
+  <view class="fab">
+    <button class="fab-button1 {{isRotate ? 'fab-button1-move' : 'fab-button-opacity'}}" bindtap="button1({{len}})">
+      单选题
+    </button>
+    <button class="fab-button2 {{isRotate ? 'fab-button2-move' : 'fab-button-opacity'}}" bindtap="button2({{len}})">
+      多选题
+    </button>
+    <button class="fab-button3 {{isRotate ? 'fab-button3-move' : 'fab-button-opacity'}}" bindtap="button3({{len}})">
+      问答题
+    </button>
+    <view class="fab-icon {{isRotate ? 'fab-icon-rotate' : ''}}" bindtap="changeRotate">
+      <van-icon name="plus" color="white" size="22px" style="margin-top:6px;"></van-icon>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class FabButton extends wepy.component {
+    props = {
+      len: {
+        type: Number,
+        default: 0
+      }
+    }
+    data = {
+      isRotate: false
+    }
+    components = {
+      
+    }
+    methods = {
+      changeRotate() {
+        this.isRotate = !this.isRotate;
+      },
+      button1(index) {
+        console.log(index);
+        if (this.isRotate) {
+          console.log('单选题');
+          var item = {
+            id: 0,
+            type: '单选题',
+            content: {
+              question:'',
+              option: []
+            }
+          };
+          var query = JSON.stringify(item);
+          wepy.navigateTo({
+            url: "editQuery?query=" + query + '&index=' + index 
+          });
+        }
+        this.isRotate = !this.isRotate;
+      },
+      button2(index) {
+        if (this.isRotate) {
+          console.log('多选题');
+          var item = {
+            id: 0,
+            type: '多选题',
+            content: {
+              question:'',
+              option: []
+            }
+          };
+          var query = JSON.stringify(item);
+          wepy.navigateTo({
+            url: "editQuery?query=" + query + '&index=' + index 
+          });
+        }
+        this.isRotate = !this.isRotate;
+      },
+      button3(index) {
+        if (this.isRotate) {
+          console.log('问答题');
+          var item = {
+            id: 0,
+            type: '问答题',
+            content: {
+              question:'',
+              ans:''
+            },
+            limit: "text"
+          };
+          var query = JSON.stringify(item);
+          wepy.navigateTo({
+            url: "editQuery?query=" + query + '&index=' + index 
+          });
+        }
+        this.isRotate = !this.isRotate;
+      }
+    }
+  }
+</script>

@@ -192,6 +192,13 @@
               content: '选项为空'
             });
           }
+          else if (this.query.content.option.length === 1) {
+            canSubbmit = false;
+            wepy.showModal({
+              title: '错误',
+              content: '选项至少2项'
+            });
+          }
           else {
             this.query.content.option.forEach(item=>{
               canSubbmit = item.ans === '' ? false : canSubbmit;
