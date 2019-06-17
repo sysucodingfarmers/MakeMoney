@@ -22,8 +22,8 @@ setStore(store)
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/createQuery',
       'pages/mainPage',
+      'pages/createQuery',
       'pages/taskDetail',
       'pages/publishTask',
       'pages/editQuery',
@@ -56,8 +56,6 @@ export default class extends wepy.app {
       'van-search': '../components/van/search/index',
       'van-tabbar': '../components/van/tabbar/index',
       'van-tabbar-item': '../components/van/tabbar-item/index',
-      'wux-button': '../components/wux/button/index',
-      'wux-icon': '../components/wux/icon/index',
       'van-icon': '../components/van/icon/index',
       'van-area': '../components/van/area/index',
       'van-tab': '../components/van/tab/index',
@@ -70,17 +68,7 @@ export default class extends wepy.app {
       'van-cell-for-infodetail': '../components/van/cell_for_InfoDetail/index',
       'van-cell-for-taskDetail': '../components/van/cell_for_taskDetail/index',
       'van-progress': '../components/van/progress/index',
-      'van-datetime-picker': '../components/van/datetime-picker/index',
-      'wux-fab-button': '../components/wux/fab-button/index',
-      'wux-col': '../components/wux/col/index',
-      'wux-row': '../components/wux/row/index',
-      'wux-cell-group': '../components/wux/cell-group/index',
-      'wux-cell': '../components/wux/cell/index',
-      'wux-input': '../components/wux/input/index',
-      'wux-input-number': '../components/wux/input-number/index',
-      'wux-textarea': '../components/wux/textarea/index',
-      'wux-accordion-group': '../components/wux/accordion-group/index',
-      'wux-accordion': '../components/wux/accordion/index'
+      'van-datetime-picker': '../components/van/datetime-picker/index'
     },
     tabBar: {
       backgroundColor: '#fff',
