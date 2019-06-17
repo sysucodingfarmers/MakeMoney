@@ -59,7 +59,6 @@
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
-  import testTaskData from '../data/TestTaskData'
   import TasksData from '../data/TempTaskData'
 
   export default class TaskDetail extends wepy.page {
@@ -89,6 +88,20 @@
           var task = JSON.stringify(this.taskInfo);
           wepy.redirectTo({
             url: "editMyTask?task=" + task
+          });
+        }
+        else if (val === '登录') {
+          wepy.showModal({
+            title: '错误',
+            content: '请先登录',
+            success(res) {
+              if (res.confirm) {
+                //...
+              }
+              else {
+                //...
+              }
+            }
           });
         }
       },
