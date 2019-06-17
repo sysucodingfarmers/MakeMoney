@@ -68,6 +68,7 @@ export default class extends wepy.app {
       'van-person-info': '../components/van/person-info/index',
       'van-picker': '../components/van/picker/index',
       'van-cell-for-infodetail': '../components/van/cell_for_InfoDetail/index',
+      'van-cell-for-taskDetail': '../components/van/cell_for_taskDetail/index',
       'van-progress': '../components/van/progress/index',
       'van-datetime-picker': '../components/van/datetime-picker/index',
       'wux-fab-button': '../components/wux/fab-button/index',

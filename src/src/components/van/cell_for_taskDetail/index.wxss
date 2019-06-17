@@ -47,14 +47,17 @@
 .van-cell__value {
   overflow: hidden;
   color: #999;
-  text-align: right;
+  text-align: left;
   vertical-align: middle
 }
 
-.van-cell__title,
-.van-cell__value {
+.van-cell__title {
   -webkit-flex: 1;
-  flex: 1
+  flex: 1;
+}
+.van-cell__value {
+  -webkit-flex: 3;
+  flex: 3;
 }
 
 .van-cell__title:empty,

@@ -34,18 +34,18 @@
     <view class="page">
       <scroll-view scroll-y="true" style="height: 87%;">
         <van-cell-group title="基本内容">
-          <van-cell title="任务名称" value="{{taskInfo.name}}" ></van-cell>
-          <van-cell title="任务详情" value="{{taskInfo.detail}}" ></van-cell>
-          <van-cell title="发起者" value="{{taskInfo.publisher}}"></van-cell>
-          <van-cell title="任务报酬" value="{{taskInfo.pay}}元" ></van-cell>
-          <van-cell title="任务限制" value="{{taskInfo.receiver_limit}}人" ></van-cell>
-          <van-cell title="开始时间" value="{{taskInfo.start_time}}" ></van-cell>
-          <van-cell title="结束时间" value="{{taskInfo.end_time}}" ></van-cell>
-          <van-cell title="任务类型" value="{{taskInfo.type}}" ></van-cell>
+          <van-cell-for-taskDetail title="任务名称" value="{{taskInfo.name}}" ></van-cell-for-taskDetail>
+          <van-cell-for-taskDetail title="任务详情" value="{{taskInfo.detail}}" ></van-cell-for-taskDetail>
+          <van-cell-for-taskDetail title="发起者" value="{{taskInfo.publisher}}"></van-cell-for-taskDetail>
+          <van-cell-for-taskDetail title="任务报酬" value="{{taskInfo.pay}}元" ></van-cell-for-taskDetail>
+          <van-cell-for-taskDetail title="任务限制" value="{{taskInfo.receiver_limit}}人" ></van-cell-for-taskDetail>
+          <van-cell-for-taskDetail title="开始时间" value="{{taskInfo.start_time}}" ></van-cell-for-taskDetail>
+          <van-cell-for-taskDetail title="结束时间" value="{{taskInfo.end_time}}" ></van-cell-for-taskDetail>
+          <van-cell-for-taskDetail title="任务类型" value="{{taskInfo.type}}" ></van-cell-for-taskDetail>
         </van-cell-group>
         <van-cell-group title="额外内容">
-          <van-cell title="任务图片"></van-cell>
-          <van-cell title="问卷链接" is-link bind:click="EditQuery" wx:if="{{taskInfo.type === '问卷调查'}}"></van-cell>
+          <van-cell-for-taskDetail title="任务图片"></van-cell-for-taskDetail>
+          <van-cell-for-taskDetail title="问卷链接" is-link bind:click="EditQuery" wx:if="{{taskInfo.type === '问卷调查'}}"></van-cell-for-taskDetail>
         </van-cell-group>
         <view style="margin-top:30px; width:100%;">
           <button class="button-left" bindtap="LeftSubbmit">{{button_left}}</button>

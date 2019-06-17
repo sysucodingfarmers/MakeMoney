@@ -1,7 +1,4 @@
 export default {
-  methods: {
-
-  },
   data: {
     tasks: [
       {
