@@ -48,7 +48,6 @@
     <mynavbar title="问卷任务" lefttext="返回" leftarrow="true"></mynavbar>
     <view class="page">
       <scroll-view scroll-y="true" style="height: 87%;">
-        <!-- <wux-fab-button position="bottomRight" theme="calm" direction="vertical" spaceBetween="10" sAngle="0" eAngle="360" buttons="{{buttons}}" bind:click="AddQuery({{item}})"></wux-fab-button> -->
         <view wx:for="{{query}}" wx:for-index="idx">
           <!-- 单选题 -->
           <view wx:if="{{item.type ==='单选题'}}" class="query-block">
@@ -110,20 +109,6 @@
           <van-button type="primary" round size="large" bindtap="subbmit">完成</van-button>
         </view>
       </scroll-view>
-      <!-- <view class="fab">
-        <button class="fab-button1 {{isRotate ? 'fab-button1-move' : 'fab-button-opacity'}}" bindtap="button1">
-          问答题
-        </button>
-        <button class="fab-button2 {{isRotate ? 'fab-button2-move' : 'fab-button-opacity'}}" bindtap="button2">
-          单选题
-        </button>
-        <button class="fab-button3 {{isRotate ? 'fab-button3-move' : 'fab-button-opacity'}}" bindtap="button3">
-          多选题
-        </button>
-        <view class="fab-icon {{isRotate ? 'fab-icon-rotate' : ''}}" bindtap="changeRotate">
-          <van-icon name="plus" color="white" size="22px" style="margin-top:6px;"></van-icon>
-        </view>
-      </view> -->
       <fabbutton :len.sync="len"></fabbutton>
     </view>
   </view>
@@ -197,8 +182,8 @@
     events = {}
     onLoad(options) {
       console.log("CreateQuery onload");
-      // var query = JSON.parse(options.query);
-      // this.query = query;
+      var query = JSON.parse(options.query);
+      this.query = query;
     }
     onShow() {
       var pages = getCurrentPages();
