@@ -63,7 +63,6 @@
       ],
       index: {},
       showTaskCategorySelector: false,
-      selectedType: [],
       activeValue: 0
     }
     methods = {
@@ -87,15 +86,16 @@
         }
         this.$apply();
       },
-      cateConfirm() {
+      cateConfirm(e) {
+        var type = e.detail.value;
         this.showTaskCategorySelector = false;
-        console.log("选择了" + this.selectedType[0] + "里面的" + this.selectedType[1]);
+        console.log("选择了" + type[0] + "里面的" + type[1]);
         // 根据需要修改
         var myurl = this.$root.$parent.globalData.publishTaskUrl;
-        myurl += "?type1="
-        myurl += this.selectedType[0]
-        myurl += "&type2="
-        myurl += this.selectedType[1]
+        myurl += "?publisher="
+        myurl += this.$root.$parent.globalData.userInfo.username
+        myurl += "&type="
+        myurl += type[1]
         wepy.navigateTo({
           url: myurl
         });
@@ -107,7 +107,6 @@
       selectCategory(event) {
         const { picker, value, index } = event.detail;
         picker.setColumnValues(1, categories[value[0]]);
-        this.selectedType = event.detail.value;
       }
     }
     events = {

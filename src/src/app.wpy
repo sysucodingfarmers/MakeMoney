@@ -34,7 +34,8 @@ export default class extends wepy.app {
       'pages/myWallet',
       'pages/mySetting',
       'pages/myInfoDetail',
-      'pages/myEditInfo'
+      'pages/myEditInfo',
+      'pages/editMyTask'
     ],
     window: {
       backgroundTextStyle: 'light',

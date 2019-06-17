@@ -41,7 +41,14 @@
       showDetail() {
         var myurl = this.$root.$parent.globalData.taskDetailUrl;
         var id = JSON.stringify(this.titem.id);
-        var mes = JSON.stringify(["接受","收藏"]);
+        var mes;
+        if (this.$root.$parent.globalData.userInfo.username === this.titem.publisher) {
+          mes = JSON.stringify(["修改","取消"]);
+        }
+        else {
+          mes = JSON.stringify(["接受","收藏"]);
+        }
+        
         myurl += "?id=";
         myurl += id;
         myurl += "&mes=";

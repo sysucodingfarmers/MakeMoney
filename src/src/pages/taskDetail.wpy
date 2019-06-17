@@ -45,11 +45,11 @@
         </van-cell-group>
         <van-cell-group title="额外内容">
           <van-cell title="任务图片"></van-cell>
-          <van-cell title="问卷链接" is-link bind:click="EditQuery"></van-cell>
+          <van-cell title="问卷链接" is-link bind:click="EditQuery" wx:if="{{taskInfo.type === '问卷调查'}}"></van-cell>
         </van-cell-group>
         <view style="margin-top:30px; width:100%;">
-          <button class="button-left">{{button_left}}</button>
-          <button class="button-right">{{button_right}}</button>
+          <button class="button-left" bindtap="LeftSubbmit">{{button_left}}</button>
+          <button class="button-right" bindtap="RightSubbmit">{{button_right}}</button>
         </view>
       </scroll-view>
     </view>
@@ -79,28 +79,32 @@
           url: 'queryDetail?query=' + query
         });
       },
-      ControlType(e) {
-        var type = e.detail.value;
-        console.log(type);
-        if (type === '修改') {
-          //...
+      LeftSubbmit() {
+        var val = this.button_left;
+        if (val === '接受') {
+          console.log('接受');
         }
-        else if (type === '删除') {
-          //...
+        else if (val === '修改') {
+          console.log('修改');
+          var task = JSON.stringify(this.taskInfo);
+          wepy.redirectTo({
+            url: "editMyTask?task=" + task
+          });
         }
-        else if (type === '取消') {
-          //...
+      },
+      RightSubbmit() {
+        var val = this.button_right;
+        if (val === '收藏') {
+          console.log('收藏');
         }
-        else if (type === '完成') {
-          //...
-        }
-        else if (type === '接收') {
-          //...
+        else if (val === '取消') {
+          console.log('取消');
         }
       }
     }
     onLoad(options) {
       console.log("taskDetail onLoad");
+      console.log(options);
       var id = JSON.parse(options.id);
       var buttons = JSON.parse(options.mes);
       console.log(id);
@@ -114,6 +118,7 @@
     }
     onShow() {
       console.log("taskDetail onShow");
+      console.log(TasksData.data.tasks);
       var pages = getCurrentPages();
       var currPage = pages[pages.length - 1];   //当前页面
       if (currPage.data.eQuery != undefined) {

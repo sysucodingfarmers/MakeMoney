@@ -48,7 +48,7 @@
 </style>
 <template>
   <view style="position: fixed; width: 100%; height: 100%;">
-    <mynavbar title="发布任务" lefttext="返回" leftarrow="true"></mynavbar> 
+    <mynavbar title="修改任务" lefttext="返回" leftarrow="true"></mynavbar> 
     <view class="page">
       <scroll-view scroll-y="true" style="height: 87%;">
         <van-cell-group title="基本信息">
@@ -152,7 +152,7 @@
           ></van-cell>
         </van-cell-group>
         <view class="subbmit-button">
-          <van-button type="primary" round size="large" bindtap="subbmit">发布</van-button>
+          <van-button type="primary" round size="large" bindtap="subbmit">确定</van-button>
         </view>
       </scroll-view>
       <van-popup
@@ -190,7 +190,7 @@
   import caculateDate from '../data/CaculateDate'
   import TasksData from '../data/TempTaskData'
 
-  export default class PublishTask extends wepy.page {
+  export default class EditMyTask extends wepy.page {
     components = {
       mynavbar: MyNavBar
     }
@@ -203,7 +203,7 @@
       showStartTimeSelector: false,
       showEndTimeSelector: false,
       //辅助数组
-      query: [],
+      // query: [],
       //本地图片上传路径
       images: [
         
@@ -217,28 +217,7 @@
       ],
       //任务
     	taskInfo: {
-        id: 0,             //用于辨别任务的id
-        name: '',           //任务名称
-        publisher: '',      //任务发起者
-        type: '',           //任务类型
-        start_time: '',     //任务开始时间:xxxx-xx-xx xx:xx
-        end_time: '',       //任务结束时间:xxxx-xx-xx xx:xx
-        pay: 0,             //任务报酬
-        detail: '',         //任务详情
-        receiver: [         //任务接收者
-          // { 
-          //   name: '',           //接收者名字
-          //   id: '',             //接受者id，用于识别
-          //   isfinished: false,  //是否完成该任务
-          //   ispaid: false       //是否给予报酬
-          // }
-        ],
-        receiver_limit: 0,  //接收者人数限制
-        finish_rate: 0,     //完成程度
-        extra_content:{     //额外内容：包括图片数据以及问卷数据
-          query: [],        //问卷
-          images:[]         //图片
-        }    
+          
       }
     }
     methods = {
@@ -423,7 +402,7 @@
           // var task = JSON.stringify(this.taskInfo);
           var id = this.taskInfo.id;
           var mes = JSON.stringify(["修改","删除"]);
-          TasksData.data.tasks.push(this.taskInfo);
+          TasksData.data.tasks[id] = this.taskInfo;
           wepy.redirectTo({
             url: 'taskDetail?id=' + id + '&mes=' + mes
           });
@@ -432,17 +411,17 @@
     }
     events = {}
     onLoad(options) {    
-      console.log("PublishTask onload");
-      this.taskInfo.publisher = options.publisher;
-      this.taskInfo.type = options.type;
-      var len = TasksData.data.tasks.length;
-      this.taskInfo.id = len;
+      console.log("EditMyTask onload");
+      this.taskInfo = JSON.parse(options.task);
+      console.log(this.taskInfo);
     }
     onShow() {
-      console.log("PublishTask onshow");
+      console.log("EditMyTask onshow");
       var pages = getCurrentPages();
       var currPage = pages[pages.length - 1];   //当前页面
-      this.taskInfo.extra_content.query = currPage.data.query;
+      if (currPage.data.query != undefined) {
+        this.taskInfo.extra_content.query = currPage.data.query;
+      }
     }
   }
 </script>
