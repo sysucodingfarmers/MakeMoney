@@ -22,10 +22,10 @@ setStore(store)
 export default class extends wepy.app {
   config = {
     pages: [
+      'pages/createQuery',
       'pages/mainPage',
       'pages/taskDetail',
       'pages/publishTask',
-      'pages/createQuery',
       'pages/editQuery',
       'pages/queryDetail',
       'pages/myInfo',
