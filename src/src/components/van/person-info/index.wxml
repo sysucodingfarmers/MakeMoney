@@ -7,21 +7,32 @@
   style="{{ customStyle }}"
   bind:tap="onClick"
 >
-  <view class="van-cell_image">
+
+  <view class="van-cell_image" wx:if="{{login}}">
     <image class="myimage" src="{{avatarurl}}" mode="scaleToFill" />
   </view>
-  <view style="display: flex; flex-direction: column; flex: 5; padding-left: 20rpx;">
-    <view class="van-cell__title" wx:if="{{ username }}">{{ username }}</view>
-    <view class="van-cell_label">
-      {{ studentID }}
-    </view>
-    <view class="van-cell__value value-class">
-      <block wx:if="{{ school }}">{{ school }}</block>
-      <slot wx:else />
+  <view class="van-cell_image" wx:else>
+    <image class="myimage" src="https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1560754276&di=9e6e09a4563fa27b2b4c20b7a5a58df7&src=http://pic.51yuansu.com/pic3/cover/01/69/80/595f67bf2026f_610.jpg" mode="scaleToFill" />
+  </view>
+  <view wx:if="{{login}}" style="display: flex; flex-direction: column; flex: 5; padding-left: 20rpx;">
+    <view >
+      <view class="van-cell__title" wx:if="{{ username }}">{{ username }}</view>
+      <view class="van-cell_label">
+        {{ studentID }}
+      </view>
+      <view class="van-cell__value value-class">
+        <block wx:if="{{ school }}">{{ school }}</block>
+        <slot wx:else />
+      </view>
+    </view> 
+  </view>
+  <view wx:else style="display: flex; flex-direction: column; flex: 5; padding-left: 20rpx;">
+    <view style="display: flex; align-items: center; flex: 5; padding-left: 20rpx;">
+      <van-button plain round type="info">请登录</van-button>
     </view>
   </view>
-  <view class="van-cell__arrow">
+  <view wx:if="{{login}}" class="van-cell__arrow">
     <view class="arrow_text">详细信息</view>
     <van-icon name="arrow" class="arrow_img" size="20px" color="#ACB1CC"/>
-  </view>
+  </view> 
 </view>

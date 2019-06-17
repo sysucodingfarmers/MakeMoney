@@ -27,7 +27,9 @@
   transform: scaleY(.5);
   border-bottom: 1px solid #eee
 }
-
+.van-cell__nologin {
+  
+}
 .van-cell--borderless:after {
   display: none
 }

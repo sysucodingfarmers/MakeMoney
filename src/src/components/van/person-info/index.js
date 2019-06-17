@@ -31,7 +31,8 @@ VantComponent({
         avatarurl: String,
         username: String,
         studentID: String,
-        school: String
+        school: String,
+        login: Boolean
     },
     methods: {
         onClick(event) {

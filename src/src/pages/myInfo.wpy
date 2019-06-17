@@ -5,7 +5,7 @@
   <view style="position: fixed; height: 100%; width: 100%;">
     <mynavbar title="我的信息" lefttext="" leftarrow="false" @tap="gotoMyDetail"></mynavbar>
     <!-- 主体 -->
-    <van-person-info avatarurl="{{userinfo.avatar}}" username="{{userinfo.username}}" studentID="{{userinfo.studentID}}" school="{{userinfo.school}}" @tap="gotoMyDetail()"></van-person-info>
+    <van-person-info avatarurl="{{userinfo.avatar}}" username="{{userinfo.username}}" studentID="{{userinfo.studentID}}" school="{{userinfo.school}}" @tap="tap()" login="{{islogin}}"></van-person-info>
     <van-cell title="我的发布" is-link url="myTask?type=publish"/>
     <van-cell title="我的接单" is-link url="myTask?type=receive"/>
     <van-cell title="我的钱包" is-link url="myWallet"/>
@@ -18,6 +18,7 @@
   import wepy from 'wepy'
   import MyTabbar from '../components/mytabbar'
   import MyNavBar from '../components/mynavbar'
+  import userInfo from '../data/userInfo'
 
   export default class MyInfo extends wepy.page {
     components = {
@@ -25,21 +26,34 @@
       mynavbar: MyNavBar
     }
     data = {
-      userinfo: {}
+      userinfo: {},
+      islogin: false
     }
     methods = {
-      gotoMyDetail() {
-        console.log("click");
-        wepy.navigateTo({
-          url: 'myInfoDetail'
-        });
+      tap() {
+        if (this.islogin) {
+          console.log("click");
+          wepy.navigateTo({
+            url: 'myInfoDetail'
+          });
+        }
+        else {
+          // 应该进入登录界面
+          // .......
+
+          this.$parent.globalData.userInfo = userInfo;
+          this.userinfo = userInfo;
+          this.islogin = true;
+        }
       }
     }
     onShow() {
-      console.log("main show");
       this.$broadcast('changeActive', "2");
       this.userinfo = this.$parent.globalData.userInfo;
       console.log(this.userinfo);
+      // console.log(userInfo)
+      if (this.userinfo == null) this.islogin = false;
+      else this.islogin = true;
     }
   }  
 </script>
