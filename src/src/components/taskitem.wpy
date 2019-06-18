@@ -51,6 +51,13 @@
         else {
           mes = JSON.stringify(["接受","收藏"]);
         }
+        if (this.titem.receiver.length != 0) {
+          this.titem.receiver.forEach(item=>{
+            if (item.name === this.$root.$parent.globalData.userInfo.username) {
+              mes = JSON.stringify(['完成', '取消']);
+            }
+          })
+        }
         
         myurl += "?id=";
         myurl += id;

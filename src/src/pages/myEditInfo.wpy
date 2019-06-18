@@ -41,10 +41,19 @@
           this.$parent.globalData.userInfo.username = this.value;
         }
         else if (this.type == 1) {
-          this.$parent.globalData.userInfo.studentID = this.value;
+          this.$parent.globalData.userInfo.id = this.value;
         }
         else if (this.type == 2) {
           this.$parent.globalData.userInfo.school = this.value;
+        }
+        else if (this.type == 3) {
+          this.$parent.globalData.userInfo.email = this.value;
+        }
+        else if (this.type == 4) {
+          this.$parent.globalData.userInfo.major = this.value;
+        }
+        else if (this.type == 5) {
+          this.$parent.globalData.userInfo.phone = this.phone;
         }
         // 上传到后端
         

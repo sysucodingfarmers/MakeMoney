@@ -184,6 +184,7 @@
       console.log("CreateQuery onload");
       var query = JSON.parse(options.query);
       this.query = query;
+      this.len = query.length;
     }
     onShow() {
       var pages = getCurrentPages();
