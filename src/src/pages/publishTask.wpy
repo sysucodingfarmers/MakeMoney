@@ -202,6 +202,7 @@
       time_error: '',
       showStartTimeSelector: false,
       showEndTimeSelector: false,
+      isOnline: false,
       //辅助数组
       query: [],
       //本地图片上传路径
@@ -420,7 +421,9 @@
         console.log(canSubmmit);
         this.$apply();
         if (canSubmmit) {
-          // var task = JSON.stringify(this.taskInfo);
+          // todo
+          // 将task传入后端并得到id
+          // ...
           var id = this.taskInfo.id;
           var mes = JSON.stringify(["修改","删除"]);
           TasksData.data.tasks.push(this.taskInfo);
@@ -433,16 +436,25 @@
     events = {}
     onLoad(options) {    
       console.log("PublishTask onload");
-      this.taskInfo.publisher = options.publisher;
-      this.taskInfo.type = options.type;
+      var type1 = options.type1;
+      var type2 = options.type2;
+      // todo
+      // 需要进行添加position
+      //
+      this.isOnline = (type1 == '线上任务') ? true : false;
+      this.taskInfo.type = options.type2;
+      this.taskInfo.publisher = this.$root.$parent.globalData.userInfo.username;
       var len = TasksData.data.tasks.length;
       this.taskInfo.id = len;
+      console.log(type1 + type2);
+      console.log('end');
     }
     onShow() {
       console.log("PublishTask onshow");
       var pages = getCurrentPages();
       var currPage = pages[pages.length - 1];   //当前页面
       this.taskInfo.extra_content.query = currPage.data.query;
+      console.log('end');
     }
   }
 </script>

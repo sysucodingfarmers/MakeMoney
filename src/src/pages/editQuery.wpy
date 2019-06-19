@@ -93,6 +93,7 @@
           <van-field
             value="{{query.limit}}"
             label="输入格式"
+            disabled
             bind:tap="ShowLimitSelection"
           ></van-field>
         </van-cell-group>

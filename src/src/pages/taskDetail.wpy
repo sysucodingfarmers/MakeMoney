@@ -45,7 +45,13 @@
         </van-cell-group>
         <van-cell-group title="额外内容">
           <van-cell-for-taskDetail title="任务图片"></van-cell-for-taskDetail>
-          <van-cell-for-taskDetail title="问卷链接" is-link bind:click="EditQuery" wx:if="{{taskInfo.type === '问卷调查'}}"></van-cell-for-taskDetail>
+          <van-cell-for-taskDetail title="问卷链接" is-link bind:click="EditQuery" wx:if="{{taskInfo.type === '问卷调查' && (button_left === '完成' || button_left === '修改')}}"></van-cell-for-taskDetail>
+          <van-cell-for-taskDetail title="请先接受任务再进行问卷填写" wx:if="{{button_left === '接受'}}"></van-cell-for-taskDetail>
+        </van-cell-group> 
+        <van-cell-group title="接收者信息" wx:if="{{button_left == '修改'}}">
+          <repeat for="{{taskInfo.receiver}}" item="item" index="index">
+            <van-cell title="接收者{{index+1}}" is-link bind:click="ShowReceiverDetail({{item.id}})" value="{{item.isfinished ? '已完成' : '未完成'}}"></van-cell>
+          </repeat>
         </van-cell-group>
         <view style="margin-top:30px; width:100%;">
           <button class="button-left" bindtap="LeftSubbmit">{{button_left}}</button>
@@ -65,7 +71,11 @@
     data = {
       taskInfo:[],
       button_left:"",
-      button_right:""
+      button_right:"",
+      finishRate: 0,
+      finish: [],
+      id: 0,
+      query: []
     }
     components = {
       mynavbar: MyNavBar
@@ -74,14 +84,49 @@
       //问卷
       EditQuery() {
         var query = JSON.stringify(this.taskInfo.extra_content.query);
+        var finish = JSON.stringify(this.finish);
         wepy.navigateTo({
-          url: 'queryDetail?query=' + query
+          url: 'queryDetail?query=' + query + "&fRate=" + this.finishRate + '&finish=' + finish
         });
       },
       LeftSubbmit() {
         var val = this.button_left;
         if (val === '接受') {
-          console.log('接受');
+          // var that = this;
+          // console.log('接受');
+          wepy.showModal({
+            title: '任务',
+            content: '是否接受',
+            success(res) {
+              if (res.confirm) {
+                //..
+              }
+              else {
+                //..
+              }
+            }
+          }).then(()=>{
+            this.button_left = '完成';
+            this.button_right = '取消';
+            var len = this.taskInfo.receiver.length;
+            if (len < this.taskInfo.receiver_limit) {
+              this.taskInfo.receiver.push({
+                name: this.$root.$parent.globalData.userInfo.username,
+                id: this.taskInfo.receiver.length,
+                isfinished: false,
+                ispaid: false
+              });
+              TasksData.data.tasks[this.id].receiver = this.taskInfo.receiver;
+              console.log(TasksData.data.tasks);
+              this.$apply();
+            }
+            else {
+              wepy.showModal({
+                title: '任务',
+                content: '任务已满'
+              })
+            }
+          })
         }
         else if (val === '修改') {
           console.log('修改');
@@ -104,40 +149,72 @@
             }
           });
         }
+        else if (val === '完成') {
+          if (this.finishRate === 100) {
+            console.log("finish");
+          }
+          else {
+            wepy.showModal({
+              title: '错误',
+              content: '还未完成',
+              success(res) {
+                if (res.confirm) {
+                  //...
+                }
+                else {
+                  //...
+                }
+              }
+            });
+          }
+        }
       },
       RightSubbmit() {
         var val = this.button_right;
         if (val === '收藏') {
           console.log('收藏');
+          wepy.navigateBack();
         }
         else if (val === '取消') {
           console.log('取消');
+          wepy.navigateBack();
         }
+      },
+      ShowReceiverDetail(id) {
+        // wepy.navigateTo({
+        //   url:
+        // })
+        console.log(id);
       }
     }
     onLoad(options) {
       console.log("taskDetail onLoad");
-      console.log(options);
       var id = JSON.parse(options.id);
       var buttons = JSON.parse(options.mes);
-      console.log(id);
+      this.id = id;
       this.button_left = buttons[0];
       this.button_right = buttons[1];
       this.taskInfo = TasksData.data.tasks[id];
-      console.log(this.taskInfo);
-      console.log(this.button_left);
-      console.log(this.button_right);
+
+      var content = "任务详情： \n任务id为" + String(id) + '\n接收到的button为' + this.button_left + '&' + this.button_right;
+      console.log(content); 
+
+      console.log("end");
       // console.log(TasksData.data.tasks);
     }
     onShow() {
       console.log("taskDetail onShow");
-      console.log(TasksData.data.tasks);
       var pages = getCurrentPages();
       var currPage = pages[pages.length - 1];   //当前页面
-      if (currPage.data.eQuery != undefined) {
-        this.taskInfo.extra_content.query = currPage.data.eQuery
+      if (currPage.data.query.length != 0) {
+        this.taskInfo.extra_content.query = currPage.data.query;
+        this.finish = currPage.data.finish;
+        this.finishRate = Number(currPage.data.finishRate);
+        console.log(this.finish);
+        console.log(this.finishRate);
+        console.log(this.query);
       }
-      console.log(this.taskInfo.extra_content.query);
+      console.log("end");
     }
   }
 </script>

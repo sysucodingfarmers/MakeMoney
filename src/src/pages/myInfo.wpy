@@ -5,7 +5,7 @@
   <view style="position: fixed; height: 100%; width: 100%;">
     <mynavbar title="我的信息" lefttext="" leftarrow="false" @tap="gotoMyDetail"></mynavbar>
     <!-- 主体 -->
-    <van-person-info avatarurl="{{userinfo.avatar}}" username="{{userinfo.username}}" studentID="{{userinfo.studentID}}" school="{{userinfo.school}}" @tap="tap()" login="{{islogin}}"></van-person-info>
+    <van-person-info avatarurl="{{userinfo.avatar}}" username="{{userinfo.username}}" studentID="{{userinfo.id}}" school="{{userinfo.school}}" @tap="tap()" login="{{islogin}}"></van-person-info>
     <van-cell title="我的发布" is-link url="myTask?type=publish"/>
     <van-cell title="我的接单" is-link url="myTask?type=receive"/>
     <van-cell title="我的钱包" is-link url="myWallet"/>
@@ -43,7 +43,27 @@
 
           this.$parent.globalData.userInfo = userInfo;
           this.userinfo = userInfo;
+          // var user = {
+          //   id: 100,
+          //   username: '陈咏强',
+          //   password: 'cai'
+          // }
+          // var user = {
+          //   id: 100,
+          //   password: 'cai'
+          // }
           this.islogin = true;
+          // wx.request({
+          //   url: 'http://193.112.103.238:5050/login',
+          //   data: user,
+          //   method: 'POST',
+          //   header: {
+          //     'content-type': 'application/json'
+          //   },
+          //   success(res) {
+          //     console.log(res.data);
+          //   }
+          // });
         }
       }
     }

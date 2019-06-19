@@ -7,8 +7,11 @@
     <!-- 主体 -->
     <van-cell-for-infodetail title="头像" is-link imgurl="{{userinfo.avatar}}" @tap="chooseAvatar()" />
     <van-cell-for-infodetail title="用户名" is-link value="{{userinfo.username}}" url="{{titleurl}}"/>
-    <van-cell-for-infodetail title="学号" is-link value="{{userinfo.studentID}}" url="{{idurl}}"/>
+    <van-cell-for-infodetail title="学号" is-link value="{{userinfo.id}}" url="{{idurl}}"/>
     <van-cell-for-infodetail title="学校" is-link value="{{userinfo.school}}" url="{{schoolurl}}"/>
+    <van-cell-for-infodetail title="邮箱" is-link value="{{userinfo.email}}" url="{{emailurl}}"/>
+    <van-cell-for-infodetail title="专业" is-link value="{{userinfo.major}}" url="{{majorurl}}"/>
+    <van-cell-for-infodetail title="手机号码" is-link value="{{userinfo.phone}}" url="{{phoneurl}}"/>
   </view>
 </template>
 <script>
@@ -59,8 +62,11 @@
     onShow() {
       this.userinfo = this.$parent.globalData.userInfo;
       this.titleurl = "myEditInfo?type=0&value=" + this.userinfo.username
-      this.idurl = "myEditInfo?type=1&value=" + this.userinfo.studentID
+      this.idurl = "myEditInfo?type=1&value=" + this.userinfo.id
       this.schoolurl = "myEditInfo?type=2&value=" + this.userinfo.school
+      this.emailurl = "myEditInfo?type=3&value=" + this.userinfo.email
+      this.majorurl = "myEditInfo?type=4&value=" + this.userinfo.major
+      this.phoneurl = "myEditInfo?type=5&value=" + this.userinfo.phone
       this.interests.list = this.userinfo.interests;
       this.$broadcast('setTitle', this.userinfo.username + " 的信息")
     }

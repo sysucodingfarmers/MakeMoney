@@ -3,13 +3,13 @@ export default {
     tasks: [
       {
         id: 0,             //用于辨别任务的id
-        name: '比武招亲1',           //任务名称
+        name: 'test1',           //任务名称
         publisher: '阿彤',      //任务发起者
         type: '问卷调查',           //任务类型
         start_time: '2019-10-10 10:00',     //任务开始时间:xxxx-xx-xx xx:xx
         end_time: '2019-10-20 10:00',       //任务结束时间:xxxx-xx-xx xx:xx
         pay: 100,             //任务报酬
-        detail: '比武招亲是一项非常重要的事情，对于当代大学生来说，相亲还不算太晚但是必须',         //任务详情
+        detail: '测试自己已为接受者并且问答题需填入数字',         //任务详情
         receiver: [         //任务接收者
           // { 
           //   name: '',           //接收者名字
@@ -19,19 +19,19 @@ export default {
           // }
           {
             name: '陈咏强',
-            id: 1,
+            id: '16340045',
             isfinished: false,
             ispaid: false
           },
           {
-            name: '戴馨乐',
-            id: 2,
+            name: 'Hello world',
+            id: '16340054',
             isfinished: false,
             ispaid: false
           },
           {
             name: '陈梓峰',
-            id: 3,
+            id: '16340020',
             isfinished: false,
             ispaid: false
           }
@@ -70,7 +70,7 @@ export default {
               question: "如何评价打球像蔡徐坤这句话",
               answer: ""
             },
-            limit: "text"
+            limit: "number"
           }
           ],        //问卷
           images:[]         //图片
@@ -78,13 +78,13 @@ export default {
       },
       {
         id: 1,             //用于辨别任务的id
-        name: '比武招亲2',           //任务名称
+        name: 'test2',           //任务名称
         publisher: '阿彤',      //任务发起者
         type: '问卷调查',           //任务类型
         start_time: '2019-10-10 10:00',     //任务开始时间:xxxx-xx-xx xx:xx
         end_time: '2019-10-20 10:00',       //任务结束时间:xxxx-xx-xx xx:xx
         pay: 100,             //任务报酬
-        detail: '比武招亲是一项非常重要的事情，对于当代大学生来说，相亲还不算太晚但是必须',         //任务详情
+        detail: '测试接受',         //任务详情
         receiver: [         //任务接收者
           // { 
           //   name: '',           //接收者名字
@@ -94,19 +94,19 @@ export default {
           // }
           {
             name: '陈咏强',
-            id: 1,
+            id: '16340045',
             isfinished: false,
             ispaid: false
           },
           {
             name: '戴馨乐',
-            id: 2,
+            id: '16340053',
             isfinished: false,
             ispaid: false
           },
           {
             name: '陈梓峰',
-            id: 3,
+            id: '16340020',
             isfinished: false,
             ispaid: false
           }
@@ -153,13 +153,13 @@ export default {
       },
       {
         id: 2,             //用于辨别任务的id
-        name: '比武招亲3',           //任务名称
+        name: 'test3',           //任务名称
         publisher: 'Hello world',      //任务发起者
         type: '问卷调查',           //任务类型
         start_time: '2019-10-10 10:00',     //任务开始时间:xxxx-xx-xx xx:xx
         end_time: '2019-10-20 10:00',       //任务结束时间:xxxx-xx-xx xx:xx
         pay: 100,             //任务报酬
-        detail: '比武招亲是一项非常重要的事情，对于当代大学生来说，相亲还不算太晚但是必须',         //任务详情
+        detail: '测试发起者是username',         //任务详情
         receiver: [         //任务接收者
           // { 
           //   name: '',           //接收者名字
@@ -169,19 +169,19 @@ export default {
           // }
           {
             name: '陈咏强',
-            id: 1,
+            id: '16340045',
             isfinished: false,
             ispaid: false
           },
           {
             name: '戴馨乐',
-            id: 2,
+            id: '16340053',
             isfinished: false,
             ispaid: false
           },
           {
             name: '陈梓峰',
-            id: 3,
+            id: '16340020',
             isfinished: false,
             ispaid: false
           }
@@ -228,13 +228,13 @@ export default {
       },
       {
         id: 3,             //用于辨别任务的id
-        name: '比武招亲4',           //任务名称
+        name: '测试4',           //任务名称
         publisher: '阿彤',      //任务发起者
         type: '问卷调查',           //任务类型
         start_time: '2019-10-10 10:00',     //任务开始时间:xxxx-xx-xx xx:xx
         end_time: '2019-10-20 10:00',       //任务结束时间:xxxx-xx-xx xx:xx
         pay: 100,             //任务报酬
-        detail: '比武招亲是一项非常重要的事情，对于当代大学生来说，相亲还不算太晚但是必须',         //任务详情
+        detail: '测试receiver已满，无法接受',         //任务详情
         receiver: [         //任务接收者
           // { 
           //   name: '',           //接收者名字
@@ -244,24 +244,24 @@ export default {
           // }
           {
             name: '陈咏强',
-            id: 1,
+            id: '16340045',
             isfinished: false,
             ispaid: false
           },
           {
             name: '戴馨乐',
-            id: 2,
+            id: '16340053',
             isfinished: false,
             ispaid: false
           },
           {
             name: '陈梓峰',
-            id: 3,
+            id: '16340020',
             isfinished: false,
             ispaid: false
           }
         ],
-        receiver_limit: 4,  //接收者人数限制
+        receiver_limit: 3,  //接收者人数限制
         finish_rate: 0,     //完成程度
         extra_content:{     //额外内容：包括图片数据以及问卷数据
           query: [

@@ -143,6 +143,7 @@
               <view wx:if="{{item.type === '问答题'}}">
                 <textarea 
                   placeholder="请输入答案" 
+                  value="{{item.content.answer}}"
                   class="text"
                   bindinput="textChange({{index}})"></textarea>
               </view>
@@ -150,7 +151,7 @@
           </view>
         </view>
         <view class="subbmit-button">
-          <van-button type="primary" round size="large" bindtap="subbmit">发布</van-button>
+          <van-button type="primary" round size="large" bindtap="subbmit">提交</van-button>
         </view>
       </scroll-view>
     </view>
@@ -217,6 +218,12 @@
         }
       },
       textChange(index, e) {
+        // if (/^[0-9]*$/.test(e.detail.value)) {
+        //   console.log('number');
+        // }
+        // else {
+        //   console.log('no number');
+        // }
         this.query[index].content.answer = e.detail.value;
         var isFinish = false;
         var pos = 0, i = 0;
@@ -240,22 +247,53 @@
         }
       },
       subbmit() {
-        var that = this;
-        var pages = getCurrentPages();
-        var prevPage = pages[pages.length - 2];  //上一个页面
-        prevPage.setData({
-          eQuery: that.query
-        });
-        console.log(this.query);
-        wepy.navigateBack({
-          delta: 1
-        });
+        var canSubbmit = true;
+        var error = "";
+        //判断是否存在错误输入，不判断空白输入
+        for (var i = 0; i < this.query.length; i++) {
+          if (this.query[i].type == '问答题' && this.query[i].limit == 'number') {
+            if ( !(/^[0-9]*$/.test(this.query[i].content.answer)) ) {
+              error += '第' + String(i+1) + '题出现非数字输入\n';
+              canSubbmit = false;
+            }
+          }
+        }
+        if (canSubbmit) {
+          var that = this;
+          var pages = getCurrentPages();
+          var prevPage = pages[pages.length - 2];  //上一个页面
+          prevPage.setData({
+            query: that.query,
+            finishRate: that.finish_rate,
+            finish: that.finish
+          });
+          console.log(this.query);
+          console.log(typeof this.finish_rate + this.finish_rate);
+          console.log(this.finish);
+          wepy.navigateBack({
+            delta: 1
+          });
+        }
+        else {
+          wepy.showModal({
+            title: '格式错误',
+            content: error
+          });
+        }
       }
     }
     onLoad(options) {
+      console.log('QueryDetail onload');
       var query = JSON.parse(options.query);
+      var fRate = JSON.parse(options.fRate);
+      var finish = JSON.parse(options.finish);
       this.query = query;
-      console.log(this.query);
+      this.finish_rate = fRate;
+      this.finish = finish;
+      this.$apply();
+      // console.log(this.query);
+      // console.log(this.finish_rate);
+      console.log("end");
     }
   }
 </script>

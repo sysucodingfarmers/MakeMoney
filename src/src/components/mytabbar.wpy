@@ -107,9 +107,9 @@
           });
         }
         else {
-          myurl += "?publisher="
-          myurl += this.$root.$parent.globalData.userInfo.username
-          myurl += "&type="
+          myurl += "?type1="
+          myurl += type[0]
+          myurl += "&type2="
           myurl += type[1]
           wepy.navigateTo({
             url: myurl
