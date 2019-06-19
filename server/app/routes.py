@@ -22,7 +22,7 @@ def index():
 如果未重复，存入数据库
 '''
 @app.route('/register', methods=['GET', 'POST'])
-def register():
+def register():·
 	json_data = json.loads(request.data)
 	users = User.query.all()
 	for user in users:
@@ -119,7 +119,7 @@ def receive_task():
 			# print(task)
 			receiver = Receiver.query.filter_by(id=current_user.id).first()
 			if(receiver==None):
-				receiver = Receiver(id=1)
+				receiver = Receiver()
 			print(len(task.receivers))
 			#判断人数限制是否已经达到
 			if task.receiver_limit <= len(task.receivers):
