@@ -69,7 +69,8 @@ export default class extends wepy.app {
       'van-cell-for-taskDetail': '../components/van/cell_for_taskDetail/index',
       'van-progress': '../components/van/progress/index',
       'van-datetime-picker': '../components/van/datetime-picker/index',
-      'van-tag': '../components/van/tag/index'
+      'van-tag': '../components/van/tag/index',
+      'van-dialog': '../components/van/dialog/index'
     },
     tabBar: {
       backgroundColor: '#fff',
@@ -97,7 +98,6 @@ export default class extends wepy.app {
   globalData = {
     userInfo: null,
     mainPageUrl: 'mainPage',
-    taskDetailUrl: 'taskDetail',
     myInfoUrl: 'myInfo',
     publishTaskUrl: 'publishTask',
     taskCategoryUrl: 'taskCategory',

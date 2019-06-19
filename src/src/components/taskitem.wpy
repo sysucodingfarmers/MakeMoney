@@ -39,21 +39,23 @@
     }
     methods = {
       showDetail() {
-        var myurl = this.$root.$parent.globalData.taskDetailUrl;
+        console.log("show detail");
+        var myurl = "taskDetail"
         var id = JSON.stringify(this.titem.id);
         var mes;
-        if (this.$root.$parent.globalData.userInfo === null) {
+        var userInfo = this.$root.$parent.globalData.userInfo;
+        if (userInfo == null) {
           mes = JSON.stringify(['登录', '取消']);
         }
-        else if (this.$root.$parent.globalData.userInfo.username === this.titem.publisher) {
+        else if (userInfo.username == this.titem.publisher) {
           mes = JSON.stringify(["修改","取消"]);
         }
         else {
           mes = JSON.stringify(["接受","收藏"]);
         }
-        if (this.titem.receiver.length != 0) {
+        if (this.titem.receiver.length != 0 && userInfo != null) {
           this.titem.receiver.forEach(item=>{
-            if (item.name === this.$root.$parent.globalData.userInfo.username) {
+            if (item.name === userInfo.username) {
               mes = JSON.stringify(['完成', '取消']);
             }
           })

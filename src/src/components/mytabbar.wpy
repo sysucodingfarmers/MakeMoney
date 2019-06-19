@@ -22,9 +22,11 @@
       bind:cancel="cateCancel"
     />
   </van-popup>
+  <van-dialog id="van-dialog" />
 </template>
 <script>
   import wepy from 'wepy'
+  import Dialog from '../components/van/dialog/dialog'
 
   const categories = {
     '线上任务': ["问卷调查", "信息标注", "其他"],
@@ -93,17 +95,18 @@
         // 根据需要修改
         var myurl = this.$root.$parent.globalData.publishTaskUrl;
         if (this.$root.$parent.globalData.userInfo === null) {
-          wepy.showModal({
-            title: '错误',
-            content: '请先登录',
-            success(res) {
-              if (res.confirm) {
-                //...
-              }
-              else{
-                //...
-              }
-            }
+          Dialog.confirm({
+            title: "错误",
+            message: '请先登录'
+          }).then(()=>{
+            // 跳转到登录页面
+            console.log("login")
+            // 假如有了登录页面则删去下来2行代码
+            this.active = this.activeValue;
+            this.$apply();
+          }).catch(()=> {
+            this.active = this.activeValue;
+            this.$apply();
           });
         }
         else {
