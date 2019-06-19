@@ -11,9 +11,15 @@
       bind:search="onSearch"
       bind:cancel="onCancel"
     >
-      <view slot="label" @tap="selectLoc">
-        <van-icon name="location-o" size="15px"></van-icon>
-        <text style="font-size: small;">{{location.city}}</text>
+      <view slot="label" style="width: 70px;" @tap="selectLoc">
+        <van-row>
+          <van-col span="6">
+            <van-icon name="location-o" size="15px"></van-icon>
+          </van-col>
+          <text style="font-size: small;">{{location.city}}</text>
+        </van-row>
+        
+        
       </view>
     </van-search>
     <!-- 页面主体 -->
@@ -161,6 +167,7 @@
   .mainBody {
     height: 100%;
     width: 100%;
+
   }
   .taskType {
     width: 100%;
