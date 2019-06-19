@@ -48,8 +48,10 @@ class Receiver(db.Model):
 	只提供 继承User 一种初始化方法，如
 	receiver = Receiver(user, finished=True, paid=False)
 	'''
+	receiver_total_id = 0
 	def __init__(self, **kwargs):
-		self.id = kwargs['id']
+		Receiver.receiver_total_id += 1
+		self.id = Receiver.receiver_total_id
 		self.finished = self.__table__.c.finished.default.arg if 'finished' not in kwargs else kwargs['finished']
 		self.paid = self.__table__.c.paid.default.arg if 'paid' not in kwargs else kwargs['paid']
 	rid = db.Column(db.Integer, nullable=False, primary_key=True)
@@ -60,6 +62,7 @@ class Receiver(db.Model):
 	paid = db.Column(db.Boolean, default=False)
 	def __repr__(self):
 		return '<Receiver {} {} {}>'.format(self.id, self.finished, self.paid)
+
 
 class Task(db.Model):
 	#初始化

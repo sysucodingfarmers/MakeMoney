@@ -119,7 +119,7 @@ def receive_task():
 			# print(task)
 			receiver = Receiver.query.filter_by(id=current_user.id).first()
 			if(receiver==None):
-				receiver = Receiver(id=1)
+				receiver = Receiver()
 			print(len(task.receivers))
 			#判断人数限制是否已经达到
 			if task.receiver_limit <= len(task.receivers):
@@ -179,6 +179,38 @@ def my_receive_task():
 # @app.route('/require', methods=['POST'])
 # def require():
 
+
+#按发布者用户名进行搜索任务
+'''
+接受一个包含'sponsor'属性的json 'sponsor':sponsor_name
+查询指定的sponsor发起的任务
+返回指定sponsor发起的所有任务的id
+如果没有改sponsor则返回 json_false
+
+返回json的
+{'task_number': 2
+'task_id':[1,2]
+}
+'''
+@app.route('/search/sponsor', methods=['GET', 'POST'])
+def search_by_sponsor():
+    if request.method == 'POST':
+        json_data = json.loads(request.data)
+        if 'sponsor' in json_data:
+            task_list = Task.query.filter_by(sponsor=json_data['sponsor'])
+        else:
+            print('no match result')
+            return json_false
+
+        #正确查询之后返回json
+        data = {'task_number':len(task_list), 'task_id':[]}
+        for task in task_list:
+            data['task_id'].append(task.id)
+        return json.dumps(data, sort_keys=False)
+
+    return json_false
+
+
 #测试
 @app.route('/test', methods=['POST'])
 def test():
@@ -201,3 +233,5 @@ def test():
 	# db.session.commit()
 
 	return json_true
+
+
