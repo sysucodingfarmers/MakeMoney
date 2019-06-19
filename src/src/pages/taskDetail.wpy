@@ -94,7 +94,7 @@
         if (val === '接受') {
           // var that = this;
           // console.log('接受');
-          wepy.showModal({
+         wx.showModal({
             title: '任务',
             content: '是否接受',
             success(res) {
@@ -121,7 +121,7 @@
               this.$apply();
             }
             else {
-              wepy.showModal({
+             wx.showModal({
                 title: '任务',
                 content: '任务已满'
               })
@@ -136,7 +136,7 @@
           });
         }
         else if (val === '登录') {
-          wepy.showModal({
+         wx.showModal({
             title: '错误',
             content: '请先登录',
             success(res) {
@@ -154,7 +154,7 @@
             console.log("finish");
           }
           else {
-            wepy.showModal({
+           wx.showModal({
               title: '错误',
               content: '还未完成',
               success(res) {
@@ -178,6 +178,32 @@
         else if (val === '取消') {
           console.log('取消');
           wepy.navigateBack();
+        }
+        else if (val === '删除') {
+          if (this.taskInfo.receiver.length != 0) {
+           wx.showModal({
+              title: '错误',
+              content: '任务已进行'
+            });
+          }
+          else {
+            var that = this;
+            wx.showModal({
+              title: '警告',
+              content: '是否删除',
+              success(res) {
+                if (res.confirm) {
+                  console.log('删除成功');
+                  TasksData.data.tasks.splice(that.id, 1);
+                  wepy.navigateBack();
+                }
+                else {
+                  console.log('删除失败');
+                  //..
+                }
+              }
+            })
+          }
         }
       },
       ShowReceiverDetail(id) {
