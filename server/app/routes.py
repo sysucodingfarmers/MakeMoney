@@ -1,10 +1,14 @@
+# -- coding:UTF-8 --
 from flask import render_template, redirect, url_for, request, json
 from flask_login import current_user,login_user,logout_user, login_required
 from app import app,db
-from app.models import User, Task, Receiver
+from app.models import SingleChoice,MultipleChoice,EssayQuestion,Template,Answer
+from app.models import User,Task,Receiver,receivers
+from app.trans import UserToJson, TaskToJson
 
 json_true = json.dumps('succeed')
 json_false = json.dumps('failed')
+id_exist = json.dumps('id_exist')
 
 
 @app.route('/')
@@ -19,14 +23,20 @@ def index():
 '''
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-	if current_user.is_authenticated:
-		print('user is existed!')
-		return json_false
 	json_data = json.loads(request.data)
-	user = User(id = json_data['id'], \
-		username = json_data['username'], \
-		wx_number = json_data['wx_number'], \
-		email = json_data['email'] if 'email' in json_data else None
+	users = User.query.all()
+	for user in users:
+		if user.id == json_data['id']:
+			print('user is existed!')
+			return json_false
+	user = User(id = json_data['id'], 
+		username = json_data['username'], 
+		email = json_data['email'] if 'email' in json_data else None, 
+		school = json_data['school'] if 'school' in json_data else None, 
+		major = json_data['major'] if 'major' in json_data else None, 
+		phone = json_data['phone'] if 'phone' in json_data else None, 
+		wx_number = json_data['wx_number'] if 'wx_number' in json_data else None, 
+		hobit = json_data['hobit'] if 'hobit' in json_data else None
 		)
 	user.set_password(json_data['password'])
 	db.session.add(user)
@@ -53,7 +63,7 @@ def login():
 			return json_false
 		login_user(user, remember=True)
 		print('login user {}!'.format(user))
-		return json_true
+		return json.dumps(user, default=UserToJson) 
 	return json_false
 
 #登出
@@ -68,17 +78,26 @@ def logout():
 发布任务（需登录）:
 接收新建任务的所有需求信息，以当前登录user进行发布
 '''
-@app.route('/sponsor_task', methods=['GET', 'POST'])
+@app.route('/task/sponsor', methods=['GET', 'POST'])
 @login_required
 def sponsor_task():
 	if request.method == 'POST':
 		if current_user.is_authenticated:
 			#获得post来的task数据
 			json_data = json.loads(request.data)
-			# print(json_data)
+			if (Task.query.filter_by(id=json_data['id']).first() != None):
+				print('existed')
 			task = Task(id = json_data['id'],
 				title = json_data['title'],
-				sponsor = current_user
+				sponsor = current_user,
+				type = json_data['type'] if 'type' in json_data else 'query', 
+				# start_time = json_data['start_time'] if 'start_time' in json_data else None, 
+				# end_time = json_data['end_time'] if 'end_time' in json_data else None, 
+				pay = json_data['pay'] if 'pay' in json_data else 0, 
+				detail = json_data['detail'] if 'detail' in json_data else None, 
+				receiver_limit = json_data['receiver_limit'] if 'receiver_limit' in json_data else 1, 
+				received_number = json_data['received_number'] if 'received_number' in json_data else 0, 
+				extra_content = json_data['extra_content'] if 'extra_content' in json_data else None, 
 				)
 			db.session.add(task)
 			db.session.commit()
@@ -89,7 +108,7 @@ def sponsor_task():
 接受任务(需登录）:
 接收任务的id，以当前user进行接收
 '''
-@app.route('/receive_task', methods=['POST'])
+@app.route('/task/receiver', methods=['POST'])
 @login_required
 def receive_task():
 	if request.method == 'POST':
@@ -97,7 +116,10 @@ def receive_task():
 			#获得POST来的task id
 			json_data = json.loads(request.data)
 			task = Task.query.filter_by(id=json_data['id']).first()
+			# print(task)
 			receiver = Receiver.query.filter_by(id=current_user.id).first()
+			if(receiver==None):
+				receiver = Receiver(id=1)
 			print(len(task.receivers))
 			#判断人数限制是否已经达到
 			if task.receiver_limit <= len(task.receivers):
@@ -110,6 +132,7 @@ def receive_task():
 					return json_false
 			#接收任务
 			task.receivers.append(receiver)
+			print(task.receivers)
 			db.session.commit()
 			return json_true
 	return json_true
@@ -120,7 +143,7 @@ def receive_task():
 若无post一个id则查询登录的user的任务
 如果无id且无登录，则返回false
 '''
-@app.route('/my_sponsor_task', methods=['GET', 'POST'])
+@app.route('/task/mysponsor', methods=['GET', 'POST'])
 def my_sponsor_task():
 	if request.method == 'POST':
 		json_data = json.loads(request.data)
@@ -132,20 +155,22 @@ def my_sponsor_task():
 			print('query error!')
 			return json_false
 		#返回
-		data = [{'number':len(user.sponsor_tasks)}]
-		i = 0
+		data = [{'task number':len(user.sponsor_tasks)}]
+		i = 1
 		for task in user.sponsor_tasks:
-			now = [{}]
-			now[0]['id'] = task.id
+			# now = [{}]
+			# now[0]['id'] = task.id
+			print(task.id)
+			now = json.dumps(task, default=TaskToJson)
 			data[0][str(i)] = now
 			i = i+1
-		return json.dumps(data)
+		return json.dumps(data, sort_keys=False)
 	return json_true
 
-# #查看接受的任务
-# @app.route('my_receive _task', methods=['GET', 'POST'])
-# def my_receive_task():
-# 	return json_true
+#查看接受的任务
+@app.route('/task/myreceive', methods=['GET', 'POST'])
+def my_receive_task():
+	return json_true
 # #根据用户爱好推荐
 # @app.route('/recommend', methods=['POST'])
 # def recommend():
@@ -161,13 +186,10 @@ def test():
 	user = User.query.all()
 	task = Task.query.all()
 	receiver = Receiver.query.all()
-	print('{}\n{}\n{}\n'.format(user,task,receiver))
+	template = Template.query.all()
+	answer = Answer.query.all()
+	print('{}\n\n{}\n\n{}\n\n{}\n\n{}\n'.format(user,task,receiver,template,answer))
 	
-	user = Receiver.query.filter_by(id=1).first()
-	# print(user.receive_tasks)
-	task = Task.query.filter_by(id=1).first()
-	print(task.receivers)
-	# user = User.query.filter_by(id=1).first()
 	#修改数据
 	# user.username = 'xiaotong'
 	# user.set_password('xiaozhu')
