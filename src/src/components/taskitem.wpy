@@ -48,7 +48,7 @@
           mes = JSON.stringify(['登录', '取消']);
         }
         else if (userInfo.username == this.titem.publisher) {
-          mes = JSON.stringify(["修改","取消"]);
+          mes = JSON.stringify(["修改","删除"]);
         }
         else {
           mes = JSON.stringify(["接受","收藏"]);

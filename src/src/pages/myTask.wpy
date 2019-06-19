@@ -1,36 +1,76 @@
 <style lang="less">
-  
+  .page{
+    line-height: 1.6;
+    background-color: #f8f8f8;
+    height:100%;
+    font-family: KaiTi;
+    font-size: 13px;
+    color: grey;
+  }
+  ::-webkit-scrollbar{
+    width: 0;
+    height: 0;
+    color: transparent;
+  }
 </style>
 <template>
   <view style="position: fixed; height: 100%; width: 100%;">
-    <mynavbar lefttext="返回" leftarrow="true"></mynavbar>
+    <mynavbar title="{{title}}" lefttext="返回" leftarrow="true"></mynavbar>
     <!-- 主体 -->
+    <view class="page">
+      <scroll-view scroll-y="true" style="height: 87%;">
+          <tasklist :tasks.sync="tasks"></tasklist>
+      </scroll-view>
+    </view>
   </view>
 </template>
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
+  import TasksData from '../data/TempTaskData'
+  import TaskList from '../components/tasklist'
 
   export default class MyTask extends wepy.page {
     data = {
       title: "默认",
-      type: 0
+      type: 0,
+      tasks: []
     }
     components = {
-      mynavbar: MyNavBar
+      mynavbar: MyNavBar,
+      tasklist: TaskList
     }
     methods = {
 
     }
     onLoad(options) {
+      var tasks = TasksData.data.tasks;
       console.log(options.type);
       if (options.type == "publish") {
         this.type = 0;
         this.title = "我的发布";
+        var that = this;
+        tasks.forEach(item=>{
+          if (item.publisher == this.$root.$parent.globalData.userInfo.username) {
+            that.tasks.push(item);
+          }
+        });
       }
       else if (options.type == "receive") {
         this.type = 1;
-        this.title = "我的接单"
+        this.title = "我的接单";
+        var that = this;
+        tasks.forEach(item=>{
+          var isReceive = false;
+          item.receiver.forEach(i=>{
+            if (i.name == this.$root.$parent.globalData.userInfo.username) {
+              isReceive = true;
+            }
+          });
+          if (isReceive) {
+            that.tasks.push(item);
+          }
+        })
       }
       console.log(this.title)
     }
