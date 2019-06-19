@@ -17,4 +17,5 @@
 6) 在MakeMoney/src文件夹下，安装依赖
 
 	npm install
+	
 7） 打开微信开发工具，导入MakeMoney/src
