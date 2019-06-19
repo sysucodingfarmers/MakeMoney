@@ -16,7 +16,7 @@
   <van-swipe-cell right-width="{{65}}">
     <van-cell-group>
       <view style="display: flex; flex-direction: column;">
-        <van-cell-for-taskItem title="{{titem.name}}" value="\<100m" label="{{titem.detail}}" imgurl="http://pic.sc.chinaz.com/files/pic/pic9/201610/apic23847.jpg" @tap="showDetail()"/>
+        <van-cell-for-taskItem title="{{titem.name}}" value="\<100m" label="{{titem.detail}}" imgurl="http://pic.sc.chinaz.com/files/pic/pic9/201610/apic23847.jpg" type="{{titem.type}}" @tap="showDetail()"/>
       </view>
     </van-cell-group>
     <view class="getTask" slot="right">

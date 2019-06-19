@@ -15,6 +15,7 @@
     <view class="van-cell_label">
       {{ label }}
     </view>
+    <van-tag custom-class="type-tag" type="primary" plain>{{type}}</van-tag>
   </view>
 
   <view class="van-cell__value value-class">

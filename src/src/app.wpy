@@ -68,7 +68,8 @@ export default class extends wepy.app {
       'van-cell-for-infodetail': '../components/van/cell_for_InfoDetail/index',
       'van-cell-for-taskDetail': '../components/van/cell_for_taskDetail/index',
       'van-progress': '../components/van/progress/index',
-      'van-datetime-picker': '../components/van/datetime-picker/index'
+      'van-datetime-picker': '../components/van/datetime-picker/index',
+      'van-tag': '../components/van/tag/index'
     },
     tabBar: {
       backgroundColor: '#fff',

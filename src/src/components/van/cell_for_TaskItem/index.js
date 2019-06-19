@@ -27,7 +27,8 @@ VantComponent({
             type: Boolean,
             value: true
         },
-        imgurl: String
+        imgurl: String,
+        type: String
     },
     methods: {
         onClick(event) {

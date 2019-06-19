@@ -59,6 +59,8 @@
   word-break: break-all;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  flex: 4;
 }
 
 .van-cell__value {
@@ -76,6 +78,7 @@
   word-break: break-all;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 2;
 }
 
 .van-cell__value {
@@ -85,7 +88,9 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
+.type-tag {
+  flex:2;
+}
 .van-cell--clickable.van-cell--hover {
   background-color: #f2f3f5
 }
