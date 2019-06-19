@@ -155,16 +155,15 @@ def my_sponsor_task():
 			print('query error!')
 			return json_false
 		#返回
+
 		data = [{'task number':len(user.sponsor_tasks)}]
 		i = 1
 		for task in user.sponsor_tasks:
-			# now = [{}]
-			# now[0]['id'] = task.id
 			print(task.id)
 			now = json.dumps(task, default=TaskToJson)
 			data[0][str(i)] = now
 			i = i+1
-		return json.dumps(data, sort_keys=False)
+		return json.dumps(data[0], sort_keys=False)
 	return json_true
 
 #查看接受的任务
@@ -207,6 +206,36 @@ def search_by_sponsor():
         for task in task_list:
             data['task_id'].append(task.id)
         return json.dumps(data, sort_keys=False)
+
+    return json_false
+
+
+#按指定id查询
+'''
+接收一个包含'task_id'属性的json
+返回对应task的详情
+'''
+@app.route('/search/task_id', method=['GET', 'POST'])
+def getTask_by_id():
+    if request.method == 'POST':
+        json_data = json.loads(request.data)
+        if 'task_id' in json_data:
+            task = Task.query.filter_by(id=json_data['task_id']).first()
+            data = {'id':task.id, 'title':task.title, 'type':task.type,
+                    'start_time':task.start_time, 'end_time':task.end_time,
+                    'pay':task.pay, 'detail':task.detail, 'receiver_limit':task.receiver_limit,
+                    'received_number':task.received_number, 'finished_number':task.finished_number,
+                    'extra_content':task.extra_content, 'sponsor_id':task.sponsor.id,
+                    'sponsor':task.sponsor.name, 'template_id':task.template.id}
+            receivers_id = []
+            for rec in task.receivers:
+                receivers_id.append(rec.id)
+            data['receivers'] = receivers_id
+            return json.dumps(data, sort_keys=False)
+
+        else:
+            print('no task_id')
+            return json_false
 
     return json_false
 

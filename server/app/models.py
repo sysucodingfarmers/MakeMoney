@@ -110,6 +110,7 @@ class Task(db.Model):
 	receivers = db.relationship('Receiver', secondary=receivers, lazy='subquery',
 		backref=db.backref('receive_tasks', lazy=True))
 
+
 	#问卷模板
 	template_id = db.Column(db.Integer, db.ForeignKey('template.id'))
 	template = db.relationship('Template', backref=db.backref('task', lazy=False, uselist=False))
