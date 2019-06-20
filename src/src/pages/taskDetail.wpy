@@ -60,12 +60,14 @@
       </scroll-view>
     </view>
   </view>
+  <van-dialog id="van-dialog" />
 </template>
 
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
   import TasksData from '../data/TempTaskData'
+  import Dialog from '../components/van/dialog/dialog'
 
   export default class TaskDetail extends wepy.page {
     data = {
@@ -93,21 +95,10 @@
         var val = this.button_left;
         if (val === '接受') {
           // var that = this;
-          // console.log('接受');
-          wepy.showModal({
-            title: '任务',
-            content: '是否接受',
-            success(res) {
-              if (res.confirm) {
-                //..
-              }
-              else {
-                //..
-              }
-            }
+          console.log('接受');
+          Dialog.confirm({
+            message: '是否接受'
           }).then(()=>{
-            this.button_left = '完成';
-            this.button_right = '取消';
             var len = this.taskInfo.receiver.length;
             if (len < this.taskInfo.receiver_limit) {
               this.taskInfo.receiver.push({
@@ -117,14 +108,15 @@
                 ispaid: false
               });
               TasksData.data.tasks[this.id].receiver = this.taskInfo.receiver;
+              this.button_left = '完成';
+              this.button_right = '取消';
               console.log(TasksData.data.tasks);
               this.$apply();
             }
             else {
-              wepy.showModal({
-                title: '任务',
-                content: '任务已满'
-              })
+              Dialog.alert({
+                message: '任务已满'
+              });
             }
           })
         }
@@ -136,17 +128,10 @@
           });
         }
         else if (val === '登录') {
-          wepy.showModal({
-            title: '错误',
-            content: '请先登录',
-            success(res) {
-              if (res.confirm) {
-                //...
-              }
-              else {
-                //...
-              }
-            }
+          Dialog.alert({
+            message: '请先登录'
+          }).then(()=>{
+            console.log('登录');
           });
         }
         else if (val === '完成') {
@@ -154,19 +139,12 @@
             console.log("finish");
           }
           else {
-            wepy.showModal({
-              title: '错误',
-              content: '还未完成',
-              success(res) {
-                if (res.confirm) {
-                  //...
-                }
-                else {
-                  //...
-                }
-              }
+            Dialog.alert({
+              message: '还未完成'
+            }).then(()=>{
+              console.log('go');
             });
-          }
+            }
         }
       },
       RightSubbmit() {
@@ -178,6 +156,25 @@
         else if (val === '取消') {
           console.log('取消');
           wepy.navigateBack();
+        }
+        else if (val === '删除') {
+          if (this.taskInfo.receiver.length != 0) {
+            Dialog.alert({
+              message: '任务进行中'
+            }).then(()=>{
+              console.log('fail');
+            });
+          }
+          else {
+            Dialog.confirm({
+              title: '是否删除',
+              message: '删除就无法回复'
+            }).then(()=>{
+              console.log('删除成功', this.id);
+              TasksData.data.tasks.splice(this.id, 1);
+              wepy.navigateBack();
+            });
+          }
         }
       },
       ShowReceiverDetail(id) {

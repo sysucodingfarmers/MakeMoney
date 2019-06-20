@@ -36,10 +36,28 @@
       <!-- 任务列表 -->
       <view class="tasklistboard">
         <myMainPageTitle></myMainPageTitle>
-        <scroll-view scroll-y="true" style="height: 87%;">
-          <!-- <repeat for="{{tasks}}" item="item"> -->
+        <scroll-view
+          class="tasklist-view"
+          scroll-y="true"
+          bindscrolltolower="getNewData"
+          bindscrolltoupper="refresh"
+          lower-threshold="50px"
+          upper-threshold="10px"
+          bindscroll="scroll"
+          bindtouchmove="touchmove"
+          scroll-into-view="{{toView}}"
+          >
+          <view 
+            style="width: 100%; height: 100%"
+            >
+<!--             <view style="height: 40px; width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10rpx;">
+              <van-loading type="spinner" size="20px">加载中</van-loading>
+            </view> -->
             <tasklist :tasks.sync="tasks"></tasklist>
-          <!-- </repeat> -->
+            <view id="main_loading" style="width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10rpx;">
+              <van-loading opacity="{{loadingOpacity}}" type="spinner" size="20px">加载中</van-loading>
+            </view>
+          </view>
         </scroll-view>
       </view>
       <!--  底部导航栏 -->
@@ -67,10 +85,12 @@
   import MyNavBar from '../components/mynavbar'
   import MyMainPageTitle from '../components/myMainPageTitle'
   import MyMainPageCategoryBtn from '../components/myMainPageCategoryBtn'
+  import Toast from '../components/van/toast/toast'
 
   export default class MainPage extends wepy.page {
     config = {
-      
+      // "backgroundColor":"#fff",
+      // "backgroundTextStyle":"dark",
     }
     components = {
       tasklist: TaskList,
@@ -89,7 +109,15 @@
         province: "获取定位",
         city: "获取定位",
         county: "获取定位"
-      }
+      },
+      loadingOpacity: 0,
+      loadingHide: true,
+      canDragDown: true,
+      canDragUp: true,
+      toView: "task_item_id0",
+      // 之后可以删去
+      dataIndex: 0,
+      batch_size: 5
     }
     computed = {
 
@@ -124,6 +152,38 @@
       },
       locCancel() {
         this.showCitySelector = false;
+      },
+      getNewData() {
+        console.log("more")
+        if (this.dataIndex < TasksData.data.tasks.length && this.canDragDown) {
+          this.loadingOpacity = 1;
+          this.canDragDown = false;
+          setTimeout(() => {
+            for (var i = 0; i < this.batch_size; i++) {
+              this.tasks.push(TasksData.data.tasks[this.dataIndex])
+              this.tasks[this.dataIndex].itemid = "task_item_id" + this.dataIndex
+              this.dataIndex += 1
+              if (this.dataIndex == TasksData.data.tasks.length) break;
+            }
+            this.loadingOpacity = 0;
+            this.canDragDown = true;
+            this.$apply();
+          }, 3000);
+        }
+      },
+      scroll(e) {
+        // console.log(e.detail)
+      },
+      refresh() {
+        console.log("scroll top")
+        this.loadingHide = false
+        setTimeout(() => {
+          this.loadingHide = true;
+          this.$apply();
+        }, 3000)
+      },
+      touchmove(e) {
+        console.log(e)
       }
     }
     events = {
@@ -131,8 +191,20 @@
     }
     onLoad() {
       var _this = this
-      this.tasks = TasksData.data.tasks;
-      console.log(this.tasks);
+      if (TasksData.data.tasks.length < 5) {
+        this.tasks = TasksData.data.tasks;
+        this.dataIndex = TasksData.data.tasks.length;
+        this.canDragDown = false;
+        for (var i = 0; i < this.dataIndex; i++)
+          this.tasks[i].itemid = "task_item_id" + i
+      }
+      else {
+        for (var i = 0; i < this.batch_size; i++) {
+          this.tasks.push(TasksData.data.tasks[i])
+          this.tasks[i].itemid = "task_item_id" + i
+          this.dataIndex += 1
+        }
+      }
       this.areaList = AreaList;
       wepy.getLocation({
         type: 'gcj02',
@@ -161,6 +233,14 @@
     onShow() {
       this.$broadcast('changeActive', "0");
     }
+    // onPullDownRefresh() {
+    //   // 显示标题栏进度条效果
+    //   wx.showNavigationBarLoading();
+    //   setTimeout(() => {
+    //     wx.hideNavigationBarLoading();
+    //     wx.stopPullDownRefresh();
+    //   }, 3000)
+    // }
   }
 </script>
 <style lang="less">
@@ -205,5 +285,8 @@
     width: 0;
     height: 0;
     color: transparent;
+  }
+  .tasklist-view {
+    height: 87%;
   }
 </style>

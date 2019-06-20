@@ -42,7 +42,8 @@ export default class extends wepy.app {
       navigationBarBackgroundColor: '#fff',
       navigationBarTitleText: 'WeChat',
       navigationBarTextStyle: 'black',
-      navigationStyle: 'custom'
+      navigationStyle: 'custom',
+      enablePullDownRefresh: true
     },
     usingComponents: {
       'van-button': '../components/van/button/index',
@@ -70,7 +71,9 @@ export default class extends wepy.app {
       'van-progress': '../components/van/progress/index',
       'van-datetime-picker': '../components/van/datetime-picker/index',
       'van-tag': '../components/van/tag/index',
-      'van-dialog': '../components/van/dialog/index'
+      'van-dialog': '../components/van/dialog/index',
+      'van-loading': '../components/van/loading/index',
+      'van-toast': '../components/van/toast/index'
     },
     tabBar: {
       backgroundColor: '#fff',

@@ -13,7 +13,7 @@
   }
 </style>
 <template>
-  <van-swipe-cell right-width="{{65}}">
+  <van-swipe-cell id="{{titem.itemid}}" right-width="{{65}}">
     <van-cell-group>
       <view style="display: flex; flex-direction: column;">
         <van-cell-for-taskItem title="{{titem.name}}" value="\<100m" label="{{titem.detail}}" imgurl="http://pic.sc.chinaz.com/files/pic/pic9/201610/apic23847.jpg" type="{{titem.type}}" @tap="showDetail()"/>
@@ -48,7 +48,7 @@
           mes = JSON.stringify(['登录', '取消']);
         }
         else if (userInfo.username == this.titem.publisher) {
-          mes = JSON.stringify(["修改","取消"]);
+          mes = JSON.stringify(["修改","删除"]);
         }
         else {
           mes = JSON.stringify(["接受","收藏"]);

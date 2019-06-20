@@ -156,11 +156,13 @@
       </scroll-view>
     </view>
   </view>
+  <van-dialog id="van-dialog" />
 </template>
 
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
+  import Dialog from '../components/van/dialog/dialog'
 
   export default class QueryDetail extends wepy.page {
     data = {
@@ -275,9 +277,9 @@
           });
         }
         else {
-          wepy.showModal({
+          Dialog.alert({
             title: '格式错误',
-            content: error
+            message: error
           });
         }
       }

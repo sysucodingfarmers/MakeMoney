@@ -36,7 +36,7 @@ def register():
 		major = json_data['major'] if 'major' in json_data else None, 
 		phone = json_data['phone'] if 'phone' in json_data else None, 
 		wx_number = json_data['wx_number'] if 'wx_number' in json_data else None, 
-		hobbit = json_data['hobbit'] if 'hobbit' in json_data else None
+		hobit = json_data['hobit'] if 'hobit' in json_data else None
 		)
 	user.set_password(json_data['password'])
 	db.session.add(user)
@@ -155,15 +155,16 @@ def my_sponsor_task():
 			print('query error!')
 			return json_false
 		#返回
-
 		data = [{'task number':len(user.sponsor_tasks)}]
 		i = 1
 		for task in user.sponsor_tasks:
+			# now = [{}]
+			# now[0]['id'] = task.id
 			print(task.id)
 			now = json.dumps(task, default=TaskToJson)
 			data[0][str(i)] = now
 			i = i+1
-		return json.dumps(data[0], sort_keys=False)
+		return json.dumps(data, sort_keys=False)
 	return json_true
 
 #查看接受的任务
@@ -208,7 +209,6 @@ def search_by_sponsor():
         return json.dumps(data, sort_keys=False)
 
     return json_false
-
 
 #按标题内容进行模糊搜索
 '''
@@ -321,7 +321,6 @@ def getUser_by_id():
             return json.dumps(data, sort_keys=False)
         return json_false
     return json_false
-
 
 #测试
 @app.route('/test', methods=['POST'])
