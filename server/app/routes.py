@@ -164,7 +164,11 @@ def my_sponsor_task():
 			now = json.dumps(task, default=TaskToJson)
 			data[0][str(i)] = now
 			i = i+1
+<<<<<<< HEAD
+		return json.dumps(data[0] , sort_keys=False)
+=======
 		return json.dumps(data, sort_keys=False)
+>>>>>>> zifeng
 	return json_true
 
 #查看接受的任务
