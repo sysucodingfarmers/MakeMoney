@@ -1,0 +1,117 @@
+<style lang="less">
+  .button {
+    margin: 2%;
+  }
+</style>
+<template>
+  <view style="position: fixed; width: 100%; height: 100%;">
+    <mynavbar title="登录" lefttext="" leftarrow="false"></mynavbar>
+    <van-cell-group>
+      <van-field
+        value="{{ studentId }}"
+        clearable
+        label="学号"
+        errorMessage="{{ studentIdErrorMessage }}"
+        placeholder="{{ studentIdPlaceholder }}"
+        bind:change="onStudentIdChange"
+      />
+
+      <van-field
+        value="{{ password }}"
+        type="password"
+        label="密码"
+        placeholder="{{ passwordPlaceholder }}"
+        errorMessage="{{ passwordErrorMessage }}"
+        bind:change="onPasswordChange"
+      />
+    </van-cell-group>
+    <view class="button">
+      <van-button size="large" type="primary" bind:click="onClickLogin" disabled="{{ isLoginButtonDisabled }}" loading-text="登录中..." loading="{{ isLogining }}">登录</van-button>
+    </view>
+    <view class="button">
+      <van-button size="large" plain type="primary" bind:click="onClickRegister" disabled="{{ isRegisterButtonDisabled }}">注册</van-button>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import MyNavBar from '../components/mynavbar'
+
+  var phone_reg = /^[1](([3][0-9])|([4][5-9])|([5][0-3,5-9])|([6][5,6])|([7][0-8])|([8][0-9])|([9][1,8,9]))[0-9]{8}$/;
+  var email_reg = /^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/;
+  var studentId_reg = /^[0-9]{8,8}$/;
+
+  export default class Login extends wepy.page {
+    data = {
+      studentId: "",
+      studentIdErrorMessage: "",
+      studentIdPlaceholder: "请输入学号",
+      password: "",
+      passwordErrorMessage: "",
+      passwordPlaceholder: "请输入密码",
+      isLoginButtonDisabled: false,
+      isLogining: false,
+      isRegisterButtonDisabled: false
+    }
+
+    components = {
+      mynavbar: MyNavBar
+    }
+
+    methods = {
+      onClickIcon() {},
+
+      onStudentIdChange(e) {
+        this.studentId = e.detail;
+      },
+
+      onPasswordChange(e) {
+        this.password = e.detail;
+      },
+
+      onClickLogin() {
+        // 检查学号是否为空
+        var isStudentIdGood = false;
+        if (this.studentId.length == 0) {
+          this.studentIdErrorMessage = "学号不能为空";
+          isStudentIdGood = false;
+        } else if (!studentId_reg.test(this.studentId)) {
+          this.studentIdErrorMessage = "学号格式错误";
+          isStudentIdGood = false;
+        } else {
+          this.studentIdErrorMessage = "";
+          isStudentIdGood = true;
+        }
+
+        //检查密码是否为空
+        var isPasswordGood = false;
+        if (this.password.length == 0) {
+          this.passwordErrorMessage = "密码不能为空";
+          isPasswordGood = false;
+        } else {
+          this.passwordErrorMessage = "";
+          isPasswordGood = true;
+        }
+
+        //只有检查通过才向后端提交用户名密码
+        if (!isStudentIdGood || !isPasswordGood) {
+          return;
+        }
+
+        // 将学号和密码交给后端检验, 期间所有按钮不可用
+        this.isLoginButtonDisabled = true;
+        this.isLogining = true;
+        this.isRegisterButtonDisabled = true;
+      },
+
+      onClickRegister() {
+        this.$navigate('./register');
+      }
+    }
+
+    onLoad(options) {
+
+    }
+  }
+</script>

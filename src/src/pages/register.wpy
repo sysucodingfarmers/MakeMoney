@@ -1,0 +1,236 @@
+<style lang="less">
+  .button {
+    margin: 2%;
+  }
+</style>
+<template>
+  <view style="position: fixed; width: 100%; height: 100%;">
+    <mynavbar title="注册" lefttext="登录" leftarrow="true"></mynavbar>
+    <van-cell-group title="学号与密码">
+      <van-field
+        value="{{ studentId }}"
+        required
+        clearable
+        label="学号"
+        errorMessage="{{ studentIdErrorMessage }}"
+        placeholder="{{ studentIdPlaceholder }}"
+        bind:change="onStudentIdChange"
+      />
+
+      <van-field
+        value="{{ password }}"
+        required
+        clearable
+        type="password"
+        label="密码"
+        placeholder="{{ passwordPlaceholder }}"
+        errorMessage="{{ passwordErrorMessage }}"
+        bind:change="onPasswordChange"
+      />
+
+      <van-field
+        value="{{ passwordAgain }}"
+        required
+        clearable
+        type="password"
+        label="再次输入密码"
+        placeholder="{{ passwordAgainPlaceholder }}"
+        errorMessage="{{ passwordAgainErrorMessage }}"
+        bind:change="onPasswordAgainChange"
+      />
+    </van-cell-group>
+
+    <van-cell-group title="其他信息">
+      <van-field
+        value="{{ username }}"
+        clearable
+        label="昵称"
+        errorMessage="{{ usernameErrorMessage }}"
+        placeholder="{{ usernamePlaceholder }}"
+        bind:change="onUsernameChange"
+      />
+
+      <van-field
+        value="{{ school }}"
+        clearable
+        label="学院"
+        placeholder="{{ schoolPlaceholder }}"
+        errorMessage="{{ schoolErrorMessage }}"
+        bind:change="onSchoolChange"
+      />
+
+      <van-field
+        value="{{ major }}"
+        clearable
+        label="专业"
+        placeholder="{{ majorPlaceholder }}"
+        errorMessage="{{ majorErrorMessage }}"
+        bind:change="onMajorChange"
+      />
+
+      <van-field
+        value="{{ email }}"
+        clearable
+        label="邮箱"
+        placeholder="{{ emailPlaceholder }}"
+        errorMessage="{{ emailErrorMessage }}"
+        bind:change="onEmailChange"
+      />
+
+      <van-field
+        value="{{ phone }}"
+        clearable
+        label="手机"
+        placeholder="{{ phonePlaceholder }}"
+        errorMessage="{{ phoneErrorMessage }}"
+        bind:change="onPhoneChange"
+      />
+    </van-cell-group>
+    <view class="button">
+      <van-button size="large" type="primary" bind:click="onClickRegister" disabled="{{ isRegisterButtonDisabled }}">确认注册</van-button>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import MyNavBar from '../components/mynavbar'
+
+  var phone_reg = /^[1](([3][0-9])|([4][5-9])|([5][0-3,5-9])|([6][5,6])|([7][0-8])|([8][0-9])|([9][1,8,9]))[0-9]{8}$/;
+  var email_reg = /^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/;
+  var studentId_reg = /^[0-9]{8,8}$/;
+
+  export default class Register extends wepy.page {
+    data = {
+      studentId: "",
+      studentIdErrorMessage: "",
+      studentIdPlaceholder: "请输入学号",
+
+      password: "",
+      passwordErrorMessage: "",
+      passwordPlaceholder: "请输入密码",
+
+      passwordAgain: "",
+      passwordAgainPlaceholder: "请再次输入密码",
+      passwordAgainErrorMessage: "",
+
+      username: "",
+      usernameErrorMessage: "",
+      usernamePlaceholder: "请输入昵称",
+
+      school: "",
+      schoolErrorMessage: "",
+      schoolPlaceholder: "请输入学院名称",
+
+      major: "",
+      majorErrorMessage: "",
+      majorPlaceholder: "请输入专业名称",
+
+      email: "",
+      emailErrorMessage: "",
+      emailPlaceholder: "请输入邮箱",
+
+      phone: "",
+      phoneErrorMessage: "",
+      phonePlaceholder: "请输入手机号码",
+
+      isLoginButtonDisabled: false,
+      isLogining: false,
+      isRegisterButtonDisabled: false
+    }
+
+    components = {
+      mynavbar: MyNavBar
+    }
+
+    methods = {
+      onStudentIdChange(e) {
+        this.studentId = e.detail;
+      },
+
+      onPasswordChange(e) {
+        this.password = e.detail;
+      },
+
+      onPasswordAgainChange(e) {
+        this.passwordAgain = e.detail;
+      },
+
+      onUsernameChange(e) {
+        this.username = e.detail;
+      },
+
+      onSchoolChange(e) {
+        this.school = e.detail;
+      },
+
+      onMajorChange(e) {
+        this.major = e.detail;
+      },
+
+      onEmailChange(e) {
+        this.email = e.detail;
+      },
+
+      onPhoneChange(e) {
+        this.phone = e.detail;
+      },
+
+      onClickRegister() {
+        // 检查学号
+        var isEverythingGood = true;
+        if (this.studentId.length == 0) {
+          this.studentIdErrorMessage = "学号不能为空";
+          isEverythingGood = false;
+        } else if (!studentId_reg.test(this.studentId)) {
+          this.studentIdErrorMessage = "学号格式错误";
+          isEverythingGood = false;
+        } else {
+          this.studentIdErrorMessage = "";
+        }
+
+        //检查密码
+        if (this.password.length == 0) {
+          this.passwordErrorMessage = "密码不能为空";
+          isEverythingGood = false;
+        } else {
+          this.passwordErrorMessage = "";
+        }
+
+        //检查重复密码
+        if (this.passwordAgain != this.password) {
+          this.passwordAgainErrorMessage = "密码不一致";
+          isEverythingGood = false;
+        } else {
+          this.passwordAgainErrorMessage = "";
+        }
+
+        //检查邮箱
+        if (!this.email.length == 0 && !email_reg.test(this.email)) {
+          this.emailErrorMessage = "输入的邮箱格式错误";
+          isEverythingGood = false;
+        } else {
+          this.emailErrorMessage = "";
+        }
+
+        //检查手机号码
+        if (!this.phone.length == 0 && !phone_reg.test(this.phone)) {
+          this.phoneErrorMessage = "输入的手机号码格式错误";
+          isEverythingGood = false;
+        } else {
+          this.phoneErrorMessage = "";
+        }
+
+        //只有所有检查通过才向后端提交信息
+        if (isEverythingGood) {
+          wepy.navigateBack();
+          return;
+        }
+      }
+    }
+
+    onLoad(options) {
+
+    }
+  }
+</script>

@@ -22,6 +22,8 @@ setStore(store)
 export default class extends wepy.app {
   config = {
     pages: [
+      'pages/login',
+      'pages/register',
       'pages/mainPage',
       'pages/createQuery',
       'pages/taskDetail',
