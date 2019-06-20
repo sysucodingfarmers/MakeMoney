@@ -87,7 +87,7 @@
       />
     </van-cell-group>
     <view class="button">
-      <van-button size="large" type="primary" bind:click="onClickRegister" disabled="{{ isRegisterButtonDisabled }}">确认注册</van-button>
+      <van-button size="large" type="info" bind:click="onClickRegister" disabled="{{ isRegisterButtonDisabled }}">确认注册</van-button>
     </view>
   </view>
 </template>
