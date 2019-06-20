@@ -210,6 +210,117 @@ def search_by_sponsor():
 
     return json_false
 
+#按标题内容进行模糊搜索
+'''
+接受一个包含'key_word'属性的json 'key_word':key_word
+根据key_word对任务标题进行模糊匹配
+返回符合条件所有任务的id
+如果没有则返回 json_false
+
+返回json的
+{'task_number': 2
+'task_id':[1,2]
+}
+'''
+@app.route('/search/title_key_word', methods=['GET', 'POST'])
+def search_by_sponsor():
+    if request.method == 'POST':
+        json_data = json.loads(request.data)
+        if 'key_word' in json_data:
+            key = '%' + json_data['key_word'] + '%'
+            task_list = Task.query.filter_by(Task.title.like(key))
+        else:
+            print('no match result')
+            return json_false
+
+        #正确查询之后返回json
+        data = {'task_number':len(task_list), 'task_id':[]}
+        for task in task_list:
+            data['task_id'].append(task.id)
+        return json.dumps(data, sort_keys=False)
+
+    return json_false
+
+
+#按任务详情进行模糊搜索
+'''
+接受一个包含'key_word'属性的json 'key_word':key_word
+根据key_word对任务详情进行模糊匹配
+返回符合条件所有任务的id
+如果没有则返回 json_false
+
+返回json的
+{'task_number': 2
+'task_id':[1,2]
+}
+'''
+@app.route('/search/detail_key_word', methods=['GET', 'POST'])
+def search_by_sponsor():
+    if request.method == 'POST':
+        json_data = json.loads(request.data)
+        if 'key_word' in json_data:
+            key = '%' + json_data['key_word'] + '%'
+            task_list = Task.query.filter_by(Task.detail.like(key))
+        else:
+            print('no match result')
+            return json_false
+
+        #正确查询之后返回json
+        data = {'task_number':len(task_list), 'task_id':[]}
+        for task in task_list:
+            data['task_id'].append(task.id)
+        return json.dumps(data, sort_keys=False)
+
+    return json_false
+
+
+#按指定id查询任务
+'''
+接收一个包含'task_id'属性的json
+返回对应task的详情
+'''
+@app.route('/search/task_id', method=['GET', 'POST'])
+def getTask_by_id():
+    if request.method == 'POST':
+        json_data = json.loads(request.data)
+        if 'task_id' in json_data:
+            task = Task.query.filter_by(id=json_data['task_id']).first()
+            data = {'id':task.id, 'title':task.title, 'type':task.type,
+                    'start_time':task.start_time, 'end_time':task.end_time,
+                    'pay':task.pay, 'detail':task.detail, 'receiver_limit':task.receiver_limit,
+                    'received_number':task.received_number, 'finished_number':task.finished_number,
+                    'extra_content':task.extra_content, 'sponsor_id':task.sponsor.id,
+                    'sponsor':task.sponsor.name, 'template_id':task.template.id}
+            receivers_id = []
+            for rec in task.receivers:
+                receivers_id.append(rec.id)
+            data['receivers'] = receivers_id
+            return json.dumps(data, sort_keys=False)
+
+        else:
+            print('no task_id')
+            return json_false
+
+    return json_false
+
+
+#按id查询用户
+'''
+接收一个包含‘user_id’属性的json
+返回对应的用户详情的json
+'''
+@app.route('/search/user_id', method=['GET', 'POST'])
+def getUser_by_id():
+    if request.method == 'POST':
+        json_data = json.loads(request.data)
+        if 'user_id' in json_data:
+            user = User.query.filter_by(id=json_data['user_id']).first()
+            data = {'id':user.id, 'username':user.username, 'email':user.email, 'school':user.school,
+                    'major':user.major, 'phone':user.phone, 'wx_number':user.wx_number, 'hobbit':user.hobbit}
+
+            return json.dumps(data, sort_keys=False)
+        return json_false
+    return json_false
 
 #测试
 @app.route('/test', methods=['POST'])
