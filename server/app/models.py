@@ -33,7 +33,7 @@ class User(UserMixin, db.Model):
 	#微信号
 	wx_number = db.Column(db.String(20))
 	#兴趣爱好
-	hobbit = db.Column(db.String(100))
+	hobit = db.Column(db.String(100))
 
 	def set_password(self, password):
 		self.password_hash = generate_password_hash(password)
@@ -109,7 +109,6 @@ class Task(db.Model):
 	#任务接受者
 	receivers = db.relationship('Receiver', secondary=receivers, lazy='subquery',
 		backref=db.backref('receive_tasks', lazy=True))
-
 
 	#问卷模板
 	template_id = db.Column(db.Integer, db.ForeignKey('template.id'))

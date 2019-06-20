@@ -12,6 +12,18 @@ VantComponent({
         color: {
             type: String,
             value: '#c9c9c9'
+        },
+        hide: {
+            type: Boolean,
+            value: false
+        },
+        opacity: {
+            type: String,
+            value: "1"
+        },
+        hide: {
+            type: Boolean,
+            value: false
         }
     }
 });
