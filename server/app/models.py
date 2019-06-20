@@ -32,7 +32,7 @@ class User(UserMixin, db.Model):
 	phone = db.Column(db.Integer)
 	#微信号
 	wx_number = db.Column(db.String(20))
-	#兴趣爱好
+	#兴趣爱好(修改了变量名，从hobit改为hobbit)
 	hobbit = db.Column(db.String(100))
 
 	def set_password(self, password):

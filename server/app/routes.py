@@ -307,7 +307,7 @@ def getTask_by_id():
 #按id查询用户
 '''
 接收一个包含‘user_id’属性的json
-返回对应的用户详情
+返回对应的用户详情的json
 '''
 @app.route('/search/user_id', method=['GET', 'POST'])
 def getUser_by_id():
