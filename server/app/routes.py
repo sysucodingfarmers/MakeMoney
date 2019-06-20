@@ -279,7 +279,7 @@ def search_by_detail():
 接收一个包含'task_id'属性的json
 返回对应task的详情
 '''
-@app.route('/search/task_id', method=['GET', 'POST'])
+@app.route('/search/task_id', methods=['GET', 'POST'])
 def getTask_by_id():
     if request.method == 'POST':
         json_data = json.loads(request.data)
@@ -309,7 +309,7 @@ def getTask_by_id():
 接收一个包含‘user_id’属性的json
 返回对应的用户详情的json
 '''
-@app.route('/search/user_id', method=['GET', 'POST'])
+@app.route('/search/user_id', methods=['GET', 'POST'])
 def getUser_by_id():
     if request.method == 'POST':
         json_data = json.loads(request.data)
