@@ -73,8 +73,7 @@ export default class extends wepy.app {
       'van-tag': '../components/van/tag/index',
       'van-dialog': '../components/van/dialog/index',
       'van-loading': '../components/van/loading/index',
-      'van-toast': '../components/van/toast/index',
-      'x-scroll-view': '../components/xing/x-scroll-view'
+      'van-toast': '../components/van/toast/index'
     },
     tabBar: {
       backgroundColor: '#fff',

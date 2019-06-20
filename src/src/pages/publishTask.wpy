@@ -183,12 +183,14 @@
       </van-popup>
     </view>
   </view>
+  <van-dialog id="van-dialog" />
 </template>
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
   import caculateDate from '../data/CaculateDate'
   import TasksData from '../data/TempTaskData'
+  import Dialog from '../components/van/dialog/dialog'
 
   export default class PublishTask extends wepy.page {
     components = {
@@ -366,9 +368,9 @@
       //删除上传的图片
       deleteImage(index) {
         var that = this;
-        wepy.showModal({
+        Dialog.confirm({
           title: '是否删除',
-          content: '删除将无法复原'
+          message: '删除就无法回复'
         }).then(res => {
           if (res.confirm) {
             that.images.splice(index,1);
@@ -412,9 +414,9 @@
         //判断问卷任务是否为空
         if (this.taskInfo.type === '问卷调查' && this.taskInfo.extra_content.query.length === 0) {
           canSubmmit = false;
-          wepy.showModal({
+          Dialog.alert({
             title: '错误',
-            content: '问卷为空'
+            message: '问卷为空'
           });
         }
         //提交任务并关闭页面

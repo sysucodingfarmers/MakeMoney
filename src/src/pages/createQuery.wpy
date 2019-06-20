@@ -112,11 +112,13 @@
       <fabbutton :len.sync="len"></fabbutton>
     </view>
   </view>
+  <van-dialog id="van-dialog" />
 </template>
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
   import FabButton from '../components/fabButton'
+  import Dialog from '../components/van/dialog/dialog'
 
   export default class CreateQuery extends wepy.page {
     components = {
@@ -136,24 +138,19 @@
     methods = {
       //删除问卷问题
       DeleteQuery(idx) {
-        var that = this;
-        wepy.showModal({
+        // var that = this;
+        Dialog.confirm({
           title: '是否删除',
-          content: '删除将无法复原'
-        }).then(res => {
-          if (res.confirm) {
-            that.query.splice(idx,1);
-            var new_id = 0;
-            that.query.forEach(item=>{
-              item.id = new_id;
-              new_id++;
-            });
-            that.len--;
-            that.$apply();
-          }
-          else {
-            console.log("用户取消删除");
-          }
+          message: '删除就无法回复'
+        }).then(() => {
+          this.query.splice(idx,1);
+          var new_id = 0;
+          this.query.forEach(item=>{
+            item.id = new_id;
+            new_id++;
+          });
+          this.len--;
+          this.$apply();
         });
       },
       //编辑题目
