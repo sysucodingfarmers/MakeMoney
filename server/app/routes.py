@@ -223,7 +223,7 @@ def search_by_sponsor():
 }
 '''
 @app.route('/search/title_key_word', methods=['GET', 'POST'])
-def search_by_sponsor():
+def search_by_title():
     if request.method == 'POST':
         json_data = json.loads(request.data)
         if 'key_word' in json_data:
@@ -255,7 +255,7 @@ def search_by_sponsor():
 }
 '''
 @app.route('/search/detail_key_word', methods=['GET', 'POST'])
-def search_by_sponsor():
+def search_by_detail():
     if request.method == 'POST':
         json_data = json.loads(request.data)
         if 'key_word' in json_data:
