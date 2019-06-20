@@ -117,10 +117,12 @@
       </van-popup>
     </view>
   </view>
+  <van-dialog id="van-dialog" />
 </template>
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
+  import Dialog from '../components/van/dialog/dialog'
 
   export default class EditQuery extends wepy.page {
     data = {
@@ -146,18 +148,13 @@
       },
       //删除选项
       DeleteOption(idx) {
-        var that = this;
-        wepy.showModal({
+        // var that = this;
+        Dialog.confirm({
           title: '是否删除',
-          content: '删除将无法复原'
-        }).then(res => {
-          if (res.confirm) {
-            that.query.content.option.splice(idx,1);
-            that.$apply();
-          }
-          else {
-            console.log("用户取消删除");
-          }
+          message: '删除就无法回复'
+        }).then(() => {
+          this.query.content.option.splice(idx,1);
+          this.$apply();
         });
       },
       //添加选项
@@ -188,16 +185,16 @@
         if (this.query.type === '单选题' || this.query.type === '多选题') {
           if (this.query.content.option.length === 0) {
             canSubbmit = false;
-            wepy.showModal({
+            Dialog.alert({
               title: '错误',
-              content: '选项为空'
+              message: '选择为空'
             });
           }
           else if (this.query.content.option.length === 1) {
             canSubbmit = false;
-            wepy.showModal({
+            Dialog.alert({
               title: '错误',
-              content: '选项至少2项'
+              message: '选择至少2项'
             });
           }
           else {
