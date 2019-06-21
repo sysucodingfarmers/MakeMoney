@@ -36,7 +36,7 @@ def register():
 		major = json_data['major'] if 'major' in json_data else None, 
 		phone = json_data['phone'] if 'phone' in json_data else None, 
 		wx_number = json_data['wx_number'] if 'wx_number' in json_data else None, 
-		hobit = json_data['hobit'] if 'hobit' in json_data else None
+		hobbit = json_data['hobbit'] if 'hobbit' in json_data else None
 		)
 	user.set_password(json_data['password'])
 	db.session.add(user)
