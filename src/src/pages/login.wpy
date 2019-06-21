@@ -26,17 +26,20 @@
       />
     </van-cell-group>
     <view class="button">
-      <van-button size="large" type="info" bind:click="onClickLogin" disabled="{{ isLoginButtonDisabled }}" loading-text="登录中..." loading="{{ isLogining }}">登录</van-button>
+      <van-button size="large" type="info" bind:click="onClickLogin">登录</van-button>
     </view>
     <view class="button">
-      <van-button size="large" plain type="info" bind:click="onClickRegister" disabled="{{ isRegisterButtonDisabled }}">注册</van-button>
+      <van-button size="large" plain type="info" bind:click="onClickRegister">注册</van-button>
     </view>
+    <van-toast id="van-toast"></van-toast>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
+  import Toast from '../components/van/toast/toast'
+  import userInfo from '../data/userInfo'
 
   var phone_reg = /^[1](([3][0-9])|([4][5-9])|([5][0-3,5-9])|([6][5,6])|([7][0-8])|([8][0-9])|([9][1,8,9]))[0-9]{8}$/;
   var email_reg = /^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/;
@@ -50,9 +53,7 @@
       password: "",
       passwordErrorMessage: "",
       passwordPlaceholder: "请输入密码",
-      isLoginButtonDisabled: false,
-      isLogining: false,
-      isRegisterButtonDisabled: false
+      userinfo: {}
     }
 
     components = {
@@ -60,8 +61,6 @@
     }
 
     methods = {
-      onClickIcon() {},
-
       onStudentIdChange(e) {
         this.studentId = e.detail;
       },
@@ -71,38 +70,75 @@
       },
 
       onClickLogin() {
+        var isEverythingGood = true;
         // 检查学号是否为空
-        var isStudentIdGood = false;
         if (this.studentId.length == 0) {
           this.studentIdErrorMessage = "学号不能为空";
-          isStudentIdGood = false;
+          isEverythingGood = false;
         } else if (!studentId_reg.test(this.studentId)) {
           this.studentIdErrorMessage = "学号格式错误";
-          isStudentIdGood = false;
+          isEverythingGood = false;
         } else {
           this.studentIdErrorMessage = "";
-          isStudentIdGood = true;
         }
 
         //检查密码是否为空
-        var isPasswordGood = false;
         if (this.password.length == 0) {
           this.passwordErrorMessage = "密码不能为空";
-          isPasswordGood = false;
+          isEverythingGood = false;
         } else {
           this.passwordErrorMessage = "";
-          isPasswordGood = true;
         }
 
-        //只有检查通过才向后端提交用户名密码
-        if (!isStudentIdGood || !isPasswordGood) {
+        //只有检查通过才向后端提交学号密码
+        if (!isEverythingGood) {
           return;
         }
 
         // 将学号和密码交给后端检验, 期间所有按钮不可用
-        this.isLoginButtonDisabled = true;
-        this.isLogining = true;
-        this.isRegisterButtonDisabled = true;
+        console.log('logining...');
+        Toast.loading({
+          mask: true,
+          message: '登录中...',
+          duration: 0
+        });
+
+        console.log(this.$parent);
+
+        var that = this;
+        function fun (res) {
+          console.log(res);
+          Toast.clear();
+          if (res.data.id == undefined || res.data.id == null) {
+            Toast('登录失败');
+          } else {
+            Toast('登录成功');
+            that.$parent.globalData.userInfo.username = res.data.username;
+            that.$parent.globalData.userInfo.id = res.data.id;
+            that.$parent.globalData.userInfo.email = res.data.email;
+            that.$parent.globalData.userInfo.phone = res.data.phone;
+            that.$parent.globalData.userInfo.school = res.data.school;
+            that.$parent.globalData.userInfo.major = res.data.major;
+            wx.switchTab({
+              url:'./mainPage'
+            });
+          }
+        }
+
+        wx.request({
+          url: 'http://193.112.103.238:5050/login',
+          //url: 'http://127.0.0.1:5050/login',
+          method: 'POST',
+          data: {
+            id: this.studentId,
+            password: this.password
+          },
+          header: {
+            'content-type': 'application/json'
+          },
+          complete: fun
+        });
+
       },
 
       onClickRegister() {
@@ -111,7 +147,10 @@
     }
 
     onLoad(options) {
-
+      if (this.$parent.globalData.userInfo == undefined) {
+        this.$parent.globalData.userInfo = {};
+      }
+      console.log(this);
     }
   }
 </script>
