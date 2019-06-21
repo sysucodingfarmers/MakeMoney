@@ -87,22 +87,24 @@ def sponsor_task():
 			json_data = json.loads(request.data)
 			if (Task.query.filter_by(id=json_data['id']).first() != None):
 				print('existed')
-			task = Task(id = json_data['id'],
-				title = json_data['title'],
-				sponsor = current_user,
-				type = json_data['type'] if 'type' in json_data else 'query', 
+				return json_false
+			else:
+				task = Task(id = json_data['id'],
+					title = json_data['title'],
+					sponsor = current_user,
+					type = json_data['type'] if 'type' in json_data else 'query', 
 				# start_time = json_data['start_time'] if 'start_time' in json_data else None, 
 				# end_time = json_data['end_time'] if 'end_time' in json_data else None, 
-				pay = json_data['pay'] if 'pay' in json_data else 0, 
-				detail = json_data['detail'] if 'detail' in json_data else None, 
-				receiver_limit = json_data['receiver_limit'] if 'receiver_limit' in json_data else 1, 
-				received_number = json_data['received_number'] if 'received_number' in json_data else 0, 
-				extra_content = json_data['extra_content'] if 'extra_content' in json_data else None, 
-				)
-			db.session.add(task)
-			db.session.commit()
-			return json_true
-	return json_true
+					pay = json_data['pay'] if 'pay' in json_data else 0, 
+					detail = json_data['detail'] if 'detail' in json_data else None, 
+					receiver_limit = json_data['receiver_limit'] if 'receiver_limit' in json_data else 1, 
+					received_number = json_data['received_number'] if 'received_number' in json_data else 0, 
+					extra_content = json_data['extra_content'] if 'extra_content' in json_data else None, 
+					)
+				db.session.add(task)
+				db.session.commit()
+				return json_true
+	return json_false
 
 '''
 接受任务(需登录）:
@@ -119,7 +121,7 @@ def receive_task():
 			# print(task)
 			receiver = Receiver.query.filter_by(id=current_user.id).first()
 			if(receiver==None):
-				receiver = Receiver()
+				receiver = Receiver(json_data['id'])
 			print(len(task.receivers))
 			#判断人数限制是否已经达到
 			if task.receiver_limit <= len(task.receivers):
@@ -135,7 +137,7 @@ def receive_task():
 			print(task.receivers)
 			db.session.commit()
 			return json_true
-	return json_true
+	return json_false
 
 '''
 查看发布的任务（无需登录）返回task id:
@@ -155,7 +157,7 @@ def my_sponsor_task():
 			print('query error!')
 			return json_false
 		#返回
-		data = [{'task number':len(user.sponsor_tasks)}]
+		data = [{'task_number':len(user.sponsor_tasks)}]
 		i = 1
 		for task in user.sponsor_tasks:
 			# now = [{}]
@@ -165,22 +167,46 @@ def my_sponsor_task():
 			data[0][str(i)] = now
 			i = i+1
 		return json.dumps(data[0] , sort_keys=False)
-	return json_true
+	return json_false
 
-#查看接受的任务
+# 查看接受的任务
+
+
 @app.route('/task/myreceive', methods=['GET', 'POST'])
 def my_receive_task():
-	return json_true
-# #根据用户爱好推荐
-# @app.route('/recommend', methods=['POST'])
-# def recommend():
+	if request.method == 'POST':
+		json_data = json.loads(request.data)
+		if 'id' in json_data:
+			receiver = Receiver.query.filter_by(id=json_data['id']).all()
+		#返回
+		data = {'task_number': len(receiver), 'task_id': []}
+		for rec in receiver:
+			data['task_id'].append(rec.tid);
+		return json.dumps(data, sort_keys=False)
+	return json_false
+
+
+
+
+
+# 任务广场的推荐
+@app.route('/recommend', methods=['POST'])
+def recommend():
+	if request.method == 'POST':
+		task_list = Task.query.order_by(-Task.received_number).all()
+		data = {"task_number":len(task_list), "task_id": []}
+		for task in task_list:
+			data['task_id'].append(task.id)
+		return json.dumps(data, sort_keys=False)
+	return json_false
+
 
 # #查询
 # @app.route('/require', methods=['POST'])
 # def require():
 
 
-#按发布者用户名进行搜索任务
+# 按发布者用户名进行搜索任务
 '''
 接受一个包含'sponsor'属性的json 'sponsor':sponsor_name
 查询指定的sponsor发起的任务
@@ -192,23 +218,25 @@ def my_receive_task():
 'task_id':[1,2]
 }
 '''
+
+
 @app.route('/search/sponsor', methods=['GET', 'POST'])
 def search_by_sponsor():
-    if request.method == 'POST':
-        json_data = json.loads(request.data)
-        if 'sponsor' in json_data:
-            task_list = Task.query.filter_by(sponsor=json_data['sponsor'])
-        else:
-            print('no match result')
-            return json_false
+	if request.method == 'POST':
+		json_data = json.loads(request.data)
+		if 'sponsor' in json_data:
+			task_list = Task.query.filter_by(sponsor=json_data['sponsor'])
+		else:
+			print('no match result')
+			return json_false
 
-        #正确查询之后返回json
-        data = {'task_number':len(task_list), 'task_id':[]}
-        for task in task_list:
-            data['task_id'].append(task.id)
-        return json.dumps(data, sort_keys=False)
+		#正确查询之后返回json
+		data = {'task_number':len(task_list), 'task_id':[]}
+		for task in task_list:
+			data['task_id'].append(task.id)
+		return json.dumps(data, sort_keys=False)
 
-    return json_false
+	return json_false
 
 #按标题内容进行模糊搜索
 '''
@@ -222,6 +250,8 @@ def search_by_sponsor():
 'task_id':[1,2]
 }
 '''
+
+
 @app.route('/search/title_key_word', methods=['GET', 'POST'])
 def search_by_title():
     if request.method == 'POST':
@@ -279,6 +309,8 @@ def search_by_detail():
 接收一个包含'task_id'属性的json
 返回对应task的详情
 '''
+
+
 @app.route('/search/task_id', methods=['GET', 'POST'])
 def getTask_by_id():
     if request.method == 'POST':
@@ -304,11 +336,13 @@ def getTask_by_id():
     return json_false
 
 
-#按id查询用户
+# 按id查询用户
 '''
 接收一个包含‘user_id’属性的json
 返回对应的用户详情的json
 '''
+
+
 @app.route('/search/user_id', methods=['GET', 'POST'])
 def getUser_by_id():
     if request.method == 'POST':
@@ -322,7 +356,7 @@ def getUser_by_id():
         return json_false
     return json_false
 
-#测试
+# 测试
 @app.route('/test', methods=['POST'])
 def test():
 	#查询
