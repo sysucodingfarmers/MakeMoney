@@ -459,7 +459,7 @@ def task_quit():
 
 				Receiver.query.filter_by(uid=json_data['user_id'], tid=json_data['task_id']).first().delete()
 
-				db.seesion.commit()
+				db.session.commit()
 				return json_true
 
 			return json_false
