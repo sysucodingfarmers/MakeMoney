@@ -41,8 +41,8 @@
           // 应该进入登录界面
           // .......
 
-          this.$parent.globalData.userInfo = userInfo;
-          this.userinfo = userInfo;
+          // this.$parent.globalData.userInfo = userInfo;
+          // this.userinfo = userInfo;
           // var user = {
           //   id: 100,
           //   username: '陈咏强',
@@ -53,6 +53,9 @@
           //   password: 'cai'
           // }
           this.islogin = true;
+          wx.navigateTo({
+            url: 'login'
+          })
           // wx.request({
           //   url: 'http://193.112.103.238:5050/login',
           //   data: user,

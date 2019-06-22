@@ -138,7 +138,6 @@
     methods = {
       //删除问卷问题
       DeleteQuery(idx) {
-        // var that = this;
         Dialog.confirm({
           title: '是否删除',
           message: '删除就无法回复'
@@ -162,8 +161,6 @@
       },
       //提交数据
       subbmit() {
-        //数据库JSON
-        var query = JSON.stringify(this.query);
         //将数据返回发布任务
         var that = this;
         var pages = getCurrentPages();
@@ -177,12 +174,14 @@
       }
     }
     events = {}
+    //接受task页面提供的query
     onLoad(options) {
       console.log("CreateQuery onload");
       var query = JSON.parse(options.query);
       this.query = query;
       this.len = query.length;
     }
+    //接受query中问题的修改
     onShow() {
       var pages = getCurrentPages();
       var currPage = pages[pages.length - 1];   //当前页面

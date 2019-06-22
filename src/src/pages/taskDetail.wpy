@@ -77,7 +77,8 @@
       finishRate: 0,
       finish: [],
       id: 0,
-      query: []
+      query: [],
+      canEditQuery: true
     }
     components = {
       mynavbar: MyNavBar
@@ -88,7 +89,7 @@
         var query = JSON.stringify(this.taskInfo.extra_content.query);
         var finish = JSON.stringify(this.finish);
         wepy.navigateTo({
-          url: 'queryDetail?query=' + query + "&fRate=" + this.finishRate + '&finish=' + finish
+          url: 'queryDetail?query=' + query + "&fRate=" + this.finishRate + '&finish=' + finish + '&canEditQuery=' + this.canEditQuery
         });
       },
       LeftSubbmit() {
@@ -193,6 +194,10 @@
       this.button_right = buttons[1];
       this.taskInfo = TasksData.data.tasks[id];
 
+      if (this.button_left == '修改') {
+        this.canEditQuery = false;
+      }
+
       var content = "任务详情： \n任务id为" + String(id) + '\n接收到的button为' + this.button_left + '&' + this.button_right;
       console.log(content); 
 
@@ -203,7 +208,9 @@
       console.log("taskDetail onShow");
       var pages = getCurrentPages();
       var currPage = pages[pages.length - 1];   //当前页面
-      if (currPage.data.query.length != 0) {
+      this.canEditQuery = currPage.data.canEditQuery;
+      console.log(this.canEditQuery);
+      if (currPage.data.query.length != 0 && this.canEditQuery) {
         this.taskInfo.extra_content.query = currPage.data.query;
         this.finish = currPage.data.finish;
         this.finishRate = Number(currPage.data.finishRate);
