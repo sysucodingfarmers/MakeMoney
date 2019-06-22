@@ -106,7 +106,7 @@ def sponsor_task():
 				task.template.single_choices.options = json_data['single_choices_options']
 				task.template.multiple_choices.question = json_data['multiple_choices_question']
 				task.template.multiple_choices.options = json_data['multiple_choices_options']
-				task.template.essay.quetion = json_data['essay_question']
+				task.template.essay_questions.question = json_data['essay_questions']
 
 				db.session.add(task)
 				db.session.commit()
@@ -383,7 +383,7 @@ def getTemplate_by_id():
 					'single_choices_options': template.single_choices.options,
 					'multiple_choices_question': template.multiple_choices.question,
 					'multiple_choices_options': template.multiple_choices.options,
-					'essay_question': template.essay_questions.question
+					'essay_questions': template.essay_questions.question
 					}
 
 			return json.dumps(data, sort_keys=False)
@@ -407,7 +407,7 @@ def getAnswer_by_id():
 
 				data = {'single_choices_options': ans['single_choices_options'],
 						'multiple_choices_options': ans['multiple_choices_options'],
-						'essay_answer': ans['essay_answer']}
+						'essay_answers': ans['essay_answers']}
 				return json.dumps(data, sort_keys=False)
 
 			return json_false
@@ -429,7 +429,7 @@ def summit_answer():
 
 				rec.answers.answers = {'single_choices_options': json_data['single_choices_options'],
 					   'multiple_choices_options': json_data['multiple_choices_options'],
-					   'essay_answer': json_data['essay_answer']
+					   'essay_answers': json_data['essay_answers']
 					   }
 				return json_true
 
@@ -459,7 +459,7 @@ def task_quit():
 
 				Receiver.query.filter_by(uid=json_data['user_id'], tid=json_data['task_id']).first().delete()
 
-				db.commit()
+				db.seesion.commit()
 				return json_true
 
 			return json_false
@@ -485,7 +485,7 @@ def task_quit():
 
 				Task.query.filter_by(id=json_data['task_id']).first().delete()
 
-				db.commit()
+				db.session.commit()
 				return json_true
 
 			return json_false

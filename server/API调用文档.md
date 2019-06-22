@@ -71,7 +71,7 @@ json_false = json.dumps('failed')
     'single_choices_options': [[], [], .. []]
     'multiple_choices_question': []
     'multiple_choices_options': [[], [], ..., []]
-    'essay_question': []}
+    'essay_questions': []}
 - 注册成功返回json_true, 失败则返回json_false
 
 -----
@@ -96,8 +96,7 @@ json_false = json.dumps('failed')
 
 - 查询失败返回json_false
 - 查询成功返回如下json：{'task_number':
-					'task_id':[]}
-  
+  				'task_id':[]}
 -----
 查看接收的任务API 
 
@@ -240,7 +239,7 @@ json_false = json.dumps('failed')
     'single_choices_options':[[],[],...,[]],
     'mutiple_choices_question':[],
     'multiple_choices_options':[[],[],...,[]],
-    'essay_question':[]
+    'essay_questions':[]
     }
 
 -----
@@ -253,7 +252,7 @@ json_false = json.dumps('failed')
     'task_id': 接收的任务的task id
     'single_choices_options':[[],[],...,[]]，
     'multiple_choices_options':[[],[],...,[]],
-    ‘essay_answer’:[]
+    ‘essay_answers’:[]
 }
 - 成功提交返回json_true，失败返回json_false
 
@@ -271,7 +270,7 @@ json_false = json.dumps('failed')
 -{
     'single_choices_options':[[], [], ..., []]
     'mutiple_choices_options':[[], [], ..., []]
-    'essay_answer':[]
+    'essay_answers':[]
 }
 
 ---
