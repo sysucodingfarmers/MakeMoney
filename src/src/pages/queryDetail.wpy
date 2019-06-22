@@ -168,7 +168,8 @@
     data = {
       query: [],
       finish: [],
-      finish_rate: 0
+      finish_rate: 0,
+      canEditQuery: true
     }
     components = {
       mynavbar: MyNavBar
@@ -289,10 +290,13 @@
       var query = JSON.parse(options.query);
       var fRate = JSON.parse(options.fRate);
       var finish = JSON.parse(options.finish);
+      var canEditQuery = JSON.parse(options.canEditQuery);
       this.query = query;
       this.finish_rate = fRate;
       this.finish = finish;
+      this.canEditQuery = canEditQuery;
       this.$apply();
+      console.log(this.canEditQuery);
       // console.log(this.query);
       // console.log(this.finish_rate);
       console.log("end");
