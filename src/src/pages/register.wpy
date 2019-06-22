@@ -33,7 +33,7 @@
         required
         clearable
         type="password"
-        label="再次输入密码"
+        label="确认密码"
         placeholder="{{ passwordAgainPlaceholder }}"
         errorMessage="{{ passwordAgainErrorMessage }}"
         bind:change="onPasswordAgainChange"
@@ -91,12 +91,14 @@
     </view>
     <van-toast id="van-toast"></van-toast>
   </view>
+  <van-dialog id='van-dialog' />
 </template>
 
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
   import Toast from '../components/van/toast/toast';
+  import Dialog from '../components/van/dialog/dialog'
 
   var phone_reg = /^[1](([3][0-9])|([4][5-9])|([5][0-3,5-9])|([6][5,6])|([7][0-8])|([8][0-9])|([9][1,8,9]))[0-9]{8}$/;
   var email_reg = /^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/;
@@ -231,7 +233,7 @@
           message: '注册中...',
           duration: 0
         });
-
+        var _this = this
         wx.request({
           url: 'http://makemoney.ink:5050/register',
           method: 'POST',
@@ -249,10 +251,18 @@
             'content-type': 'application/json'
           },
           complete: function (res) {
-            console.log(res);
-            Toast.clear();
             if (res.data == 'succeed') {
-              Toast('注册成功');
+              // Toast('注册成功');
+              Dialog.alert({
+                title: "注册成功",
+                message: "是否前去登录？"
+              }).then(() => {
+                _this.$parent.globalData.loginData.studentId = _this.studentId
+                _this.$parent.globalData.loginData.password = _this.password
+                wx.navigateBack({
+                  delta: 1
+                })
+              })
             } else {
               Toast('注册失败');
             }
@@ -262,7 +272,14 @@
     }
 
     onLoad(options) {
-
+      var pages = getCurrentPages();
+      var prepage = pages[pages.length - 2]
+      console.log("prepage")
+      console.log(prepage)
+      console.log("data")
+      console.log(prepage.__data__)
+      console.log("studentId")
+      console.log("studentId: " + prepage.__data__.studentId)
     }
   }
 </script>

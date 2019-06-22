@@ -191,6 +191,16 @@
     }
     onLoad() {
       var _this = this
+      wx.request({
+        url: 'http://makemoney.ink:5050/recommend',
+        method: 'POST',
+        header: {
+          'content-type': 'application/json'
+        },
+        success(res) {
+          console.log(res.data);
+        }
+      });
       if (TasksData.data.tasks.length < 5) {
         this.tasks = TasksData.data.tasks;
         this.dataIndex = TasksData.data.tasks.length;

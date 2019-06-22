@@ -106,7 +106,11 @@ export default class extends wepy.app {
     myInfoUrl: 'myInfo',
     publishTaskUrl: 'publishTask',
     taskCategoryUrl: 'taskCategory',
-    myTaskUrl: 'myTask'
+    myTaskUrl: 'myTask',
+    loginData: {
+      studentId: "",
+      password: ""
+    }
   }
 
   constructor () {
