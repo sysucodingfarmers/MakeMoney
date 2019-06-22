@@ -101,6 +101,13 @@ def sponsor_task():
 					received_number = json_data['received_number'] if 'received_number' in json_data else 0, 
 					extra_content = json_data['extra_content'] if 'extra_content' in json_data else None, 
 					)
+
+				task.template.single_choices.question = json_data['single_choices_question']
+				task.template.single_choices.options = json_data['single_choices_options']
+				task.template.multiple_choices.question = json_data['multiple_choices_question']
+				task.template.multiple_choices.options = json_data['multiple_choices_options']
+				task.template.essay.quetion = json_data['essay_question']
+
 				db.session.add(task)
 				db.session.commit()
 				return json_true
@@ -121,7 +128,7 @@ def receive_task():
 			# print(task)
 			receiver = Receiver.query.filter_by(id=current_user.id).first()
 			if(receiver==None):
-				receiver = Receiver(json_data['id'])
+				receiver = Receiver(json_data['id'], current_user.id)
 			print(len(task.receivers))
 			#判断人数限制是否已经达到
 			if task.receiver_limit <= len(task.receivers):
@@ -134,7 +141,9 @@ def receive_task():
 					return json_false
 			#接收任务
 			task.receivers.append(receiver)
+			task.received_number += 1
 			print(task.receivers)
+			db.session.add(receiver)
 			db.session.commit()
 			return json_true
 	return json_false
@@ -295,7 +304,7 @@ def search_by_detail():
             print('no match result')
             return json_false
 
-        #正确查询之后返回json
+        # 正确查询之后返回json
         data = {'task_number':len(task_list), 'task_id':[]}
         for task in task_list:
             data['task_id'].append(task.id)
@@ -304,7 +313,7 @@ def search_by_detail():
     return json_false
 
 
-#按指定id查询任务
+# 按指定id查询任务
 '''
 接收一个包含'task_id'属性的json
 返回对应task的详情
@@ -355,6 +364,133 @@ def getUser_by_id():
             return json.dumps(data, sort_keys=False)
         return json_false
     return json_false
+
+
+'''
+按id查询问卷模板
+接收的json格式应包含 ‘template_id’属性
+'''
+
+
+@app.route('/search/template_id', methods=['POST'])
+def getTemplate_by_id():
+	if request.method == 'POST':
+		json_data = json.loads(request.data)
+		if 'template_id' in json_data:
+			template = Template.query.filter_by(id=json_data['template_id']).first()
+			data = {'id': template.id,
+					'single_choices_question': template.single_choices.question,
+					'single_choices_options': template.single_choices.options,
+					'multiple_choices_question': template.multiple_choices.question,
+					'multiple_choices_options': template.multiple_choices.options,
+					'essay_question': template.essay_questions.question
+					}
+
+			return json.dumps(data, sort_keys=False)
+		return json_false
+	return json_false
+
+
+'''
+根据任务接收者uid和任务id查询问卷答案
+'''
+
+
+@app.route('/search/answer', methods=['POST'])
+def getAnswer_by_id():
+	if request.method == 'POST':
+		json_data = json.loads(request.data)
+		if 'task_id' in json_data:
+			if 'user_id' in json_data:
+				rec = Receiver.query.filter_by(uid=json_data['user_id'], tid=json_data['task_id']).first()
+				ans = rec.answers.answers
+
+				data = {'single_choices_options': ans['single_choices_options'],
+						'multiple_choices_options': ans['multiple_choices_options'],
+						'essay_answer': ans['essay_answer']}
+				return json.dumps(data, sort_keys=False)
+
+			return json_false
+		return json_false
+	return json_false
+
+
+'''
+用户提交问卷答案 需要提'user_id' 'task_id'
+'''
+
+@app.route('/summit/answer')
+def summit_answer():
+	if request.method == 'POST':
+		json_data = json.loads(request.data)
+		if 'task_id' in json_data:
+			if 'user_id' in json_data:
+				rec = Receiver.query.filter_by(uid=json_data['user_id'], tid=json_data['task_id']).first()
+
+				rec.answers.answers = {'single_choices_options': json_data['single_choices_options'],
+					   'multiple_choices_options': json_data['multiple_choices_options'],
+					   'essay_answer': json_data['essay_answer']
+					   }
+				return json_true
+
+			return json_false
+		return json_false
+	return json_false
+
+
+
+'''
+退出任务
+接收 'user_id' 和 'task_id'
+'''
+@app.route('/task_quit', methods=['POST'])
+def task_quit():
+	if request.method == 'POST':
+		json_data = json.loads(request.data)
+		if 'task_id' in json_data:
+			if 'user_id' in json_data:
+				task = Task.query.filter_by(id=json_data['task_id']).first()
+				rec = Receiver.query.filter_by(uid=json_data['user_id'], tid=json_data['task_id']).first()
+
+				task.received_number -= 1
+				for current_rec in task.receivers:
+					if current_rec.uid == rec.uid:
+						task.receivers.remove(current_rec)
+
+				Receiver.query.filter_by(uid=json_data['user_id'], tid=json_data['task_id']).first().delete()
+
+				db.commit()
+				return json_true
+
+			return json_false
+		return json_false
+	return json_false
+
+
+'''
+撤销任务
+接收 'user_id' 和 'task_id'
+'''
+@app.route('/task_quit', methods=['POST'])
+def task_quit():
+	if request.method == 'POST':
+		json_data = json.loads(request.data)
+		if 'task_id' in json_data:
+			if 'user_id' in json_data:
+				task = Task.query.filter_by(id=json_data['task_id']).first()
+				if task.sponsor.id != json_data['user_id']:
+					return json_false
+
+				Receiver.query.filter_by(tid=json_data['task_id']).all().delete()
+
+				Task.query.filter_by(id=json_data['task_id']).first().delete()
+
+				db.commit()
+				return json_true
+
+			return json_false
+		return json_false
+	return json_false
 
 # 测试
 @app.route('/test', methods=['POST'])

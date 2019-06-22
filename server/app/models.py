@@ -11,10 +11,10 @@ receivers = db.Table('receivers',
     db.Column('receiver_id', db.Integer, db.ForeignKey('receiver.id'), primary_key=True)
 )
 #Answer和Task之间的多对多关系
-answers = db.Table('answers',
-    db.Column('task_id', db.Integer, db.ForeignKey('task.id'), primary_key=True),
-    db.Column('answer_id', db.Integer, db.ForeignKey('answer.id'), primary_key=True)
-)
+# answers = db.Table('answers',
+#     db.Column('task_id', db.Integer, db.ForeignKey('task.id'), primary_key=True),
+#     db.Column('answer_id', db.Integer, db.ForeignKey('answer.id'), primary_key=True)
+# )
 
 class User(UserMixin, db.Model):
 	#学号(账号)
@@ -48,16 +48,20 @@ class Receiver(db.Model):
 	只提供 继承User 一种初始化方法，如
 	receiver = Receiver(user, finished=True, paid=False)
 	'''
-	receiver_total_id = 0
-	def __init__(self, task_id):
-		Receiver.receiver_total_id += 1
+	def __init__(self, task_id, user_id):
 		self.tid = task_id
-		self.rid = Receiver.receiver_total_id
+		self.uid = user_id
 		self.finished = self.__table__.c.finished.default.arg if 'finished' not in kwargs else kwargs['finished']
 		self.paid = self.__table__.c.paid.default.arg if 'paid' not in kwargs else kwargs['paid']
-	rid = db.Column(db.Integer, nullable=False, primary_key=True)
-	id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+	id = db.Column(db.Integer, nullable=False, primary_key=True)
+	uid = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 	tid = db.Column(db.Integer, nullable=False)
+
+	# 回答
+	answers = db.relationship('Answer', secondary=answers, lazy='subquery', backref=db.backref('task', lazy=True))
+	#answer id
+	aid = db.Column(db.Integer, db.foreginKey(answers.id), nullable=True)
+
 	#该id用户的任务是否完成
 	finished = db.Column(db.Boolean, default=False)
 	#该id用户的报酬是否支付
@@ -115,9 +119,6 @@ class Task(db.Model):
 	#问卷模板
 	template_id = db.Column(db.Integer, db.ForeignKey('template.id'))
 	template = db.relationship('Template', backref=db.backref('task', lazy=False, uselist=False))
-
-	#回答
-	answers = db.relationship('Answer', secondary=answers, lazy='subquery', backref=db.backref('task', lazy=True))
 
 	#图片
 	images = db.Column(db.LargeBinary)

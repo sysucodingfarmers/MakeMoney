@@ -1,6 +1,12 @@
 ### API调用文档
 
 -----
+```python
+我们约定
+json_true = json.dumps('succeed')
+json_false = json.dumps('failed')
+```
+-----
 
 - 注册API 
 
@@ -60,9 +66,13 @@
     'detail':
     'receiver_limit':
     'received_number':
-    'extra_content':}
+    'extra_content':
+    'single_choices_question': []
+    'single_choices_options': [[], [], .. []]
+    'multiple_choices_question': []
+    'multiple_choices_options': [[], [], ..., []]
+    'essay_question': []}
 - 注册成功返回json_true, 失败则返回json_false
-
 
 -----
 接收任务API 
@@ -215,3 +225,73 @@
   ​					'hobbit':
 
   ​					}
+  
+----
+
+根据id获得问卷模板API
+- 地址: '/search/template_id'
+- 接收POST请求
+- 接收的json格式应包含 ‘templa_id’属性
+- 查询失败返回json_false
+- 查询成功返回如下json
+- {
+    'id': template_id,
+    'single_choices_question':[],
+    'single_choices_options':[[],[],...,[]],
+    'mutiple_choices_question':[],
+    'multiple_choices_options':[[],[],...,[]],
+    'essay_question':[]
+    }
+
+-----
+用户提交问卷答案API
+- 地址: '/summit/answer'
+- 接收POST请求
+- 接收的json如下
+{
+    'user_id': 任务接收者的user id，
+    'task_id': 接收的任务的task id
+    'single_choices_options':[[],[],...,[]]，
+    'multiple_choices_options':[[],[],...,[]],
+    ‘essay_answer’:[]
+}
+- 成功提交返回json_true，失败返回json_false
+
+----
+根据任务接收者uid和任务id查询问卷答案API
+- 地址：‘/search/answer’
+- 接收POST请求
+- 接收如下josn
+{
+  ‘user_id’: 
+  'task_id':
+}
+- 查询失败返回json_false
+- 查询成功返回json
+-{
+    'single_choices_options':[[], [], ..., []]
+    'mutiple_choices_options':[[], [], ..., []]
+    'essay_answer':[]
+}
+
+---
+退出任务API
+- 地址:'/task_quit'
+- 接收POST请求
+- 接收如下json
+{
+    'user_id':
+    'task_id':
+}
+- 退出成功返回json_true，失败返回json_false
+
+---
+取消任务API
+- 地址: '/task_cancel'
+- 接收POST请求
+- 接收如下json
+{
+    'user_id':
+    'task_id':
+}
+- 退出成功返回json_true, 失败返回json_false
