@@ -126,7 +126,7 @@
         }
 
         wx.request({
-          url: 'http://193.112.103.238:5050/login',
+          url: 'http://makemoney.ink:5050/login',
           //url: 'http://127.0.0.1:5050/login',
           method: 'POST',
           data: {
