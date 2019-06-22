@@ -1,4 +1,4 @@
-# -- coding:UTF-8 --
+ # -- coding:UTF-8 --
 from app import db, login
 from werkzeug.security import generate_password_hash, check_password_hash
 #用户验证用户是否登录，加入到User的继承中
@@ -49,13 +49,15 @@ class Receiver(db.Model):
 	receiver = Receiver(user, finished=True, paid=False)
 	'''
 	receiver_total_id = 0
-	def __init__(self, **kwargs):
+	def __init__(self, task_id):
 		Receiver.receiver_total_id += 1
-		self.id = Receiver.receiver_total_id
+		self.tid = task_id
+		self.rid = Receiver.receiver_total_id
 		self.finished = self.__table__.c.finished.default.arg if 'finished' not in kwargs else kwargs['finished']
 		self.paid = self.__table__.c.paid.default.arg if 'paid' not in kwargs else kwargs['paid']
 	rid = db.Column(db.Integer, nullable=False, primary_key=True)
 	id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+	tid = db.Column(db.Integer, nullable=False)
 	#该id用户的任务是否完成
 	finished = db.Column(db.Boolean, default=False)
 	#该id用户的报酬是否支付
