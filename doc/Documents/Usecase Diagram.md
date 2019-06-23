@@ -1,2 +1,2 @@
 ### Usecase Diagram  
-![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/Usecase%20Diagram.png)  
+![](https://raw.githubusercontent.com/sysucodingfarmers/MakeMoney/master/doc/Documents/pictures/new-usecase.jpg)  
