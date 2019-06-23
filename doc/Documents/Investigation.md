@@ -106,7 +106,7 @@ b）代取业务需求分析
                    
 #### （3）二者对于业务范围的共同需求调查：
 第6题：现有一款校园内的“挣零花钱”有偿互助平台，你期待在平台上看到什么样的业务？      [多选题]
-![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/Documents/pictures/8.png)     
+![](https://raw.githubusercontent.com/sysucodingfarmers/MakeMoney/master/doc/Documents/pictures/8.png)     
 分析：从该题可以看出，各种业务的需求都不低，最低的业务需求也有百分之37%以上，说明我们平台推出的业务种类应该尽可能丰富，尽可能满足广大用户的需求。            
 
 ### 4. 总结            
