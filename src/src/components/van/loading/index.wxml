@@ -1,7 +1,6 @@
 <view
   class="van-loading custom-class"
-  style="width: {{ size }}; height: {{ size }}"
-  opacity="{{opacity}}"
+  style="width: {{ size }}; height: {{ size }}; opacity: {{opacity}}"
   hidden="{{hide}}"
 >
   <view

@@ -105,38 +105,69 @@
 
         console.log(this.$parent);
 
-        var that = this;
-        function fun (res) {
-          console.log(res);
-          Toast.clear();
-          if (res.data.id == undefined || res.data.id == null) {
-            Toast('登录失败');
-          } else {
-            Toast('登录成功');
-            that.$parent.globalData.userInfo.username = res.data.username;
-            that.$parent.globalData.userInfo.id = res.data.id;
-            that.$parent.globalData.userInfo.email = res.data.email;
-            that.$parent.globalData.userInfo.phone = res.data.phone;
-            that.$parent.globalData.userInfo.school = res.data.school;
-            that.$parent.globalData.userInfo.major = res.data.major;
-            wx.switchTab({
-              url:'./mainPage'
-            });
-          }
+        var that = this
+        var _data = {
+          id: parseInt(this.studentId),
+          password: this.password
         }
-
+        console.log(_data)
         wx.request({
           url: 'http://makemoney.ink:5050/login',
-          //url: 'http://127.0.0.1:5050/login',
           method: 'POST',
-          data: {
-            id: this.studentId,
-            password: this.password
-          },
+          data: _data,
           header: {
             'content-type': 'application/json'
           },
-          complete: fun
+          complete: function(res) {
+            console.log(res);
+            Toast.clear();
+            if (res.data.id == undefined || res.data.id == null) {
+              Toast(res.errMsg);
+              var pages = getCurrentPages()
+              var infoIndex = -1
+              for (var i = pages.length - 1; i >= 0; i--)
+              {
+                console.log(pages[i].route)
+                if (pages[i].route == 'pages/myInfo') {
+                  infoIndex = i;
+                  break;
+                }
+              }
+              console.log("infoIndex " + infoIndex)
+            } else {
+              Toast('登录成功');
+              that.$parent.globalData.userInfo.username = res.data.username;
+              that.$parent.globalData.userInfo.id = res.data.id;
+              that.$parent.globalData.userInfo.email = res.data.email;
+              that.$parent.globalData.userInfo.phone = res.data.phone;
+              that.$parent.globalData.userInfo.school = res.data.school;
+              that.$parent.globalData.userInfo.major = res.data.major;
+              var pages = getCurrentPages()
+              var infoIndex = -1
+              for (var i = pages.length - 1; i >= 0; i--)
+              {
+                console.log(pages[i].route)
+                if (pages[i].route == 'pages/myInfo') {
+                  infoIndex = i;
+                  break;
+                }
+              }
+              console.log("infoIndex " + infoIndex)
+              if (infoIndex == -1) {
+                wx.navigateTo({
+                  url: 'myInfo'
+                })
+              }
+              else {
+                wx.navigateBack({
+                  delta: infoIndex
+                })
+              }
+              // wx.switchTab({
+              //   url:'./mainPage'
+              // });
+            }
+          }
         });
 
       },
@@ -151,6 +182,7 @@
         this.$parent.globalData.userInfo = {};
       }
       console.log(this);
+      console.log(getCurrentPages())
     }
     onShow() {
       console.log(this.$parent.globalData.loginData)

@@ -38,35 +38,10 @@
           });
         }
         else {
-          // 应该进入登录界面
-          // .......
-
-          // this.$parent.globalData.userInfo = userInfo;
-          // this.userinfo = userInfo;
-          // var user = {
-          //   id: 100,
-          //   username: '陈咏强',
-          //   password: 'cai'
-          // }
-          // var user = {
-          //   id: 100,
-          //   password: 'cai'
-          // }
-          this.islogin = true;
+          var _this = this
           wx.navigateTo({
             url: 'login'
           })
-          // wx.request({
-          //   url: 'http://193.112.103.238:5050/login',
-          //   data: user,
-          //   method: 'POST',
-          //   header: {
-          //     'content-type': 'application/json'
-          //   },
-          //   success(res) {
-          //     console.log(res.data);
-          //   }
-          // });
         }
       }
     }
@@ -75,8 +50,9 @@
       this.userinfo = this.$parent.globalData.userInfo;
       console.log(this.userinfo);
       // console.log(userInfo)
-      if (this.userinfo == null) this.islogin = false;
-      else this.islogin = true;
+      this.islogin = this.$parent.globalData.loginData.state;
+      console.log("islogin: " + this.islogin)
+      this.$apply()
     }
   }  
 </script>

@@ -44,8 +44,7 @@ export default class extends wepy.app {
       navigationBarBackgroundColor: '#fff',
       navigationBarTitleText: 'WeChat',
       navigationBarTextStyle: 'black',
-      navigationStyle: 'custom',
-      enablePullDownRefresh: true
+      navigationStyle: 'custom'
     },
     usingComponents: {
       'van-button': '../components/van/button/index',
@@ -109,7 +108,8 @@ export default class extends wepy.app {
     myTaskUrl: 'myTask',
     loginData: {
       studentId: "",
-      password: ""
+      password: "",
+      state: false
     }
   }
 

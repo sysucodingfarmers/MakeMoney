@@ -37,25 +37,24 @@
       <view class="tasklistboard">
         <myMainPageTitle></myMainPageTitle>
         <scroll-view
+          id="scroll-wrap"
           class="tasklist-view"
           scroll-y="true"
           bindscrolltolower="getNewData"
-          bindscrolltoupper="refresh"
-          lower-threshold="50px"
-          upper-threshold="10px"
-          bindscroll="scroll"
-          bindtouchmove="touchmove"
-          scroll-into-view="{{toView}}"
+          lower-threshold="100"
           >
-          <view 
-            style="width: 100%; height: 100%"
+          <view
+            id="inner-wrap"
+            style="width: 100%;"
+            bindtouchstart="touch_start"
+            bindtouchend="touch_end"
             >
-<!--             <view style="height: 40px; width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10rpx;">
-              <van-loading type="spinner" size="20px">加载中</van-loading>
-            </view> -->
+            <view style="width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10rpx;">
+              <van-loading hide="{{loadingHide}}" type="spinner" size="20px"></van-loading>
+            </view>
             <tasklist :tasks.sync="tasks"></tasklist>
-            <view id="main_loading" style="width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10rpx;">
-              <van-loading opacity="{{loadingOpacity}}" type="spinner" size="20px">加载中</van-loading>
+            <view style="width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10rpx;">
+              <van-loading type="spinner" size="20px"></van-loading>
             </view>
           </view>
         </scroll-view>
@@ -112,12 +111,18 @@
       },
       loadingOpacity: 0,
       loadingHide: true,
-      canDragDown: true,
       canDragUp: true,
-      toView: "task_item_id0",
+      canDragDown: true,
+
+      height: 0, // scroll-wrap 的高度
+      inner_height: 0, // inner-wrap 的高度
+      scroll_top: 0, // 滚动到的位置
+      start_scroll: 0, // 滚动前的位置
+      touch_down: 0, // 触摸时候的Y的位置
+
       // 之后可以删去
       dataIndex: 0,
-      batch_size: 5
+      batch_size: 10
     }
     computed = {
 
@@ -154,10 +159,15 @@
         this.showCitySelector = false;
       },
       getNewData() {
-        console.log("more")
-        if (this.dataIndex < TasksData.data.tasks.length && this.canDragDown) {
-          this.loadingOpacity = 1;
+        var _this = this
+        if (this.canDragDown) {
+          console.log("more")
           this.canDragDown = false;
+          this.loadingOpacity = 1;
+          this.$apply()
+          if (this.dataIndex >= TasksData.data.tasks.length) {
+            this.dataIndex = 0;
+          }
           setTimeout(() => {
             for (var i = 0; i < this.batch_size; i++) {
               this.tasks.push(TasksData.data.tasks[this.dataIndex])
@@ -165,8 +175,8 @@
               this.dataIndex += 1
               if (this.dataIndex == TasksData.data.tasks.length) break;
             }
-            this.loadingOpacity = 0;
             this.canDragDown = true;
+            this.loadingOpacity = 0;
             this.$apply();
           }, 3000);
         }
@@ -182,8 +192,36 @@
           this.$apply();
         }, 3000)
       },
-      touchmove(e) {
-        console.log(e)
+      touch_start(e) {
+        let self = this
+        this.touch_down = e.touches[0].clientY;
+        // 获取inner-wrap的高度
+        wx.createSelectorQuery().select('#inner-wrap').boundingClientRect((rect) => {
+          self.inner_height = rect.height;
+        }).exec()
+        // 获取scroll-wrap的高度和当前scrollTop的值
+        wx.createSelectorQuery().select('#scroll-wrap').fields({
+          scrollOffset: true,
+          size: true
+        }, (rect) => {
+          self.start_scroll = rect.scrollTop;
+          self.height = rect.height;
+        }).exec()
+      },
+      touch_end(e) {
+        let current_y = e.changedTouches[0].clientY;
+        let _this = this
+        if (current_y > this.touch_down && current_y - this.touch_down > 20 && this.start_scroll == 0) {
+          console.log('下拉')
+          this.loadingHide = false;
+          setTimeout((res) => {
+            _this.loadingHide = true;
+            _this.$apply()
+          }, 3000)  
+        }
+        // else if (current_y < this.touch_down && this.touch_down - current_y >= 20 && this.inner_height - this.height - this.start_scroll <= 2.0) {
+        //   console.log('上拉')
+        // }
       }
     }
     events = {
@@ -191,16 +229,30 @@
     }
     onLoad() {
       var _this = this
-      wx.request({
-        url: 'http://makemoney.ink:5050/recommend',
-        method: 'POST',
-        header: {
-          'content-type': 'application/json'
-        },
-        success(res) {
-          console.log(res.data);
-        }
-      });
+      wx.createSelectorQuery().select('#scroll-wrap').boundingClientRect((rect) => {
+        _this.height = rect.height;
+      }).exec()
+      wx.createSelectorQuery().select('#inner-wrap').boundingClientRect((rect) => {
+        _this.inner_height = rect.height;
+      }).exec()
+      // wx.request({
+      //   url: 'http://makemoney.ink:5050/recommend',
+      //   method: 'POST',
+      //   header: {
+      //     'content-type': 'application/json'
+      //   },
+      //   success: (res) => {
+      //     console.log(res.data);
+      //   },
+      //   fail: (res) => {
+      //     console.log(res)
+      //   },
+      //   complete: (res) => {
+      //     console.log('complete')
+      //   }
+      // });
+
+
       if (TasksData.data.tasks.length < 5) {
         this.tasks = TasksData.data.tasks;
         this.dataIndex = TasksData.data.tasks.length;
@@ -243,14 +295,6 @@
     onShow() {
       this.$broadcast('changeActive', "0");
     }
-    // onPullDownRefresh() {
-    //   // 显示标题栏进度条效果
-    //   wx.showNavigationBarLoading();
-    //   setTimeout(() => {
-    //     wx.hideNavigationBarLoading();
-    //     wx.stopPullDownRefresh();
-    //   }, 3000)
-    // }
   }
 </script>
 <style lang="less">

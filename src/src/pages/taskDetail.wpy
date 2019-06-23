@@ -133,6 +133,9 @@
             message: '请先登录'
           }).then(()=>{
             console.log('登录');
+            wepy.navigateTo({
+              url: 'login'
+            })
           });
         }
         else if (val === '完成') {
