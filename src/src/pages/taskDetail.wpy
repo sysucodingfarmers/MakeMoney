@@ -130,6 +130,7 @@
         }
         else if (val === '登录') {
           Dialog.alert({
+            title: '错误',
             message: '请先登录'
           }).then(()=>{
             console.log('登录');
@@ -144,6 +145,7 @@
           }
           else {
             Dialog.alert({
+              title: '错误',
               message: '还未完成'
             }).then(()=>{
               console.log('go');
@@ -164,6 +166,7 @@
         else if (val === '删除') {
           if (this.taskInfo.receiver.length != 0) {
             Dialog.alert({
+              title: '无法删除',
               message: '任务进行中'
             }).then(()=>{
               console.log('fail');
@@ -172,7 +175,7 @@
           else {
             Dialog.confirm({
               title: '是否删除',
-              message: '删除就无法回复'
+              message: '删除就无法恢复'
             }).then(()=>{
               console.log('删除成功', this.id);
               TasksData.data.tasks.splice(this.id, 1);
@@ -190,30 +193,43 @@
     }
     onLoad(options) {
       console.log("taskDetail onLoad");
-      var id = JSON.parse(options.id);
-      var buttons = JSON.parse(options.mes);
-      this.id = id;
-      this.button_left = buttons[0];
-      this.button_right = buttons[1];
-      this.taskInfo = TasksData.data.tasks[id];
+      
+      this.id = options.id;
+      this.taskInfo = TasksData.data.tasks[this.id];
 
-      if (this.button_left == '修改') {
-        this.canEditQuery = false;
-      }
-
-      var content = "任务详情： \n任务id为" + String(id) + '\n接收到的button为' + this.button_left + '&' + this.button_right;
+      var content = "任务详情： \n任务id为" + String(this.id);
       console.log(content); 
-
-      console.log("end");
       // console.log(TasksData.data.tasks);
     }
     onShow() {
       console.log("taskDetail onShow");
-      var pages = getCurrentPages();
-      var currPage = pages[pages.length - 1];   //当前页面
-      this.canEditQuery = currPage.data.canEditQuery;
-      console.log(this.canEditQuery);
-      if (currPage.data.query.length != 0 && this.canEditQuery) {
+      var mes;
+      var userInfo = this.$root.$parent.globalData.userInfo;
+      var titem = TasksData.data.tasks[this.id]
+      if (userInfo.username == undefined) {
+        mes = JSON.stringify(['登录', '取消']);
+      }
+      else if (userInfo.username == titem.publisher) {
+        mes = JSON.stringify(["修改","删除"]);
+      }
+      else {
+        mes = JSON.stringify(["接受","收藏"]);
+      }
+      if (titem.receiver.length != 0 && userInfo != null) {
+        titem.receiver.forEach(item=>{
+          if (item.name === userInfo.username) {
+            mes = JSON.stringify(['完成', '取消']);
+          }
+        })
+      }
+      var buttons = JSON.parse(mes);
+      this.button_left = buttons[0];
+      this.button_right = buttons[1];
+      if (this.button_left == '修改') {
+        this.canEditQuery = false;
+      }
+      console.log('接收到的button为' + this.button_left + '&' + this.button_right)
+      if (this.query.length != 0 && this.canEditQuery) {
         this.taskInfo.extra_content.query = currPage.data.query;
         this.finish = currPage.data.finish;
         this.finishRate = Number(currPage.data.finishRate);
@@ -221,7 +237,6 @@
         console.log(this.finishRate);
         console.log(this.query);
       }
-      console.log("end");
     }
   }
 </script>

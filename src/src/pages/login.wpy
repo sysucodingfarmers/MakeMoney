@@ -145,28 +145,25 @@
               that.$parent.globalData.userInfo.school = res.data.school;
               that.$parent.globalData.userInfo.major = res.data.major;
               that.$parent.globalData.loginData.state = true;
-              console.log(that.$parent.globalData.userInfo)
-              var pages = getCurrentPages()
-              var infoIndex = -1
-              for (var i = pages.length - 1; i >= 0; i--)
-              {
-                console.log(pages[i].route)
-                if (pages[i].route == 'pages/myInfo') {
-                  infoIndex = i;
-                  break;
-                }
-              }
-              console.log("infoIndex " + infoIndex)
-              if (infoIndex == -1) {
-                wx.navigateTo({
-                  url: 'myInfo'
-                })
-              }
-              else {
-                wx.navigateBack({
-                  delta: infoIndex
-                })
-              }
+              // console.log(that.$parent.globalData.userInfo)
+              // var pages = getCurrentPages()
+              // var infoIndex = -1
+              // for (var i = pages.length - 1; i >= 0; i--)
+              // {
+              //   console.log(pages[i].route)
+              //   if (pages[i].route == 'pages/myInfo') {
+              //     infoIndex = i;
+              //     break;
+              //   }
+              // }
+              // console.log("infoIndex " + infoIndex)
+              // if (infoIndex == -1) {
+              //   console.log("go to myInfo")
+              //   wepy.navigateTo({
+              //     url: 'myInfo'
+              //   })
+              // }
+              wx.navigateBack()
               // wx.switchTab({
               //   url:'./mainPage'
               // });

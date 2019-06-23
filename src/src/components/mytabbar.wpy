@@ -94,7 +94,16 @@
         console.log("选择了" + type[0] + "里面的" + type[1]);
         // 根据需要修改
         var myurl = this.$root.$parent.globalData.publishTaskUrl;
-        if (this.$root.$parent.globalData.userInfo === null) {
+        if (this.$root.$parent.globalData.userInfo.username) {
+          myurl += "?type1="
+          myurl += type[0]
+          myurl += "&type2="
+          myurl += type[1]
+          wepy.navigateTo({
+            url: myurl
+          });
+        }
+        else {
           Dialog.confirm({
             title: "错误",
             message: '请先登录'
@@ -102,20 +111,14 @@
             // 跳转到登录页面
             console.log("login")
             // 假如有了登录页面则删去下来2行代码
-            this.active = this.activeValue;
-            this.$apply();
+            // this.active = this.activeValue;
+            // this.$apply();
+            wepy.navigateTo({
+              url: 'login'
+            })
           }).catch(()=> {
             this.active = this.activeValue;
             this.$apply();
-          });
-        }
-        else {
-          myurl += "?type1="
-          myurl += type[0]
-          myurl += "&type2="
-          myurl += type[1]
-          wepy.navigateTo({
-            url: myurl
           });
         }
       },

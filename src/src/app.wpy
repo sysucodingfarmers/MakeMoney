@@ -101,7 +101,7 @@ export default class extends wepy.app {
   }
 
   globalData = {
-    userInfo: null,
+    userInfo: {},
     mainPageUrl: 'mainPage',
     myInfoUrl: 'myInfo',
     publishTaskUrl: 'publishTask',

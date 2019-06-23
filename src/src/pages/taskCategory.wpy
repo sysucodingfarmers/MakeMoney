@@ -16,7 +16,7 @@
       </repeat>
     </van-tabs>
     <scroll-view scroll-y="true" style="height: 80%; margin-top: 5%;">
-      <repeat for="{{tasks}}" item="item" style="margin-top: 10px;">
+      <repeat for="{{tasks}}" item="item">
         <tasklist :tasks="item"></tasklist>
       </repeat>
     </scroll-view>

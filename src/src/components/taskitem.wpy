@@ -32,32 +32,9 @@
     }
     methods = {
       showDetail() {
-        console.log("show detail");
         var myurl = "taskDetail"
-        var id = JSON.stringify(this.titem.id);
-        var mes;
-        var userInfo = this.$root.$parent.globalData.userInfo;
-        if (userInfo == null) {
-          mes = JSON.stringify(['登录', '取消']);
-        }
-        else if (userInfo.username == this.titem.publisher) {
-          mes = JSON.stringify(["修改","删除"]);
-        }
-        else {
-          mes = JSON.stringify(["接受","收藏"]);
-        }
-        if (this.titem.receiver.length != 0 && userInfo != null) {
-          this.titem.receiver.forEach(item=>{
-            if (item.name === userInfo.username) {
-              mes = JSON.stringify(['完成', '取消']);
-            }
-          })
-        }
-        
         myurl += "?id=";
-        myurl += id;
-        myurl += "&mes=";
-        myurl += mes;
+        myurl += this.titem.id;
         console.log(myurl);
         wepy.navigateTo({
           url: myurl
