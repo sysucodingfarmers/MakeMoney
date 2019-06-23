@@ -79,29 +79,29 @@
 #### （1）业务发布者需求调查                    
 a)	问卷业务需求分析                     
 第2题：如果您需要发放问卷，您是否愿意有偿让别人填写问卷？[单选题]                                      
-![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/Documents/pictures/1.png)     
+![](https://raw.githubusercontent.com/sysucodingfarmers/MakeMoney/master/doc/Documents/pictures/1.png)     
 
 第3题：请问您最多愿意花多少钱让别人填写一份问卷？ [单选题]                                
-![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/Documents/pictures/2.png)                       
+![](https://raw.githubusercontent.com/sysucodingfarmers/MakeMoney/master/doc/Documents/pictures/2.png)                       
 分析：从这两题的结果可以看出，用户对有偿问卷发布的需求是较高的，有87%的用户愿意尝试发布有偿问卷，并且在101个愿意发布有偿问卷的用户中，有将近25%的用户愿意以1元以上的单价让他人进行有偿问卷填写。                  
 
 b）代取业务需求分析
 第4题：如果您有一个快递无法去取（快递过重、距离过远、没有时间等原因），你是否愿意尝试有偿代取业务？ [单选题]                                
-![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/Documents/pictures/3.png)      
+![](https://raw.githubusercontent.com/sysucodingfarmers/MakeMoney/master/doc/Documents/pictures/3.png)      
 
 第5题：你最多愿意支付多少劳务费让他人代取快递？
-![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/Documents/pictures/4.png)                                     
+![](https://raw.githubusercontent.com/sysucodingfarmers/MakeMoney/master/doc/Documents/pictures/4.png)                                     
 分析：从这两题的结果可以看出，发布者对与快递代取的需求是较高的，将近90%的人愿意尝试有偿代取业务，并且在104个愿意有偿让他人代取快递的用户中，有25%的用户愿意最多支付5元以上的劳务费。
 
 #### （2）闲钱赚取者需求调查
 第9题：如果您有闲暇时间，你是否愿意使用该平台有偿帮助他人？ [单选题]                               
-![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/Documents/pictures/5.png)      
+![](https://raw.githubusercontent.com/sysucodingfarmers/MakeMoney/master/doc/Documents/pictures/5.png)      
 
 第10题：如果您填写一份问卷（一分钟填完），您的底线劳务费是多少？ [单选题]
-![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/Documents/pictures/6.png)    
+![](https://raw.githubusercontent.com/sysucodingfarmers/MakeMoney/master/doc/Documents/pictures/6.png)    
 
 第11题：如果您帮忙代取快递，您的底线劳务费是多少？ [单选题]
-![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/Documents/pictures/7.png)                       
+![](https://raw.githubusercontent.com/sysucodingfarmers/MakeMoney/master/doc/Documents/pictures/7.png)                       
 分析：从这三题的答案可以看出，大家还是比较愿意在闲暇时间使用该平台赚取佣金的，但是三层用户只愿意在线上业务中帮忙他人，说明我们在需求中可以加大线上业务的力度。同时，从大家对佣金的期待值来看，大学生群体对佣金的要求并没有很高，对于问卷填写，四成同学不计较报酬，而对于代取业务，六成同学只需1~5元即可愿意帮人代取。
                    
 #### （3）二者对于业务范围的共同需求调查：
