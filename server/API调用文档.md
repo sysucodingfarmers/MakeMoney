@@ -4,7 +4,6 @@
 ```python
 我们约定
 json_true = json.dumps('succeed')
-json_false = json.dumps('failed')
 ```
 -----
 
@@ -32,7 +31,7 @@ json_false = json.dumps('failed')
 
       'hobbit':}
 
-- 注册成功返回json_true, 失败则返回json_false
+- 注册成功返回json_true, 失败则返回包含‘errmsg’的json文件
 
 ----
 
@@ -44,7 +43,7 @@ json_false = json.dumps('failed')
   - {‘id’: 
     'password':}
 
-- 登陆成功返回json_true, 失败则返回json_false
+- 登陆成功返回json_true, 失败则返回包含‘errmsg’的json文件
   
 -----
 登出API 
@@ -72,7 +71,7 @@ json_false = json.dumps('failed')
     'multiple_choices_question': []
     'multiple_choices_options': [[], [], ..., []]
     'essay_questions': []}
-- 注册成功返回json_true, 失败则返回json_false
+- 注册成功返回json_true, 失败则返回包含‘errmsg’的json文件
 
 -----
 接收任务API 
@@ -83,7 +82,7 @@ json_false = json.dumps('failed')
 
   - {‘id’: 任务的id}
 
-- 注册成功返回json_true, 失败则返回json_false
+- 注册成功返回json_true, 失败则返回包含‘errmsg’的json文件
   
   
 -----
@@ -94,7 +93,7 @@ json_false = json.dumps('failed')
 - 接收的json格式应包含
   - {‘id’: 用户的id}
 
-- 查询失败返回json_false
+- 查询失败返回包含‘errmsg’的json文件
 - 查询成功返回如下json：{'task_number':
   				'task_id':[]}
 -----
@@ -105,7 +104,7 @@ json_false = json.dumps('failed')
 - 接收的json格式应包含
   - {‘id’: 用户的id}
 
-- 查询失败返回json_false
+- 查询失败返回包含‘errmsg’的json文件
 - 查询成功返回如下json：{'task_number':
 					'task_id':[]}
 -----
@@ -116,7 +115,7 @@ json_false = json.dumps('failed')
 - 接收的json格式应包含
   - {‘sponsor’: 要查询的发起者的username}
 
-- 查询失败返回json_false
+- 查询失败返回包含‘errmsg’的json文件
 - 查询成功返回如下json：{'task_number':
 					'task_id':[]}
 -----
@@ -127,7 +126,7 @@ json_false = json.dumps('failed')
 - 接收的json格式应包含
   - {‘key_word’: 要查询的关键字}
 
-- 查询失败返回json_false
+- 查询失败返回包含‘errmsg’的json文件
 - 查询成功返回如下json：{'task_number':
 					'task_id':[]}
 -----
@@ -135,7 +134,7 @@ json_false = json.dumps('failed')
 
 - 地址：'/recommend’ 
 - 接受POST请求
-- 失败返回json_false
+- 失败返回包含‘errmsg’的json文件
 - 成功返回如下json：{'task_number':
 					'task_id':[]}
 - 备注：这个API事实上返回了所有发布中的任务，推荐顺序跟task_id中的排序一致
@@ -148,7 +147,7 @@ json_false = json.dumps('failed')
 - 接收的json格式应包含
   - {‘key_word’: 要查询的关键字}
 
-- 查询失败返回json_false
+- 查询失败返回包含‘errmsg’的json文件
 - 查询成功返回如下json：{'task_number':
 					'task_id':[]}
 -----
@@ -163,7 +162,7 @@ json_false = json.dumps('failed')
 
   - {‘task_id’: 任务的id}
 
-- 查询失败返回json_false
+- 查询失败返回包含‘errmsg’的json文件
 
 - 查询成功返回如下json：{'id':
 
@@ -206,7 +205,7 @@ json_false = json.dumps('failed')
 
   - {‘user_id’: 任务的id}
 
-- 查询失败返回json_false
+- 查询失败返回包含‘errmsg’的json文件
 
 - 查询成功返回如下json：{'id':
 
@@ -231,7 +230,7 @@ json_false = json.dumps('failed')
 - 地址: '/search/template_id'
 - 接收POST请求
 - 接收的json格式应包含 ‘templa_id’属性
-- 查询失败返回json_false
+- 查询失败返回包含‘errmsg’的json文件
 - 查询成功返回如下json
 - {
     'id': template_id,
@@ -254,7 +253,7 @@ json_false = json.dumps('failed')
     'multiple_choices_options':[[],[],...,[]],
     ‘essay_answers’:[]
 }
-- 成功提交返回json_true，失败返回json_false
+- 成功提交返回json_true，失败返回包含‘errmsg’的json文件
 
 ----
 根据任务接收者uid和任务id查询问卷答案API
@@ -265,7 +264,7 @@ json_false = json.dumps('failed')
   ‘user_id’: 
   'task_id':
 }
-- 查询失败返回json_false
+- 查询失败返回包含‘errmsg’的json文件
 - 查询成功返回json
 -{
     'single_choices_options':[[], [], ..., []]
@@ -282,7 +281,7 @@ json_false = json.dumps('failed')
     'user_id':
     'task_id':
 }
-- 退出成功返回json_true，失败返回json_false
+- 退出成功返回json_true，失败返回包含‘errmsg’的json文件
 
 ---
 取消任务API
@@ -293,4 +292,4 @@ json_false = json.dumps('failed')
     'user_id':
     'task_id':
 }
-- 退出成功返回json_true, 失败返回json_false
+- 退出成功返回json_true, 失败返回包含‘errmsg’的json文件

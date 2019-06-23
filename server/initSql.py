@@ -38,14 +38,15 @@ task2 = Task(
 	id = 2,
 	title = 'task2',
 	sponsor = user2,
-	template = template1,
-	answers = [answer1, answer2]
+	template = template1
 	)
 
 
 receiver1 = Receiver(uid=user1.id, tid=task1.id, finished = True)
 receiver2 = Receiver(uid=user2.id, tid=task2.id, finished = True,paid = True)
 
+db.session.add_all([user1,user2,task1,task2,receiver1,receiver2,template1,template2])
+db.session.commit()
 
 answer1 = Answer(\
 	receiver_id = receiver1.id,\
@@ -54,7 +55,9 @@ answer2 = Answer(\
 	receiver_id = receiver2.id,\
 	answers = ['101', '问答题1回答', '问答题2回答'])
 
-db.session.add_all([user1,user2,task1,task2,receiver1,receiver2,template1,template2,answer1,answer2])
+task2.answers = [answer1,answer2]
+
+db.session.add_all([answer1,answer2])
 db.session.commit()
 
 pdb.set_trace()

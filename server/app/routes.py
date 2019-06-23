@@ -28,7 +28,7 @@ def register():
 	for user in users:
 		if user.id == json_data['id']:
 			print('user is existed!')
-			return json_false
+			return json.dumps({'errmsg': '用户已存在'})
 	user = User(id = json_data['id'], 
 		username = json_data['username'], 
 		email = json_data['email'] if 'email' in json_data else None, 
@@ -54,17 +54,17 @@ def login():
 	if request.method == 'POST':
 		if current_user.is_authenticated:
 			print('Error, user is active!')
-			return json_false
+			return json.dumps({'errmsg': '用户已登陆'})
 		json_data = json.loads(request.data)
 		# print(json_data)
 		user = User.query.filter_by(id=json_data['id']).first()
 		if user is None or not user.check_password(json_data['password']):
 			print('username or password isn\'t correct!')
-			return json_false
+			return json.dumps({'errmsg': '用户名或密码错误'})
 		login_user(user, remember=True)
 		print('login user {}!'.format(user))
 		return json.dumps(user, default=UserToJson) 
-	return json_false
+	return json.dumps({'errmsg': '没有使用POST请求'})
 
 #登出
 @app.route('/logout')
@@ -87,7 +87,7 @@ def sponsor_task():
 			json_data = json.loads(request.data)
 			if (Task.query.filter_by(id=json_data['id']).first() != None):
 				print('existed')
-				return json_false
+				return json.dumps({'errmsg': '任务已存在'})
 			else:
 				task = Task(id = json_data['id'],
 					title = json_data['title'],
@@ -111,7 +111,7 @@ def sponsor_task():
 				db.session.add(task)
 				db.session.commit()
 				return json_true
-	return json_false
+	return json.dumps({'errmsg': '没有使用POST请求'})
 
 '''
 接受任务(需登录）:
@@ -133,12 +133,12 @@ def receive_task():
 			#判断人数限制是否已经达到
 			if task.receiver_limit <= len(task.receivers):
 				print('receiver limit!')
-				return json_false
+				return json.dumps({'errmsg': '任务接收人数已满'})
 			#判断是否重复接收任务
 			for re in task.receivers:
 				if re.id == current_user.id:
 					print('user had receivered this task!')
-					return json_false
+					return json.dumps({'errmsg': '用户已经接收了该任务'})
 			#接收任务
 			task.receivers.append(receiver)
 			task.received_number += 1
@@ -146,7 +146,7 @@ def receive_task():
 			db.session.add(receiver)
 			db.session.commit()
 			return json_true
-	return json_false
+	return json.dumps({'errmsg': '没有使用POST请求'})
 
 '''
 查看发布的任务（无需登录）返回task id:
@@ -164,7 +164,7 @@ def my_sponsor_task():
 			user = current_user
 		else:
 			print('query error!')
-			return json_false
+			return json.dumps({'errmsg': '用户不存在'})
 		#返回
 		data = [{'task_number':len(user.sponsor_tasks)}]
 		i = 1
@@ -176,7 +176,7 @@ def my_sponsor_task():
 			data[0][str(i)] = now
 			i = i+1
 		return json.dumps(data[0] , sort_keys=False)
-	return json_false
+	return json.dumps({'errmsg': '没有使用POST请求'})
 
 # 查看接受的任务
 
@@ -188,11 +188,12 @@ def my_receive_task():
 		if 'id' in json_data:
 			receiver = Receiver.query.filter_by(id=json_data['id']).all()
 		#返回
-		data = {'task_number': len(receiver), 'task_id': []}
-		for rec in receiver:
-			data['task_id'].append(rec.tid);
-		return json.dumps(data, sort_keys=False)
-	return json_false
+			data = {'task_number': len(receiver), 'task_id': []}
+			for rec in receiver:
+				data['task_id'].append(rec.tid);
+			return json.dumps(data, sort_keys=False)
+		return json.dumps({'errmsg': '没有传递id'})
+	return json.dumps({'errmsg': '没有使用POST请求'})
 
 
 
@@ -207,7 +208,7 @@ def recommend():
 		for task in task_list:
 			data['task_id'].append(task.id)
 		return json.dumps(data, sort_keys=False)
-	return json_false
+	return json.dumps({'errmsg': '没有使用POST请求'})
 
 
 # #查询
@@ -237,7 +238,7 @@ def search_by_sponsor():
 			task_list = Task.query.filter_by(sponsor=json_data['sponsor'])
 		else:
 			print('no match result')
-			return json_false
+			return json.dumps({'errmsg': '没有传递sponsor'})
 
 		#正确查询之后返回json
 		data = {'task_number':len(task_list), 'task_id':[]}
@@ -245,7 +246,7 @@ def search_by_sponsor():
 			data['task_id'].append(task.id)
 		return json.dumps(data, sort_keys=False)
 
-	return json_false
+	return json.dumps({'errmsg': '没有使用POST请求'})
 
 #按标题内容进行模糊搜索
 '''
@@ -270,7 +271,7 @@ def search_by_title():
             task_list = Task.query.filter_by(Task.title.like(key))
         else:
             print('no match result')
-            return json_false
+            return json.dumps({'errmsg': '没有传递key_word'})
 
         #正确查询之后返回json
         data = {'task_number':len(task_list), 'task_id':[]}
@@ -278,7 +279,7 @@ def search_by_title():
             data['task_id'].append(task.id)
         return json.dumps(data, sort_keys=False)
 
-    return json_false
+    return json.dumps({'errmsg': '没有使用POST请求'})
 
 
 #按任务详情进行模糊搜索
@@ -302,7 +303,7 @@ def search_by_detail():
             task_list = Task.query.filter_by(Task.detail.like(key))
         else:
             print('no match result')
-            return json_false
+            return json.dumps({'errmsg': '没有传递key_word'})
 
         # 正确查询之后返回json
         data = {'task_number':len(task_list), 'task_id':[]}
@@ -310,7 +311,7 @@ def search_by_detail():
             data['task_id'].append(task.id)
         return json.dumps(data, sort_keys=False)
 
-    return json_false
+    return json.dumps({'errmsg': '没有使用POST请求'})
 
 
 # 按指定id查询任务
@@ -340,9 +341,9 @@ def getTask_by_id():
 
         else:
             print('no task_id')
-            return json_false
+            return json.dumps({'errmsg': '没有传递task_id'})
 
-    return json_false
+    return json.dumps({'errmsg': '没有使用POST请求'})
 
 
 # 按id查询用户
@@ -362,8 +363,8 @@ def getUser_by_id():
                     'major':user.major, 'phone':user.phone, 'wx_number':user.wx_number, 'hobbit':user.hobbit}
 
             return json.dumps(data, sort_keys=False)
-        return json_false
-    return json_false
+        return json.dumps({'errmsg': '没有传递user_id'})
+    return json.dumps({'errmsg': '没有使用POST请求'})
 
 
 '''
@@ -387,8 +388,8 @@ def getTemplate_by_id():
 					}
 
 			return json.dumps(data, sort_keys=False)
-		return json_false
-	return json_false
+		return json.dumps({'errmsg': '没有传递template_id'})
+	return json.dumps({'errmsg': '没有使用POST请求'})
 
 
 '''
@@ -410,9 +411,9 @@ def getAnswer_by_id():
 						'essay_answers': ans['essay_answers']}
 				return json.dumps(data, sort_keys=False)
 
-			return json_false
-		return json_false
-	return json_false
+			return json.dumps({'errmsg': '没有传递user_id'})
+		return json.dumps({'errmsg': '没有传递task_id'})
+	return json.dumps({'errmsg': '没有使用POST请求'})
 
 
 '''
@@ -433,9 +434,9 @@ def summit_answer():
 					   }
 				return json_true
 
-			return json_false
-		return json_false
-	return json_false
+			return json.dumps({'errmsg': '没有传递user_id'})
+		return json.dumps({'errmsg': '没有传递task_id'})
+	return json.dumps({'errmsg': '没有使用POST请求'})
 
 
 
@@ -462,24 +463,24 @@ def task_quit():
 				db.session.commit()
 				return json_true
 
-			return json_false
-		return json_false
-	return json_false
+			return json.dumps({'errmsg': '没有传递user_id'})
+		return json.dumps({'errmsg': '没有传递task_id'})
+	return json.dumps({'errmsg': '没有使用POST请求'})
 
 
 '''
 撤销任务
 接收 'user_id' 和 'task_id'
 '''
-@app.route('/task_quit', methods=['POST'])
-def task_quit():
+@app.route('/task_cancel', methods=['POST'])
+def task_delete():
 	if request.method == 'POST':
 		json_data = json.loads(request.data)
 		if 'task_id' in json_data:
 			if 'user_id' in json_data:
 				task = Task.query.filter_by(id=json_data['task_id']).first()
 				if task.sponsor.id != json_data['user_id']:
-					return json_false
+					return json.dumps({'errmsg': '该用户不是任务发起者'})
 
 				Receiver.query.filter_by(tid=json_data['task_id']).all().delete()
 
@@ -488,9 +489,9 @@ def task_quit():
 				db.session.commit()
 				return json_true
 
-			return json_false
-		return json_false
-	return json_false
+			return json.dumps({'errmsg': '没有传递user_id'})
+		return json.dumps({'errmsg': '没有传递task_id'})
+	return json.dumps({'errmsg': '没有使用POST请求'})
 
 # 测试
 @app.route('/test', methods=['POST'])

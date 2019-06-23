@@ -48,19 +48,19 @@ class Receiver(db.Model):
 	只提供 继承User 一种初始化方法，如
 	receiver = Receiver(user, finished=True, paid=False)
 	'''
-	def __init__(self, task_id, user_id):
-		self.tid = task_id
-		self.uid = user_id
+	def __init__(self, **kwargs):
+		self.tid = kwargs['tid']
+		self.uid = kwargs['uid']
 		self.finished = self.__table__.c.finished.default.arg if 'finished' not in kwargs else kwargs['finished']
 		self.paid = self.__table__.c.paid.default.arg if 'paid' not in kwargs else kwargs['paid']
 	id = db.Column(db.Integer, nullable=False, primary_key=True)
-	uid = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+	uid = db.Column(db.Integer, nullable=False)
 	tid = db.Column(db.Integer, nullable=False)
 
 	# 回答
-	answers = db.relationship('Answer', secondary=answers, lazy='subquery', backref=db.backref('task', lazy=True))
+	answers = db.relationship('Answer', backref=db.backref('task', lazy=True))
 	#answer id
-	aid = db.Column(db.Integer, db.foreginKey(answers.id), nullable=True)
+	aid = db.Column(db.Integer, db.ForeignKey('answer.id'), nullable=True)
 
 	#该id用户的任务是否完成
 	finished = db.Column(db.Boolean, default=False)
