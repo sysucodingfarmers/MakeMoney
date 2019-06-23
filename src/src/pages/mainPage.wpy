@@ -9,7 +9,7 @@
       placeholder="搜索"
       shape="round"
       bind:search="onSearch"
-      bind:cancel="onCancel"
+      bind:change="onSearchChange"
     >
       <view slot="label" style="width: 70px;" @tap="selectLoc">
         <van-row>
@@ -109,16 +109,18 @@
         city: "获取定位",
         county: "获取定位"
       },
-      loadingOpacity: 0,
-      loadingHide: true,
-      canDragUp: true,
-      canDragDown: true,
+      // 获取任务相关
+      loadingHide: true, // 下拉刷新是否显示加载符号
+      canDragUp: true, // 是否可以下拉（防止重复）
+      canDragDown: true, // 是否可以上拉加载更多
 
       height: 0, // scroll-wrap 的高度
       inner_height: 0, // inner-wrap 的高度
       scroll_top: 0, // 滚动到的位置
       start_scroll: 0, // 滚动前的位置
       touch_down: 0, // 触摸时候的Y的位置
+
+      keyword: "",
 
       // 之后可以删去
       dataIndex: 0,
@@ -128,23 +130,17 @@
 
     }
     methods = {
+      // 搜索相关
       onSearch(e) {
-        console.log(e.detail);
-        console.log('search');
-        var data = {
-          value: e.detail,
-          location: this.location
-        }
-        console.log(data)
-      },
-      onCancel(e) {
-        console.log(e);
-        console.log('cancel');
+        wepy.navigateTo({
+          url: "searchResult?keyword=" + this.keyword
+        })
       },
       onSearchChange(e) {
-        console.log(e);
-        console.log("change");
+        console.log(e.detail);
+        this.keyword = e.detail;
       },
+      // 选择地址
       selectLoc() {
         this.showCitySelector = true;
       },
@@ -158,10 +154,13 @@
       locCancel() {
         this.showCitySelector = false;
       },
+      // 任务数据相关
       getNewData() {
+        /* 
+          获取新的数据
+        */
         var _this = this
         if (this.canDragDown) {
-          console.log("more")
           this.canDragDown = false;
           this.loadingOpacity = 1;
           this.$apply()
@@ -181,17 +180,9 @@
           }, 3000);
         }
       },
-      scroll(e) {
-        // console.log(e.detail)
-      },
-      refresh() {
-        console.log("scroll top")
-        this.loadingHide = false
-        setTimeout(() => {
-          this.loadingHide = true;
-          this.$apply();
-        }, 3000)
-      },
+      /*
+        touch_start和touch_end用于下拉刷新
+      */
       touch_start(e) {
         let self = this
         this.touch_down = e.touches[0].clientY;
@@ -212,16 +203,12 @@
         let current_y = e.changedTouches[0].clientY;
         let _this = this
         if (current_y > this.touch_down && current_y - this.touch_down > 20 && this.start_scroll == 0) {
-          console.log('下拉')
           this.loadingHide = false;
           setTimeout((res) => {
             _this.loadingHide = true;
             _this.$apply()
           }, 3000)  
         }
-        // else if (current_y < this.touch_down && this.touch_down - current_y >= 20 && this.inner_height - this.height - this.start_scroll <= 2.0) {
-        //   console.log('上拉')
-        // }
       }
     }
     events = {
@@ -235,22 +222,23 @@
       wx.createSelectorQuery().select('#inner-wrap').boundingClientRect((rect) => {
         _this.inner_height = rect.height;
       }).exec()
-      // wx.request({
-      //   url: 'http://makemoney.ink:5050/recommend',
-      //   method: 'POST',
-      //   header: {
-      //     'content-type': 'application/json'
-      //   },
-      //   success: (res) => {
-      //     console.log(res.data);
-      //   },
-      //   fail: (res) => {
-      //     console.log(res)
-      //   },
-      //   complete: (res) => {
-      //     console.log('complete')
-      //   }
-      // });
+
+      wx.request({
+        url: 'http://makemoney.ink:5050/recommend',
+        method: 'POST',
+        header: {
+          'content-type': 'application/json'
+        },
+        success: (res) => {
+          console.log(res.data);
+        },
+        fail: (res) => {
+          console.log(res)
+        },
+        complete: (res) => {
+          console.log('complete')
+        }
+      });
 
 
       if (TasksData.data.tasks.length < 5) {

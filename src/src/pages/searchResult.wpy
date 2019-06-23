@@ -1,0 +1,31 @@
+<script>
+  
+</script>
+<template>
+  <view style="position: fixed; height: 100%; width: 100%;">
+    <mynavbar title="搜索结果" lefttext="返回" leftarrow="true"></mynavbar>
+    <!-- 主体 -->
+    <van-cell title="{{keyword}}" />
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import MyNavBar from '../components/mynavbar'
+
+  export default class SearchResult extends wepy.page {
+    components = {
+      mynavbar: MyNavBar
+    }
+    data = {
+      keyword: ""
+    }
+    methods = {
+
+    }
+    onLoad(option) {
+      // 搜索的关键词
+      console.log(option.keyword)
+      this.keyword = option.keyword
+    }
+  }  
+</script>
