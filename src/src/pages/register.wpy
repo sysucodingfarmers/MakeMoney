@@ -6,6 +6,7 @@
 <template>
   <view style="position: fixed; width: 100%; height: 100%;">
     <mynavbar title="注册" lefttext="登录" leftarrow="true"></mynavbar>
+    <van-cell-for-infodetail title="头像" is-link imgurl="{{imageData}}" @tap="chooseAvatar()" />
     <van-cell-group title="学号与密码">
       <van-field
         value="{{ studentId }}"
@@ -106,6 +107,8 @@
 
   export default class Register extends wepy.page {
     data = {
+      imageData: "https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1560754276&di=9e6e09a4563fa27b2b4c20b7a5a58df7&src=http://pic.51yuansu.com/pic3/cover/01/69/80/595f67bf2026f_610.jpg",
+
       studentId: "",
       studentIdErrorMessage: "",
       studentIdPlaceholder: "请输入学号",
@@ -266,6 +269,36 @@
             } else {
               Toast('注册失败');
             }
+          }
+        });
+      },
+      chooseAvatar() {
+        var that = this;
+        wx.chooseImage({
+          count: 1,
+          sizeType: ['original', 'compressed'],
+          sourceType: ['album', 'camera'],
+          success: function(res) {
+            console.log(res);
+            console.log(res.tempFilePaths);
+            var tempFilePaths = res.tempFilePaths;
+            // wx.uploadFile({
+            //   url: 'http://makemoney.ink:5050/uploadAvatar',
+            //   header: {
+            //     'Content-Type': 'multipart/form-data',
+            //     'token': wx.getStorageSync('token')
+            //   }
+            // })
+            // uploadFile上传头像
+            that.userinfo.avatar = tempFilePaths;
+            that.$parent.globalData.userInfo.avatar = tempFilePaths;
+            that.$apply();
+          },
+          fail: function(e) {
+            console.log(e);
+          },
+          complete: function(e) {
+            console.log(e)
           }
         });
       }

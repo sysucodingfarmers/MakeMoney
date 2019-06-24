@@ -10,16 +10,16 @@
   <view class="van-cell_image">
     <image class="myimage" src="{{imgurl}}" mode="scaleToFill" />
   </view>
-  <view style="display: flex; flex-direction: column; -webkit-flex: 4; flex: 4;">
+  <view style="display: flex; flex-direction: column; -webkit-flex: 9; flex: 9; margin-left: 10rpx;">
     <view class="van-cell__title" wx:if="{{ title }}">{{ title }}</view>
     <view class="van-cell_label">
       {{ label }}
     </view>
-    <van-tag custom-class="type-tag" type="primary" plain>{{type}}</van-tag>
   </view>
 
   <view class="van-cell__value value-class">
-    <block wx:if="{{ value || value === 0 }}">{{ value }}</block>
-    <slot wx:else />
+<!--     <block wx:if="{{ value || value === 0 }}">{{ value }}</block>
+    <slot wx:else /> -->
+    <van-tag custom-class="type-tag" type="primary" plain>{{type}}</van-tag>
   </view>
 </view>

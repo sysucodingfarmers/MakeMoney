@@ -5,13 +5,13 @@
     <!-- 搜索栏 -->
     <van-search
       class="search"
-      value="{{search_keyword}}"
-      placeholder="搜索"
+      value=""
+      placeholder="搜索任务，用户等"
       shape="round"
-      bind:search="onSearch"
-      bind:change="onSearchChange"
+      disabled
+      @tap="beginsearch"
     >
-      <view slot="label" style="width: 70px;" @tap="selectLoc">
+<!--       <view slot="label" style="width: 70px;" @tap="selectLoc">
         <van-row>
           <van-col span="6">
             <van-icon name="location-o" size="15px"></van-icon>
@@ -20,7 +20,7 @@
         </van-row>
         
         
-      </view>
+      </view> -->
     </van-search>
     <!-- 页面主体 -->
     <view class="mainBody">
@@ -63,7 +63,7 @@
       <mytabbar></mytabbar>
     </view>
   </view>
-  <van-popup
+<!--   <van-popup
     show="{{showCitySelector}}"
     position="bottom"
   >
@@ -72,14 +72,14 @@
       @confirm="locConfirm"
       @cancel="locCancel"
     ></van-area>
-  </van-popup>
+  </van-popup> -->
 </template>
 
 <script>
   import wepy from 'wepy'
   import TaskList from '../components/tasklist'
   import MyTabbar from '../components/mytabbar'
-  import AreaList from '../utility/area'
+  // import AreaList from '../utility/area'
   import TasksData from '../data/TempTaskData'
   import MyNavBar from '../components/mynavbar'
   import MyMainPageTitle from '../components/myMainPageTitle'
@@ -120,8 +120,6 @@
       start_scroll: 0, // 滚动前的位置
       touch_down: 0, // 触摸时候的Y的位置
 
-      keyword: "",
-
       // 之后可以删去
       dataIndex: 0,
       batch_size: 10
@@ -130,30 +128,20 @@
 
     }
     methods = {
-      // 搜索相关
-      onSearch(e) {
-        wepy.navigateTo({
-          url: "searchResult?keyword=" + this.keyword
-        })
-      },
-      onSearchChange(e) {
-        console.log(e.detail);
-        this.keyword = e.detail;
-      },
       // 选择地址
-      selectLoc() {
-        this.showCitySelector = true;
-      },
-      locConfirm(e) {
-        var value = e.detail.values;
-        this.location.province = value[0].name;
-        this.location.city = value[1].name;
-        this.location.county = value[2].name;
-        this.showCitySelector = false;
-      },
-      locCancel() {
-        this.showCitySelector = false;
-      },
+      // selectLoc() {
+      //   this.showCitySelector = true;
+      // },
+      // locConfirm(e) {
+      //   var value = e.detail.values;
+      //   this.location.province = value[0].name;
+      //   this.location.city = value[1].name;
+      //   this.location.county = value[2].name;
+      //   this.showCitySelector = false;
+      // },
+      // locCancel() {
+      //   this.showCitySelector = false;
+      // },
       // 任务数据相关
       getNewData() {
         /* 
@@ -209,6 +197,14 @@
             _this.$apply()
           }, 3000)  
         }
+      },
+      beginsearch() {
+        // if (!this.showCitySelector) {
+          
+        // }
+        wepy.navigateTo({
+          url: "searchResult"
+        })
       }
     }
     events = {
@@ -255,30 +251,30 @@
           this.dataIndex += 1
         }
       }
-      this.areaList = AreaList;
-      wepy.getLocation({
-        type: 'gcj02',
-        success: function(address) {
-          var QQMapWX = require('../qqmap-sdk/qqmap-wx-jssdk.js')
-          var qqmapsdk = new QQMapWX({
-            key: 'Z7ZBZ-INFRD-J2H47-PEF53-KYYYS-GVFEM'
-          })
-          var mylocation = {
-            latitude: address.latitude,
-            longitude: address.longitude
-          }
-          qqmapsdk.reverseGeocoder({
-            location: mylocation,
-            success: function(res) {
-              res = res.result.address_component
-              _this.location.province = res.province
-              _this.location.city = res.city
-              _this.location.county = res.district
-              _this.$apply()
-            }
-          })
-        }
-      });
+      // this.areaList = AreaList;
+      // wepy.getLocation({
+      //   type: 'gcj02',
+      //   success: function(address) {
+      //     var QQMapWX = require('../qqmap-sdk/qqmap-wx-jssdk.js')
+      //     var qqmapsdk = new QQMapWX({
+      //       key: 'Z7ZBZ-INFRD-J2H47-PEF53-KYYYS-GVFEM'
+      //     })
+      //     var mylocation = {
+      //       latitude: address.latitude,
+      //       longitude: address.longitude
+      //     }
+      //     qqmapsdk.reverseGeocoder({
+      //       location: mylocation,
+      //       success: function(res) {
+      //         res = res.result.address_component
+      //         _this.location.province = res.province
+      //         _this.location.city = res.city
+      //         _this.location.county = res.district
+      //         _this.$apply()
+      //       }
+      //     })
+      //   }
+      // });
     }
     onShow() {
       this.$broadcast('changeActive', "0");

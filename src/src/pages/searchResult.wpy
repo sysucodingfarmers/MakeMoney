@@ -3,9 +3,32 @@
 </script>
 <template>
   <view style="position: fixed; height: 100%; width: 100%;">
-    <mynavbar title="搜索结果" lefttext="返回" leftarrow="true"></mynavbar>
+    <mynavbar title="搜索" lefttext="返回" leftarrow="true"></mynavbar>
     <!-- 主体 -->
-    <van-cell title="{{keyword}}" />
+    <van-search
+      class="search"
+      value="{{keyword}}"
+      placeholder="搜索任务，用户等"
+      shape="round"
+      bind:search="onSearch"
+      bind:change="onChange"
+      bind:clear="onClear"
+      focus
+      use-action-slot
+    >
+      <view wx:if="{{issearch}}" slot="action" bind:tap="onCancel">取消</view>
+      <view wx:else slot="action" bind:tap="onClickSearch">搜索</view>
+    </van-search>
+    <view wx:if="{{issearch}}">
+      <!-- 搜索历史界面 -->
+      <van-cell title="搜索关键字" label="{{keyword}}" />
+    </view>
+    <view wx:else>
+      <!-- 搜索结果展示页面 -->
+      <van-cell-group title="搜索历史">
+        
+      </van-cell-group>
+    </view>
   </view>
 </template>
 <script>
@@ -17,15 +40,32 @@
       mynavbar: MyNavBar
     }
     data = {
-      keyword: ""
+      keyword: "",
+      issearch: false
     }
     methods = {
+      onSearch(e) {
+        this.keyword = e.detail;
+        this.issearch = true;
+      },
+      onCancel() {
+        this.issearch = false;
+        this.keyword = ""
+      },
+      onChange(e) {
+        this.keyword = e.detail;
+      },
+      onClear() {
+        this.issearch = false;
+      },
+      onClickSearch() {
+        console.log(this.keyword)
+        this.issearch = true
 
+      }
     }
-    onLoad(option) {
-      // 搜索的关键词
-      console.log(option.keyword)
-      this.keyword = option.keyword
+    onLoad() {
+      
     }
   }  
 </script>

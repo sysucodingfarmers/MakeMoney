@@ -42,6 +42,13 @@
             console.log(res);
             console.log(res.tempFilePaths);
             var tempFilePaths = res.tempFilePaths;
+            // wx.uploadFile({
+            //   url: 'http://makemoney.ink:5050/uploadAvatar',
+            //   header: {
+            //     'Content-Type': 'multipart/form-data',
+            //     'token': wx.getStorageSync('token')
+            //   }
+            // })
             // uploadFile上传头像
             that.userinfo.avatar = tempFilePaths;
             that.$parent.globalData.userInfo.avatar = tempFilePaths;

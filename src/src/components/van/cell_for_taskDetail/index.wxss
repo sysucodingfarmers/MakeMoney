@@ -48,7 +48,9 @@
   overflow: hidden;
   color: #999;
   text-align: left;
-  vertical-align: middle
+  vertical-align: middle;
+  display: flex;
+  justify-content: center;
 }
 
 .van-cell__title {
