@@ -112,7 +112,8 @@ export default class extends wepy.app {
       studentId: "",
       password: "",
       state: false
-    }
+    },
+    timer: null
   }
 
   constructor () {

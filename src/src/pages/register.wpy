@@ -190,7 +190,7 @@
       isphone: true,
 
       btn_msg: "发送验证码",
-      cur_time: 60,
+      cur_time: 120,
       issend: false,
 
       phone_sms: "",
@@ -413,7 +413,7 @@
       console.log("生成的验证码为： " + this.send_phone_sms)
     }
     setTimer() {
-      var timer = setTimeout((res) => {
+      this.$parent.globalData.timer = setTimeout((res) => {
         this.cur_time -= 1;
         if (this.cur_time > 0) {
           this.btn_msg = "已发送 " + this.cur_time;
@@ -425,9 +425,11 @@
           this.issend = false;
           this.send_phone_sms = ""
           this.btn_msg = "重新发送"
-          this.cur_time = 60
+          console.log(this.btn_msg)
+          this.init = false
+          this.cur_time = 120
           this.$apply()
-          clearTimeout(timer)
+          clearTimeout(this.$parent.globalData.timer)
         }
       }, 1000)
     }

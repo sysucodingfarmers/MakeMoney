@@ -33,7 +33,8 @@
     }
     methods = {
       goBack(e) {
-        wepy.navigateBack();
+        wx.navigateBack();
+        clearTimeout(this.$root.$parent.globalData.timer)
       }
     }
     onLoad() {

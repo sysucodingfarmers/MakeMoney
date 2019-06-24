@@ -168,6 +168,7 @@
       },
       onSelect(e) {
         console.log(e.detail)
+        this.logintypeshow = false
         if (e.detail.key == 'phone')
           wepy.navigateTo({
             url: 'register?type=phone'
