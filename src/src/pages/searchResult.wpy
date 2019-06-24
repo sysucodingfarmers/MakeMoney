@@ -1,71 +1,170 @@
-<script>
-  
-</script>
+<style lang='less'>
+  .tasklist-view {
+    height: 450px;
+  }
+</style>
 <template>
   <view style="position: fixed; height: 100%; width: 100%;">
-    <mynavbar title="搜索" lefttext="返回" leftarrow="true"></mynavbar>
-    <!-- 主体 -->
+
+    <!-- 导航栏 -->
+    <mynavbar title="搜索" lefttext="首页" leftarrow="true"></mynavbar>
+
+    <!-- 搜索框 -->
     <van-search
       class="search"
-      value="{{keyword}}"
-      placeholder="搜索任务，用户等"
+      value="{{ keyword }}"
+      placeholder="搜索"
       shape="round"
+      show-action
       bind:search="onSearch"
+      bind:cancel="onCancel"
       bind:change="onChange"
-      bind:clear="onClear"
       focus
-      use-action-slot
-    >
-      <view wx:if="{{issearch}}" slot="action" bind:tap="onCancel">取消</view>
-      <view wx:else slot="action" bind:tap="onClickSearch">搜索</view>
-    </van-search>
-    <view wx:if="{{issearch}}">
-      <!-- 搜索历史界面 -->
+    ></van-search>
+
+    <view class="tasklistboard" wx:if="{{issearch}}">
+      <!-- 搜索结果 -->
       <van-cell title="搜索关键字" label="{{keyword}}" />
+      <scroll-view
+        id="scroll-wrap"
+        class="tasklist-view"
+        scroll-y="true"
+        lower-threshold="100"
+      >
+        <view
+          id="inner-wrap"
+          style="width: 100%;"
+        >
+          <tasklist :tasks.sync="tasks"></tasklist>
+        </view>
+      </scroll-view>
     </view>
     <view wx:else>
-      <!-- 搜索结果展示页面 -->
+      <!-- 搜索历史 -->
       <van-cell-group title="搜索历史">
-        
+        <view wx:for="{{ search_histories }}" wx:key="idx" wx:for-index="idx" wx:for-item="itemName">
+          <van-cell id="{{ idx }}" title="{{ itemName }}" clickable bind:click="onClickHistory"></van-cell>
+        </view>
       </van-cell-group>
     </view>
+
   </view>
 </template>
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
+  import TaskList from '../components/tasklist'
+  import TasksData from '../data/TempTaskData'
 
   export default class SearchResult extends wepy.page {
     components = {
+      tasklist: TaskList,
       mynavbar: MyNavBar
     }
+
     data = {
       keyword: "",
-      issearch: false
+      issearch: false,
+      tasks: [],
+      search_histories: [],
+      history: "",
+      dataIndex: 0
     }
-    methods = {
-      onSearch(e) {
-        this.keyword = e.detail;
-        this.issearch = true;
-      },
-      onCancel() {
-        this.issearch = false;
-        this.keyword = ""
-      },
-      onChange(e) {
-        this.keyword = e.detail;
-      },
-      onClear() {
-        this.issearch = false;
-      },
-      onClickSearch() {
-        console.log(this.keyword)
-        this.issearch = true
 
+    methods = {
+      onChange (e) {
+          this.keyword = e.detail;
+      },
+
+      onSearch () {
+        this.search();
+      },
+
+      onCancel (e) {
+        this.issearch = false;
+      },
+
+      onClickHistory (e) {
+        this.keyword = this.search_histories[e.target.id];
+        this.search();
       }
     }
-    onLoad() {
-      
+
+    onLoad () {
+      this.search_histories = wx.getStorageSync('searchHistory');
     }
-  }  
+
+    search () {
+      if (this.keyword == '') {
+        // 搜索框为空时不做任何事情
+      } else {
+        // 搜索框不为空时搜索
+        this.issearch = true;
+
+        // 只保存6个最近记录
+        var _keyword = this.keyword;
+        if (this.search_histories.length <= 0) {
+
+        } else if (this.search_histories.length < 6) {
+          var index = this.search_histories.findIndex(function (element) {
+            return element == _keyword;
+          });
+          if (index >= 0) {
+            this.search_histories.splice(index, 1);
+          }
+        } else {
+          var index = this.search_histories.findIndex(function (element) {
+            return element == _keyword;
+          });
+          if (index < 0) {
+            this.search_histories.shift();
+          } else {
+            this.search_histories.splice(index, 1);
+          }
+        }
+        this.search_histories.push(this.keyword);
+        console.log(this.search_histories);
+
+        // 将历史搜索记录保存到本地缓存
+        wx.setStorageSync(
+          'searchHistory',
+          this.search_histories
+        );
+
+        //console.log(this.keyword);
+
+        // 任务列表
+        this.tasks = [];
+        this.dataIndex = 0;
+        for (var i = 0; i < 10; i++) {
+          this.tasks.push(TasksData.data.tasks[this.dataIndex]);
+          this.tasks[this.dataIndex].itemid = "task_item_id" + this.dataIndex;
+          this.dataIndex += 1;
+          if (this.dataIndex == TasksData.data.tasks.length) break;
+        }
+        this.$apply();
+        console.log(this.dataIndex);
+        /*
+        wx.request({
+          url: 'http://makemoney.ink:5050/search/title_key_word',
+          method: 'POST',
+          data: {
+            'key_word': this.keyword
+          },
+          header: {
+            'content-type': 'application/json'
+          },
+          success: (res) => {
+            console.log(res.data);
+          },
+          fail: (res) => {
+            console.log(res.data)
+          },
+          complete: (res) => {
+
+          }
+        });*/
+      }
+    }
+  }
 </script>
