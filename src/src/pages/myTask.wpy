@@ -44,10 +44,22 @@
 
     }
     onLoad(options) {
-      var tasks = TasksData.data.tasks;
-      console.log(options.type);
+      console.log('mytask onload');
       if (options.type == "publish") {
         this.type = 0;
+      }
+      else {
+        this.type = 1;
+      }
+      console.log('mytask end');
+    }
+    onShow() {
+      console.log('mytask onshow');
+      this.$broadcast("setTitle", this.title);
+      var tasks = TasksData.data.tasks;
+      this.tasks = [];
+      
+      if (this.type == 0) {
         this.title = "我的发布";
         var that = this;
         tasks.forEach(item=>{
@@ -56,8 +68,7 @@
           }
         });
       }
-      else if (options.type == "receive") {
-        this.type = 1;
+      else if (this.type == 1) {
         this.title = "我的接单";
         var that = this;
         tasks.forEach(item=>{
@@ -72,10 +83,7 @@
           }
         })
       }
-      console.log(this.title)
-    }
-    onShow() {
-      this.$broadcast("setTitle", this.title)
+      console.log('mytask end');
     }
   }
 </script>

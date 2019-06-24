@@ -166,7 +166,8 @@
         var pages = getCurrentPages();
         var prevPage = pages[pages.length - 2];  //上一个页面
         prevPage.setData({
-          query: that.query
+          query: that.query,
+          isQueryChange: true
         });
         wepy.navigateBack({
           delta: 1

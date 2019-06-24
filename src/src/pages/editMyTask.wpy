@@ -1,423 +1,60 @@
 <style lang="less">
-  .page{
-    line-height: 1.6;
-    background-color: #f8f8f8;
-    height:100%;
-  }
-  .img-block{
-    float:left;
-    display: block;
-    position:relative;
-    width: 140rpx;
-    height: 140rpx;
-    margin:10rpx 10rpx 10rpx 10rpx;
-    padding:0 0 0 0;
-    border: 1px solid #D9D9D9;
-  }
-  .img-block-img{ 
-    position:absolute;
-    left:0;
-    z-index:5; 
-    height:100%;
-    width:100%;
-  }
-  .img-block-icon{
-    position:absolute;
-    right:2px;
-    z-index:10;
-  }
-  .img-tip{
-    position:absolute;
-    bottom:5rpx;
-    right:28rpx;
-    color: #888;
-    font-size: 28rpx;
-  }
-  .subbmit-button{
-    margin-left:20px;
-    margin-right:20px;
-    margin-top:25px;
-    justify-content: center;
-    align-item: center;
-  }
-  ::-webkit-scrollbar{
-    width: 0;
-    height: 0;
-    color: transparent;
-  }
+  
 </style>
 <template>
   <view style="position: fixed; width: 100%; height: 100%;">
     <mynavbar title="修改任务" lefttext="返回" leftarrow="true"></mynavbar> 
     <view class="page">
       <scroll-view scroll-y="true" style="height: 87%;">
-        <van-cell-group title="基本信息">
-          <van-field
-            value="{{taskInfo.name}}"
-            label="任务名称"
-            placeholder="请输入任务名称"
-            clearable
-            required
-            error-message="{{name_error}}"
-            bind:input="EditName"
-          ></van-field>
-          <van-field
-            value="{{taskInfo.detail}}"
-            label="任务详情"
-            type="textarea"
-            placeholder="请输入任务详情"
-            clearable
-            required
-            error-message="{{detail_error}}"
-            autosize
-            bind:input="EditDetail"
-          ></van-field>
-          <van-field
-            value="{{taskInfo.pay}}"
-            label="任务报酬"
-            type="number"
-            clearable
-            required
-            error-message="{{pay_error}}"
-            bind:input="EditPay"
-          ></van-field>
-          <van-field
-            value="{{taskInfo.receiver_limit}}"
-            label="任务人数"
-            type="number"
-            clearable
-            required
-            error-message="{{receiver_limit_error}}"
-            bind:input="EditReceiverLimit"
-          ></van-field>
-          <van-field
-            value="{{taskInfo.start_time}}"
-            label="开始时间"
-            placeholder="请输入开始时间"
-            required
-            readonly
-            bindtap="EditStartTime"
-          ></van-field>
-          <van-field
-            value="{{taskInfo.end_time}}"
-            label="结束时间"
-            placeholder="请输入结束时间"
-            required
-            readonly
-            error-message="{{time_error}}"
-            bindtap="EditEndTime"
-          ></van-field>
-          <van-field
-            value="{{taskInfo.type}}"
-            label="任务类型"
-            readonly
-          ></van-field>
-        </van-cell-group>
-        <van-cell-group title="额外信息">
-          <van-cell title="任务图片" icon="photo-o">
-            <van-icon 
-              slot="right-icon" 
-              name="add-o" 
-              size="20px" 
-              style="margin-top:3px;"
-              bindtap="AddImage"
-            ></van-icon>
-          </van-cell>
-          <van-cell wx:if="{{images.length>0}}">
-            <repeat for="{{images}}" key="index" index="index" item="item">
-              <view class="img-block">
-                <van-icon
-                  slot="right-icon"
-                  name="close"
-                  size="15px"
-                  class="img-block-icon"
-                  bindtap="deleteImage({{index}})"
-                ></van-icon>
-                <image 
-                  src="{{item}}" 
-                  mode="aspectFill" 
-                  class="img-block-img"
-                  bindtap="previewImage({{item}})"
-                ></image>
-              </view>
-            </repeat>
-            <view class="img-tip">{{images.length}}/8</view>
-          </van-cell>
-          <van-cell 
-            title="问卷链接" 
-            wx:if="{{taskInfo.type === '问卷调查'}}"
-            is-link
-            icon="description"
-            bind:click="EditQuery"
-          ></van-cell>
-        </van-cell-group>
-        <view class="subbmit-button">
-          <van-button type="primary" round size="large" bindtap="subbmit">确定</van-button>
-        </view>
+        <edittask :query.sync="query" :images.sync="images" :taskInfo.sync="taskInfo" :taskid.sync="taskid"></edittask>
       </scroll-view>
-      <van-popup
-        show="{{showStartTimeSelector}}"
-        position="bottom"
-      >
-        <van-datetime-picker
-          type="datetime"
-          confirm-button-text="确认"
-          cancel-button-text="取消"
-          title="开始时间"
-          bind:confirm="ConfirmStartTime"
-          bind:cancel="CancelStartTime"
-        ></van-datetime-picker>
-      </van-popup>
-      <van-popup
-        show="{{showEndTimeSelector}}"
-        position="bottom"
-      >
-        <van-datetime-picker
-          type="datetime"
-          confirm-button-text="确认"
-          cancel-button-text="取消"
-          title="结束时间"
-          bind:confirm="ConfirmEndTime"
-          bind:cancel="CancelEndTime"
-        ></van-datetime-picker>
-      </van-popup>
     </view>
   </view>
-  <van-dialog id="van-dialog" />
 </template>
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
-  import caculateDate from '../data/CaculateDate'
+  import EditTask from '../components/editTask'
   import TasksData from '../data/TempTaskData'
-  import Dialog from '../components/van/dialog/dialog'
 
   export default class EditMyTask extends wepy.page {
     components = {
-      mynavbar: MyNavBar
+      mynavbar: MyNavBar,
+      edittask: EditTask
     }
     data = {
-      name_error: '',
-      detail_error: '',
-      pay_error: '',
-      receiver_limit_error: '',
-      time_error: '',
-      showStartTimeSelector: false,
-      showEndTimeSelector: false,
+      //任务的id
+      taskid: 0,
+      //辅助参数
+      isQueryChange: false,
       //辅助数组
-      // query: [],
+      query: [],
       //本地图片上传路径
-      images: [
-        
-      ],
+      images: [],
       //辅助参数，用于选择任务类型
-      types: [
-        '问卷调查',
-        '寻物启事',
-        '跑腿任务',
-        '实验调查'
-      ],
       //任务
-    	taskInfo: {
-          
-      }
+    	taskInfo: {}
     }
     methods = {
-      //编辑任务名称
-      EditName(e) {
-        var val = e.detail;
-        console.log(val);
-        if (val === '') {
-          this.name_error = '名称不能为空';
-          this.$apply();
-        }
-        else {
-          this.taskInfo.name = val;
-          this.name_error = '';
-          this.$apply();
-        }
-      },
-      //填写任务详情
-      EditDetail(e) {
-        var val = e.detail;
-        console.log(val);
-        if (val === '') {
-          this.detail_error = '详情不能为空';
-          this.$apply();
-        }
-        else {
-          this.taskInfo.detail = val;
-          this.detail_error = '';
-          this.$apply();
-        }
-      },
-      //填写任务每人报酬
-      EditPay(e) {
-        var val = Number(e.detail);
-        console.log(val);
-        if (val <= 0 || val >= 1000 || isNaN(val)) {
-          this.pay_error = '请输入正确的浮点数(1-1000)';
-          this.$apply();
-        }
-        else {
-          this.taskInfo.pay = val;
-          this.pay_error = '';
-          this.$apply();
-        }
-      },
-      //编辑限制人数
-      EditReceiverLimit(e) {
-        var val = Number(e.detail);
-        console.log(val);
-        if (val <= 0 || val >= 1000 || isNaN(val) || val % 1 != 0) {
-          this.receiver_limit_error = '请输入正确的整数(1-1000)';
-          this.$apply();
-        }
-        else {
-          this.taskInfo.receiver_limit = val;
-          this.receiver_limit_error = '';
-          this.$apply();
-        }
-      },
-      //编辑开始时间
-      EditStartTime(e) {
-        this.showStartTimeSelector = true;
-      },
-      ConfirmStartTime(e) {
-        var date = new Date(e.detail);
-        this.taskInfo.start_time = caculateDate.DateToString(date);
-        this.showStartTimeSelector = false;
-        var eTime = caculateDate.StringToDate(this.taskInfo.end_time);
-        if (date.getTime() >= eTime.getTime()) {
-          this.time_error = '无效时间';
-        }
-        else {
-          this.time_error = '';
-        }
-        this.$apply();
-      },
-      CancelStartTime(e) {
-        this.showStartTimeSelector = false;
-      },
-      //编辑结束时间
-      EditEndTime(e) {
-        this.showEndTimeSelector = true;
-      },
-      ConfirmEndTime(e) {
-        var date = new Date(e.detail);
-        this.taskInfo.end_time = caculateDate.DateToString(date);
-        this.showEndTimeSelector = false;
-        var sTime = caculateDate.StringToDate(this.taskInfo.start_time);
-        if (date.getTime() <= sTime.getTime()) {
-          this.time_error = '无效时间';
-        }
-        else {
-          this.time_error = '';
-        }
-        this.$apply();
-      },
-      CancelEndTime(e) {
-        this.showEndTimeSelector = false;
-      },
-      //添加本地图片
-      AddImage() {
-          const that = this;
-          wx.chooseImage({
-              count: 1,
-              sizeType: ['original', 'compressed'],
-              sourceType: ['album', 'camera'],
-              success(res) {
-                that.images = that.images.concat([res.tempFilePaths[0]]);
-                console.log(that.images);
-                that.$apply();
-              },
-              fail(res) {
-                console.log("fail");
-              }
-          });
-      },
-      //预览本地图片
-      previewImage(item) {
-          wx.previewImage({
-              current: item, // 当前显示图片的http链接
-              urls: this.images // 需要预览的图片http链接列表
-          });
-      },
-      //删除上传的图片
-      deleteImage(index) {
-        Dialog.confirm({
-          title: '是否删除',
-          message: '删除就无法回复'
-        }).then(() => {
-          this.images.splice(index,1);
-          this.$apply();
-        });
-      },
-      //编辑问卷
-      EditQuery(e) {
-        var query = JSON.stringify(this.taskInfo.extra_content.query);
-        wepy.navigateTo({
-          url: "createQuery?query=" + query
-        });
-      },
-      //提交数据
-      subbmit(e) {
-        var canSubmmit = true;
-        //判断任务名称
-        this.name_error = this.taskInfo.name === '' ? '名字不能为空' : this.name_error;
-        canSubmmit = this.name_error != '' ? false : canSubmmit;
-        console.log(canSubmmit);
-        //判断任务详情
-        this.detail_error = this.taskInfo.detail === '' ? '详情不能为空' : this.detail_error;
-        canSubmmit = this.detail_error != '' ? false : canSubmmit;
-        console.log(canSubmmit);
-        //判断日期
-        this.time_error = (this.taskInfo.end_time === '' || this.taskInfo.start_time === '') ? "时间未填" : this.time_error;
-        canSubmmit = this.time_error != '' ? false : canSubmmit;
-        console.log(canSubmmit);
-        //判断报酬是否为零
-        this.pay_error = this.taskInfo.pay === 0 ? "报酬不能为空" : this.pay_error;
-        canSubmmit = this.pay_error != '' ? false : canSubmmit;
-        console.log(canSubmmit);
-        //判断允许人数是否为零
-        this.receiver_limit_error = this.taskInfo.receiver_limit === 0 ? "人数不能为空" : this.receiver_limit_error;
-        canSubmmit = this.receiver_limit_error != '' ? false : canSubmmit;
-        console.log(canSubmmit);
-        //判断问卷任务是否为空
-        if (this.taskInfo.type === '问卷调查' && this.taskInfo.extra_content.query.length === 0) {
-          canSubmmit = false;
-          Dialog.alert({
-            title: '错误',
-            message: '问卷为空'
-          });
-        }
-        //提交任务并关闭页面
-        console.log(canSubmmit);
-        this.$apply();
-        if (canSubmmit) {
-          // var task = JSON.stringify(this.taskInfo);
-          var id = this.taskInfo.id;
-          var mes = JSON.stringify(["修改","删除"]);
-          TasksData.data.tasks[id] = this.taskInfo;
-          wepy.redirectTo({
-            url: 'taskDetail?id=' + id + '&mes=' + mes
-          });
-        }
-      }
+
     }
     events = {}
     onLoad(options) {    
       console.log("EditMyTask onload");
-      this.taskInfo = JSON.parse(options.task);
-      console.log(this.taskInfo);
+      var id = JSON.parse(options.taskid);
+      this.taskid = id;
+      this.taskInfo = TasksData.data.tasks[id];
+      console.log('EditMyTask end');
     }
     onShow() {
       console.log("EditMyTask onshow");
       var pages = getCurrentPages();
       var currPage = pages[pages.length - 1];   //当前页面
-      if (currPage.data.query != undefined) {
+      this.isQueryChange = currPage.data.isQueryChange;
+      if (this.isQueryChange) {
         this.taskInfo.extra_content.query = currPage.data.query;
       }
+      console.log('EditMyTask end');
     }
   }
 </script>
