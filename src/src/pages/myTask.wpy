@@ -3,9 +3,7 @@
     line-height: 1.6;
     background-color: #f8f8f8;
     height:100%;
-    font-family: KaiTi;
-    font-size: 13px;
-    color: grey;
+
   }
   ::-webkit-scrollbar{
     width: 0;
@@ -17,11 +15,16 @@
   <view style="position: fixed; height: 100%; width: 100%;">
     <mynavbar title="{{title}}" lefttext="返回" leftarrow="true"></mynavbar>
     <!-- 主体 -->
-    <view class="page">
-      <scroll-view scroll-y="true" style="height: 87%;">
-          <tasklist :tasks.sync="tasks"></tasklist>
-      </scroll-view>
-    </view>
+    <van-tabs active="{{active}}" bind:change="onChange">
+      <repeat for="{{category.list}}" item="item">
+        <van-tab title="{{item}}">
+          <view></view>
+        </van-tab>
+      </repeat>
+    </van-tabs>
+    <scroll-view scroll-y="true" style="height: 80%; margin-top: 5%;">
+      <tasklist :tasks.sync="tasks"></tasklist>
+    </scroll-view>
   </view>
 </template>
 <script>
@@ -34,14 +37,20 @@
     data = {
       title: "默认",
       type: 0,
-      tasks: []
+      tasks: [],
+      category: {
+        list: []
+      }
     }
     components = {
       mynavbar: MyNavBar,
       tasklist: TaskList
     }
     methods = {
-
+      onChange() {
+        console.log("change list")
+        // 下面切换list
+      }
     }
     onLoad(options) {
       console.log('mytask onload');
@@ -55,13 +64,14 @@
     }
     onShow() {
       console.log('mytask onshow');
-      this.$broadcast("setTitle", this.title);
+      
       var tasks = TasksData.data.tasks;
       this.tasks = [];
       
       if (this.type == 0) {
         this.title = "我的发布";
         var that = this;
+        this.category.list = ['进行中', '已结束']
         tasks.forEach(item=>{
           if (item.publisher == this.$root.$parent.globalData.userInfo.username) {
             that.tasks.push(item);
@@ -71,6 +81,7 @@
       else if (this.type == 1) {
         this.title = "我的接单";
         var that = this;
+        this.category.list = ['未完成', '已完成']
         tasks.forEach(item=>{
           var isReceive = false;
           item.receiver.forEach(i=>{
@@ -83,6 +94,7 @@
           }
         })
       }
+      this.$broadcast("setTitle", this.title);
       console.log('mytask end');
     }
   }
