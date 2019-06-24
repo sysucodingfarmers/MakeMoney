@@ -34,7 +34,9 @@ class User(UserMixin, db.Model):
 	wx_number = db.Column(db.String(20))
 	#兴趣爱好(修改了变量名，从hobit改为hobbit)
 	hobbit = db.Column(db.String(100))
-
+	# 头像图片的编码
+	profile = db.Column(db.String(125000))
+	
 	def set_password(self, password):
 		self.password_hash = generate_password_hash(password)
 	def check_password(self, password):
@@ -53,6 +55,7 @@ class Receiver(db.Model):
 		self.uid = kwargs['uid']
 		self.finished = self.__table__.c.finished.default.arg if 'finished' not in kwargs else kwargs['finished']
 		self.paid = self.__table__.c.paid.default.arg if 'paid' not in kwargs else kwargs['paid']
+		self.answers = Answer()
 	id = db.Column(db.Integer, nullable=False, primary_key=True)
 	uid = db.Column(db.Integer, nullable=False)
 	tid = db.Column(db.Integer, nullable=False)
@@ -60,14 +63,14 @@ class Receiver(db.Model):
 	# 回答
 	answers = db.relationship('Answer', backref=db.backref('task', lazy=True))
 	#answer id
-	aid = db.Column(db.Integer, db.ForeignKey('answer.id'), nullable=True)
+	aid = db.Column(db.Integer, db.ForeignKey('answer.id'))
 
 	#该id用户的任务是否完成
 	finished = db.Column(db.Boolean, default=False)
 	#该id用户的报酬是否支付
 	paid = db.Column(db.Boolean, default=False)
 	def __repr__(self):
-		return '<Receiver {} {} {}>'.format(self.id, self.finished, self.paid)
+		return '<Receiver id:{} uid:{} tid:{} finished:{} paid:{}>'.format(self.id, self.uid, self.tid, self.finished, self.paid)
 
 
 class Task(db.Model):
@@ -85,6 +88,7 @@ class Task(db.Model):
 			kwargs['received_number'] = self.__table__.c.received_number.default.arg
 		if 'finished_number' not in kwargs:
 			kwargs['finished_number'] = self.__table__.c.finished_number.default.arg
+		self.template = Template()
 		super(Task, self).__init__(**kwargs)
 	#任务id
 	id = db.Column(db.Integer, primary_key=True)
@@ -126,41 +130,18 @@ class Task(db.Model):
 	def __repr__(self):
 		return '<Task {} {} sponsor:{}>'.format(self.id, self.title, self.sponsor_id)
 
-#单选题
-class SingleChoice(object):
-	def __init__(self,question,options):
-		self.question=question
-		self.options=options
-	def __repr__(self):
-		return '<SingleChoice {} {}>'.format(self.question, self.options)
-
-#多选题
-class MultipleChoice(object):
-	def __init__(self,question,options):
-		self.question=question
-		self.options=options
-	def __repr__(self):
-		return '<MultipleChoice {} {}>'.format(self.question, self.options)
-
-#问答题
-class EssayQuestion(object):
-	def __init__(self,question):
-		self.question=question
-	def __repr__(self):
-		return '<EssayQuestion {}>'.format(self.question)
-
 class Template(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	single_choices = db.Column(db.PickleType)
-	multiple_choices = db.Column(db.PickleType)
-	essay_questions = db.Column(db.PickleType)
+	questions = db.Column(db.PickleType)
+	options = db.Column(db.PickleType)
+	types = db.Column(db.PickleType)
 	def __repr__(self):
-		return '<Template {}\n{}\n{}>\n\n'.format(self.single_choices, self.multiple_choices, self.essay_questions)
+		return '<Template {}\n{}\n{}>\n\n'.format(self.questions, self.options, self.types)
 
 #回答
 class Answer(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+	receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 	answers = db.Column(db.PickleType)
 	def __repr__(self):
 		return '<Answer {} {} {}>'.format(self.id, self.receiver_id, self.answers)

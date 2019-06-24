@@ -10,7 +10,8 @@ def UserToJson(user):
 	    'major': user.major,
 	    'phone': user.phone,
 	    'wx_number': user.wx_number,
-	    'hobbit': user.hobbit
+	    'hobbit': user.hobbit,
+	    'profile': user.profile
 	}
 
 def TaskToJson(task):
