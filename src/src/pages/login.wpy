@@ -34,6 +34,16 @@
     <van-toast id="van-toast"></van-toast>
   </view>
   <van-dialog id='van-dialog' />
+  <van-action-sheet
+    show="{{logintypeshow}}"
+    actions="{{actions}}"
+    bind:select="onSelect"
+    bind:cancel="onClose"
+    cancel-text="取消"
+    close-on-click-overlay="true"
+    safe-area-inset-bottom="true"
+    overlay="true"
+  />
 </template>
 
 <script>
@@ -55,7 +65,18 @@
       password: "",
       passwordErrorMessage: "",
       passwordPlaceholder: "请输入密码",
-      userinfo: {}
+      userinfo: {},
+      actions: [
+        {
+          key: 'phone',
+          name: '通过手机注册'
+        },
+        {
+          key: 'email',
+          name: '通过邮箱注册'
+        }
+      ],
+      logintypeshow: false
     }
 
     components = {
@@ -118,21 +139,11 @@
             'content-type': 'application/json'
           },
           complete: function(res) {
+            console.log(res)
             Toast.clear();
             if (res.data.id == undefined || res.data.id == null)
             {
-              Toast(res.data.errMsg);
-              var pages = getCurrentPages()
-              var infoIndex = -1
-              for (var i = pages.length - 1; i >= 0; i--)
-              {
-                console.log(pages[i].route)
-                if (pages[i].route == 'pages/myInfo') {
-                  infoIndex = i;
-                  break;
-                }
-              }
-              console.log("infoIndex " + infoIndex)
+              Toast(res.data.errmsg);
             } 
             else 
             {
@@ -145,36 +156,30 @@
               that.$parent.globalData.userInfo.school = res.data.school;
               that.$parent.globalData.userInfo.major = res.data.major;
               that.$parent.globalData.loginData.state = true;
-              // console.log(that.$parent.globalData.userInfo)
-              // var pages = getCurrentPages()
-              // var infoIndex = -1
-              // for (var i = pages.length - 1; i >= 0; i--)
-              // {
-              //   console.log(pages[i].route)
-              //   if (pages[i].route == 'pages/myInfo') {
-              //     infoIndex = i;
-              //     break;
-              //   }
-              // }
-              // console.log("infoIndex " + infoIndex)
-              // if (infoIndex == -1) {
-              //   console.log("go to myInfo")
-              //   wepy.navigateTo({
-              //     url: 'myInfo'
-              //   })
-              // }
               wx.navigateBack()
-              // wx.switchTab({
-              //   url:'./mainPage'
-              // });
             }
           }
         });
 
       },
-
       onClickRegister() {
-        this.$navigate('./register');
+        // this.$navigate('./register');
+        this.logintypeshow = true;
+      },
+      onSelect(e) {
+        console.log(e.detail)
+        if (e.detail.key == 'phone')
+          wepy.navigateTo({
+            url: 'register?type=phone'
+          });
+        else if (e.detail.key == 'email')
+          wepy.navigateTo({
+            url: 'register?type=email'
+          })
+      },
+      onClose() {
+        console.log("close")
+        this.logintypeshow = false;
       }
     }
 

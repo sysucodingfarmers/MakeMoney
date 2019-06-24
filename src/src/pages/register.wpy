@@ -68,24 +68,68 @@
         errorMessage="{{ majorErrorMessage }}"
         bind:change="onMajorChange"
       />
-
-      <van-field
-        value="{{ email }}"
-        clearable
-        label="邮箱"
-        placeholder="{{ emailPlaceholder }}"
-        errorMessage="{{ emailErrorMessage }}"
-        bind:change="onEmailChange"
-      />
-
-      <van-field
-        value="{{ phone }}"
-        clearable
-        label="手机"
-        placeholder="{{ phonePlaceholder }}"
-        errorMessage="{{ phoneErrorMessage }}"
-        bind:change="onPhoneChange"
-      />
+      <view wx:if="{{isphone}}">
+        <van-field
+          value="{{ phone }}"
+          clearable
+          required
+          label="手机"
+          placeholder="{{ phonePlaceholder }}"
+          errorMessage="{{ phoneErrorMessage }}"
+          bind:change="onPhoneChange"
+        />
+        <van-field
+          value="{{phone_sms}}"
+          center
+          clearable
+          label="验证码"
+          placeholder="{{ phone_sms_placeholder }}"
+          errorMessage="{{ phone_sms_error_msg }}"
+          border="{{false}}"
+          use-button-slot
+          bind:change="onPhoneSMSchange"
+        >
+          <van-button 
+            slot="button"
+            size="small"
+            type="info"
+            bind:click="sendPhoneCode"
+            disabled="{{issend}}"
+          >
+            {{btn_msg}}
+          </van-button>
+        </van-field>
+      </view>
+      <view wx:else>
+        <van-field
+          value="{{ email }}"
+          clearable
+          label="邮箱"
+          required
+          placeholder="{{ emailPlaceholder }}"
+          errorMessage="{{ emailErrorMessage }}"
+          bind:change="onEmailChange"
+        />
+        <van-field
+          value="{{email_sms}}"
+          center
+          clearable
+          label="验证码"
+          placeholder="请输入邮箱验证码"
+          
+          border="{{false}}"
+          use-button-slot
+        >
+          <van-button 
+            slot="button"
+            size="small"
+            type="info"
+            
+          >
+            发送验证码
+          </van-button>
+        </van-field>
+      </view>
     </van-cell-group>
     <view class="button">
       <van-button size="large" type="info" bind:click="onClickRegister" disabled="{{ isRegisterButtonDisabled }}">确认注册</van-button>
@@ -100,10 +144,12 @@
   import MyNavBar from '../components/mynavbar'
   import Toast from '../components/van/toast/toast';
   import Dialog from '../components/van/dialog/dialog'
+  import zhenzisms from '../sdk/zhenzisms'
 
   var phone_reg = /^[1](([3][0-9])|([4][5-9])|([5][0-3,5-9])|([6][5,6])|([7][0-8])|([8][0-9])|([9][1,8,9]))[0-9]{8}$/;
   var email_reg = /^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/;
   var studentId_reg = /^[0-9]{8,8}$/;
+  var timer = null;
 
   export default class Register extends wepy.page {
     data = {
@@ -139,7 +185,21 @@
 
       phone: "",
       phoneErrorMessage: "",
-      phonePlaceholder: "请输入手机号码"
+      phonePlaceholder: "请输入手机号码",
+
+      isphone: true,
+
+      btn_msg: "发送验证码",
+      cur_time: 60,
+      issend: false,
+
+      phone_sms: "",
+      phone_sms_error_msg: "",
+      phone_sms_placeholder: "请输入验证码",
+      phone_sms_len: 6,
+      send_phone_sms: "",
+
+      email_sms: ""
     }
 
     components = {
@@ -179,6 +239,11 @@
         this.phone = e.detail;
       },
 
+      onPhoneSMSchange(e) {
+        console.log(this.phone_sms)
+        this.phone_sms = e.detail
+      },
+
       onClickRegister() {
         // 检查学号
         var isEverythingGood = true;
@@ -208,20 +273,36 @@
           this.passwordAgainErrorMessage = "";
         }
 
-        //检查邮箱
-        if (!this.email.length == 0 && !email_reg.test(this.email)) {
-          this.emailErrorMessage = "输入的邮箱格式错误";
-          isEverythingGood = false;
-        } else {
-          this.emailErrorMessage = "";
-        }
+        // 手机检查
+        if (this.isphone) {
+          //检查手机号码
+          if (!this.phone.length == 0 && !phone_reg.test(this.phone)) {
+            this.phoneErrorMessage = "输入的手机号码格式错误";
+            isEverythingGood = false;
+          } else {
+            this.phoneErrorMessage = "";
+          }
 
-        //检查手机号码
-        if (!this.phone.length == 0 && !phone_reg.test(this.phone)) {
-          this.phoneErrorMessage = "输入的手机号码格式错误";
-          isEverythingGood = false;
-        } else {
-          this.phoneErrorMessage = "";
+          // 检查手机验证码
+          console.log(this.phone_sms + " " + this.send_phone_sms)
+          console.log(this.phone_sms == this.send_phone_sms)
+          if (this.phone_sms == this.send_phone_sms) {
+            this.phone_sms_error_msg = ""
+          }
+          else {
+            this.phone_sms_error_msg = "验证码错误"
+            isEverythingGood = false;
+          }
+        }
+        else {
+          //检查邮箱
+          if (!this.email.length == 0 && !email_reg.test(this.email)) {
+            this.emailErrorMessage = "输入的邮箱格式错误";
+            isEverythingGood = false;
+          } else {
+            this.emailErrorMessage = "";
+          }
+          // 检查邮箱验证码
         }
 
         //只有所有检查通过才向后端提交信息
@@ -230,6 +311,7 @@
         }
 
         //禁用所有按钮
+        if (timer) clearTimeout(timer)
         console.log('registering...');
         Toast.loading({
           mask: true,
@@ -301,18 +383,75 @@
             console.log(e)
           }
         });
+      },
+      sendPhoneCode() {
+        console.log("phone: " + this.phone)
+        if (this.phone.length == 0) {
+          Toast('请输入手机号码')
+        }
+        else if (!phone_reg.test(this.phone)) {
+          Toast('手机号码有误，请检查后重新输入')
+        }
+        else {
+          console.log('手机号码正确')
+          this.generateCode()
+          zhenzisms.client.send((res) => {
+            console.log(res)
+            this.issend = true;
+            this.btn_msg = "已发送 " + this.cur_time
+            this.$apply()
+            this.setTimer();
+          }, this.phone, '你的注册验证码为' + this.send_phone_sms)
+        }
       }
     }
-
+    generateCode() {
+      this.send_phone_sms = ""
+      for (var i = 0; i < this.phone_sms_len; i++) {
+        this.send_phone_sms += Math.floor(Math.random()*10)
+      }
+      console.log("生成的验证码为： " + this.send_phone_sms)
+    }
+    setTimer() {
+      var timer = setTimeout((res) => {
+        this.cur_time -= 1;
+        if (this.cur_time > 0) {
+          this.btn_msg = "已发送 " + this.cur_time;
+          this.$apply()
+          console.log(this.btn_msg)
+          this.setTimer()
+        }
+        else {
+          this.issend = false;
+          this.send_phone_sms = ""
+          this.btn_msg = "重新发送"
+          this.cur_time = 60
+          this.$apply()
+          clearTimeout(timer)
+        }
+      }, 1000)
+    }
     onLoad(options) {
-      var pages = getCurrentPages();
-      var prepage = pages[pages.length - 2]
-      console.log("prepage")
-      console.log(prepage)
-      console.log("data")
-      console.log(prepage.__data__)
-      console.log("studentId")
-      console.log("studentId: " + prepage.__data__.studentId)
+      // var pages = getCurrentPages();
+      // var prepage = pages[pages.length - 2]
+      // console.log("prepage")
+      // console.log(prepage)
+      // console.log("data")
+      // console.log(prepage.__data__)
+      // console.log("studentId")
+      // console.log("studentId: " + prepage.__data__.studentId)
+      if (options.type == 'phone') {
+        this.isphone = true
+        // 初始化榛子短信平台sdk
+        console.log('初始化榛子短信平台sdk')
+        zhenzisms.client.init(
+          'https://sms_developer.zhenzikj.com',
+          '101900',
+          'c97a8e58-04ec-4b17-9160-5f73ec4dcb6f'
+        )
+      }
+      else 
+        this.isphone = false
     }
   }
 </script>
