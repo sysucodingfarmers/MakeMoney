@@ -95,9 +95,7 @@
         // 根据需要修改
         var myurl = this.$root.$parent.globalData.publishTaskUrl;
         if (this.$root.$parent.globalData.userInfo.username) {
-          myurl += "?type1="
-          myurl += type[0]
-          myurl += "&type2="
+          myurl += "?type="
           myurl += type[1]
           wepy.navigateTo({
             url: myurl

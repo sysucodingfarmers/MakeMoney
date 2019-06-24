@@ -71,14 +71,14 @@
 
   export default class TaskDetail extends wepy.page {
     data = {
-      taskInfo:[],
-      button_left:"",
-      button_right:"",
-      finishRate: 0,
-      finish: [],
-      id: 0,
-      query: [],
-      canEditQuery: true
+      taskInfo:[],         //暂时存储任务详情
+      button_left:"",      //左边按钮的内容
+      button_right:"",     //右边按钮的内容
+      finishRate: 0,       //辅助参数，判断是否填写完问卷
+      finish: [],          //辅助参数，页面之间的传递参数，储存完成的问卷编号
+      id: 0,               //任务的编号
+      query: [],           //辅助参数，进行页面之间的任务参数传递
+      canEditQuery: true   //辅助参数，判断任务的内容是否可编辑保存
     }
     components = {
       mynavbar: MyNavBar
@@ -86,16 +86,17 @@
     methods = {
       //问卷
       EditQuery() {
-        var query = JSON.stringify(this.taskInfo.extra_content.query);
+        var query = JSON.stringify(this.query);
         var finish = JSON.stringify(this.finish);
         wepy.navigateTo({
           url: 'queryDetail?query=' + query + "&fRate=" + this.finishRate + '&finish=' + finish + '&canEditQuery=' + this.canEditQuery
         });
       },
+      //左边button，包括接受，修改，登录以及完成
       LeftSubbmit() {
         var val = this.button_left;
+        //接受
         if (val === '接受') {
-          // var that = this;
           console.log('接受');
           Dialog.confirm({
             message: '是否接受'
@@ -111,7 +112,6 @@
               TasksData.data.tasks[this.id].receiver = this.taskInfo.receiver;
               this.button_left = '完成';
               this.button_right = '取消';
-              console.log(TasksData.data.tasks);
               this.$apply();
             }
             else {
@@ -121,17 +121,18 @@
             }
           })
         }
+        //修改
         else if (val === '修改') {
           console.log('修改');
-          var task = JSON.stringify(this.taskInfo);
+          var taskid = JSON.stringify(this.id);
           wepy.redirectTo({
-            url: "editMyTask?task=" + task
+            url: "editMyTask?taskid=" + taskid
           });
         }
+        //登录
         else if (val === '登录') {
           Dialog.alert({
-            title: '错误',
-            message: '请先登录'
+            message: '即将跳转登录页面'
           }).then(()=>{
             console.log('登录');
             wepy.navigateTo({
@@ -139,37 +140,58 @@
             })
           });
         }
+        //完成
         else if (val === '完成') {
           if (this.finishRate === 100) {
-            console.log("finish");
+            //todo
+            //将完成的信息发送至后端
+            TasksData.data.tasks[this.id].receiver.forEach(receiver=>{
+              if (receiver.name == this.$root.$parent.globalData.userInfo.username) {
+                receiver.isfinished = true;
+                receiver.ispaid = true;
+              }
+            });
+            this.button_left = '已完成';
+            //...
+            console.log("完成");
           }
           else {
+            console.log('未完成');
             Dialog.alert({
               title: '错误',
               message: '还未完成'
             }).then(()=>{
-              console.log('go');
+              // console.log('go');
             });
             }
         }
+        //已完成
+        else if (val === '已完成') {
+          console.log('已完成');
+          wepy.navigateBack();
+        }
       },
+      //左边button，包括取消，收藏以及删除
       RightSubbmit() {
         var val = this.button_right;
+        //收藏
         if (val === '收藏') {
           console.log('收藏');
           wepy.navigateBack();
         }
+        //取消
         else if (val === '取消') {
           console.log('取消');
           wepy.navigateBack();
         }
+        //删除
         else if (val === '删除') {
           if (this.taskInfo.receiver.length != 0) {
             Dialog.alert({
               title: '无法删除',
               message: '任务进行中'
             }).then(()=>{
-              console.log('fail');
+              console.log('删除失败');
             });
           }
           else {
@@ -177,28 +199,44 @@
               title: '是否删除',
               message: '删除就无法恢复'
             }).then(()=>{
-              console.log('删除成功', this.id);
+              console.log('删除成功');
               TasksData.data.tasks.splice(this.id, 1);
               wepy.navigateBack();
             });
           }
         }
       },
+      //发布者查看接受者信息
       ShowReceiverDetail(id) {
-        // wepy.navigateTo({
-        //   url:
-        // })
         console.log(id);
       }
     }
     onLoad(options) {
       console.log("taskDetail onLoad");
-      
       this.id = options.id;
       this.taskInfo = TasksData.data.tasks[this.id];
-
-      var content = "任务详情： \n任务id为" + String(this.id);
-      console.log(content); 
+      this.query = this.taskInfo.extra_content.query;
+      console.log('打开任务', this.id);
+      console.log('taskDetail end');
+      // wx.request({
+      //   url: 'http://makemoney.ink:5050/search/task_id',
+      //   method: 'POST',
+      //   header: {
+      //     'content-type': 'application/json'
+      //   },
+      //   data: {
+      //     'task_id': '1'
+      //   },
+      //   success: (res) => {
+      //     console.log(res.data);
+      //   },
+      //   fail: (res) => {
+      //     console.log(res)
+      //   },
+      //   complete: (res) => {
+      //     console.log('complete')
+      //   }
+      // });
       // console.log(TasksData.data.tasks);
     }
     onShow() {
@@ -207,36 +245,38 @@
       var userInfo = this.$root.$parent.globalData.userInfo;
       var titem = TasksData.data.tasks[this.id]
       if (userInfo.username == undefined) {
-        mes = JSON.stringify(['登录', '取消']);
+        mes = ['登录', '取消'];
       }
       else if (userInfo.username == titem.publisher) {
-        mes = JSON.stringify(["修改","删除"]);
+        mes = ["修改","删除"];
+        this.canEditQuery = false;
       }
       else {
-        mes = JSON.stringify(["接受","收藏"]);
+        mes = ["接受","收藏"];
       }
       if (titem.receiver.length != 0 && userInfo != null) {
         titem.receiver.forEach(item=>{
           if (item.name === userInfo.username) {
-            mes = JSON.stringify(['完成', '取消']);
+            if (!item.isfinished) {
+              mes = ['完成', '取消'];
+            }
+            else {
+              mes = ['已完成', '取消'];
+            }
           }
         })
       }
-      var buttons = JSON.parse(mes);
-      this.button_left = buttons[0];
-      this.button_right = buttons[1];
-      if (this.button_left == '修改') {
-        this.canEditQuery = false;
-      }
-      console.log('接收到的button为' + this.button_left + '&' + this.button_right)
-      if (this.query.length != 0 && this.canEditQuery) {
-        this.taskInfo.extra_content.query = currPage.data.query;
+      this.button_left = mes[0];
+      this.button_right = mes[1];
+      
+      var pages = getCurrentPages();
+      var currPage = pages[pages.length - 1];
+      if (currPage.data.query.length != 0 && this.canEditQuery) {
+        this.query = currPage.data.query;
         this.finish = currPage.data.finish;
         this.finishRate = Number(currPage.data.finishRate);
-        console.log(this.finish);
-        console.log(this.finishRate);
-        console.log(this.query);
       }
+      console.log('taskDetail end');
     }
   }
 </script>

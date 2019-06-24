@@ -121,7 +121,7 @@
                 </van-col>
               </van-row>
               <van-row>
-                <view class="question">{{item.content.question}}</view>
+                <view class="question">{{item.content.question}}{{item.limit == 'number' ? '(请输入整数)' : ''}}</view>
               </van-row>
               <!-- 单选题 -->
               <view wx:if="{{item.type === '单选题'}}">
@@ -166,15 +166,16 @@
 
   export default class QueryDetail extends wepy.page {
     data = {
-      query: [],
-      finish: [],
-      finish_rate: 0,
-      canEditQuery: true
+      query: [],          //辅助参数，进行页面之间的任务参数传递
+      finish: [],         //辅助参数，页面之间的传递参数，储存完成的问卷编号
+      finish_rate: 0,     //辅助参数，判断是否填写完问卷
+      canEditQuery: true  //辅助参数，判断任务的内容是否可编辑保存
     }
     components = {
       mynavbar: MyNavBar
     }
     methods = {
+      //单选题
       radioChange(index, e) {
         this.query[index].content.option.forEach(item=>{
           item.isSelected = false;
@@ -192,6 +193,7 @@
           this.$apply();
         }
       },
+      //多选题
       checkboxChange(index, e) {
         this.query[index].content.option.forEach(item=>{
           item.isSelected = false;
@@ -220,13 +222,8 @@
           this.$apply();
         }
       },
+      //问答题
       textChange(index, e) {
-        // if (/^[0-9]*$/.test(e.detail.value)) {
-        //   console.log('number');
-        // }
-        // else {
-        //   console.log('no number');
-        // }
         this.query[index].content.answer = e.detail.value;
         var isFinish = false;
         var pos = 0, i = 0;
@@ -270,9 +267,6 @@
             finishRate: that.finish_rate,
             finish: that.finish
           });
-          console.log(this.query);
-          console.log(typeof this.finish_rate + this.finish_rate);
-          console.log(this.finish);
           wepy.navigateBack({
             delta: 1
           });
@@ -296,10 +290,7 @@
       this.finish = finish;
       this.canEditQuery = canEditQuery;
       this.$apply();
-      console.log(this.canEditQuery);
-      // console.log(this.query);
-      // console.log(this.finish_rate);
-      console.log("end");
+      console.log("QueryDetail end");
     }
   }
 </script>
