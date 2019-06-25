@@ -134,6 +134,7 @@
         //console.log(this.keyword);
 
         // 任务列表
+        /*
         this.tasks = [];
         this.dataIndex = 0;
         for (var i = 0; i < 10; i++) {
@@ -143,8 +144,8 @@
           if (this.dataIndex == TasksData.data.tasks.length) break;
         }
         this.$apply();
-        console.log(this.dataIndex);
-        /*
+        console.log(this.dataIndex);*/
+
         wx.request({
           url: 'http://makemoney.ink:5050/search/title_key_word',
           method: 'POST',
@@ -156,6 +157,12 @@
           },
           success: (res) => {
             console.log(res.data);
+            if (res.data.hasOwnProperty('task_id')) {
+              this.tasks = res.data.task_id;
+              cosole.log('search success!');
+            } else {
+              console.log('search failed!');
+            }
           },
           fail: (res) => {
             console.log(res.data)
@@ -163,7 +170,7 @@
           complete: (res) => {
 
           }
-        });*/
+        });
       }
     }
   }
