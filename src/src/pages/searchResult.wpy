@@ -25,6 +25,7 @@
     <view class="tasklistboard" wx:if="{{issearch}}">
       <!-- 搜索结果 -->
       <van-cell title="搜索关键字" label="{{keyword}}" />
+      <view>{{resultMessage}}</view>
       <scroll-view
         id="scroll-wrap"
         class="tasklist-view"
@@ -45,6 +46,7 @@
         <view wx:for="{{ search_histories }}" wx:key="idx" wx:for-index="idx" wx:for-item="itemName">
           <van-cell id="{{ idx }}" title="{{ itemName }}" clickable bind:click="onClickHistory"></van-cell>
         </view>
+
       </van-cell-group>
     </view>
 
@@ -68,7 +70,8 @@
       tasks: [],
       search_histories: [],
       history: "",
-      dataIndex: 0
+      dataIndex: 0,
+      resultMessage: ""
     }
 
     methods = {
@@ -159,7 +162,9 @@
             console.log(res.data);
             if (res.data.hasOwnProperty('task_id')) {
               this.tasks = res.data.task_id;
-              cosole.log('search success!');
+              this.resultMessage = "搜索到" + this.tasks.length + "条结果";
+              this.$apply();
+              console.log('search success!');
             } else {
               console.log('search failed!');
             }
