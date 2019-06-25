@@ -25,12 +25,15 @@
 </style>
 <template>
   <view class='recommend'>
-    <text class='recommend-title'>热门推荐</text>
+    <text class='recommend-title'>{{title}}</text>
   </view>
 </template>
 <script>
   import wepy from 'wepy'
 
   export default class MyMainPageTitle extends wepy.component {
+    props = {
+      title: String
+    }
   }
 </script>

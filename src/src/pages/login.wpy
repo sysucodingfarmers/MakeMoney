@@ -150,6 +150,10 @@
               that.$parent.globalData.session_id = res.header.session_id;
               console.log(that.$parent.globalData.session_id);
               that.$parent.globalData.userInfo = {}
+              if (res.data.profile)
+                that.$parent.globalData.userInfo.avatar = res.data.avatar
+              else
+                that.$parent.globalData.userInfo.avatar = 'https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1560754276&di=9e6e09a4563fa27b2b4c20b7a5a58df7&src=http://pic.51yuansu.com/pic3/cover/01/69/80/595f67bf2026f_610.jpg'
               that.$parent.globalData.userInfo.username = res.data.username;
               that.$parent.globalData.userInfo.id = res.data.id;
               that.$parent.globalData.userInfo.email = res.data.email;

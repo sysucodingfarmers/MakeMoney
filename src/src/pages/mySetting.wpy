@@ -5,8 +5,8 @@
   <view style="position: fixed; height: 100%; width: 100%;">
     <mynavbar title="我的设置" lefttext="返回" leftarrow="true"></mynavbar>
     <!-- 主体 -->
-    <van-cell title="切换账号" is-link />
-    <van-cell title="注销账号" is-link />
+    <van-cell title="切换账号" is-link @tap="changeAccount"/>
+    <van-cell title="注销账号" is-link @tap="logout"/>
   </view>
 </template>
 <script>
@@ -21,7 +21,21 @@
       mynavbar: MyNavBar
     }
     methods = {
+      changeAccount() {
 
+      },
+      logout() {
+        wx.request({
+          url: 'http://makemoney.ink:5050/logout',
+          method: 'POST',
+          header: {
+            'content-type': 'application/json'
+          },
+          complete: (res) => {
+            console.log(res.data)
+          }
+        })
+      }
     }
   }
 </script>
