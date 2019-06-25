@@ -24,8 +24,7 @@
 
     <view class="tasklistboard" wx:if="{{issearch}}">
       <!-- 搜索结果 -->
-      <van-cell title="搜索关键字" label="{{keyword}}" />
-      <view>{{resultMessage}}</view>
+      <van-cell title="{{resultMessage}}" label="{{keyword}}" />
       <scroll-view
         id="scroll-wrap"
         class="tasklist-view"
