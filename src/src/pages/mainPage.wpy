@@ -220,10 +220,13 @@
       }).exec()
 
       wx.request({
-        url: 'http://makemoney.ink:5050/recommend',
+        url: this.$parent.globalData.ip + 'recommend',
         method: 'POST',
         header: {
           'content-type': 'application/json'
+        },
+        data: {
+          batch_size: this.batch_size
         },
         success: (res) => {
           console.log(res.data);

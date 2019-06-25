@@ -132,14 +132,13 @@
           password: this.password
         }
         wx.request({
-          url: 'http://makemoney.ink:5050/login',
+          url: this.$parent.globalData.ip + 'login',
           method: 'POST',
           data: _data,
           header: {
             'content-type': 'application/json'
           },
           complete: function(res) {
-            console.log(res)
             Toast.clear();
             if (res.data.id == undefined || res.data.id == null)
             {
@@ -148,6 +147,8 @@
             else 
             {
               Toast('登录成功');
+              that.$parent.globalData.session_id = res.header.session_id;
+              console.log(that.$parent.globalData.session_id);
               that.$parent.globalData.userInfo = {}
               that.$parent.globalData.userInfo.username = res.data.username;
               that.$parent.globalData.userInfo.id = res.data.id;
@@ -160,6 +161,8 @@
             }
           }
         });
+
+        
 
       },
       onClickRegister() {

@@ -38,7 +38,8 @@ export default class extends wepy.app {
       'pages/editMyTask',
       'pages/login',
       'pages/register',
-      'pages/searchResult'
+      'pages/searchResult',
+      'pages/receiverDetail'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -102,6 +103,8 @@ export default class extends wepy.app {
   }
 
   globalData = {
+    ip: 'http://172.26.96.247:5050/',
+    session_id: '',
     userInfo: {},
     mainPageUrl: 'mainPage',
     myInfoUrl: 'myInfo',
