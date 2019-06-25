@@ -15,7 +15,7 @@
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
   import EditTask from '../components/editTask'
-  import TasksData from '../data/TempTaskData'
+  // import TasksData from '../data/TempTaskData'
 
   export default class EditMyTask extends wepy.page {
     components = {
@@ -43,7 +43,9 @@
       console.log("EditMyTask onload");
       var id = JSON.parse(options.taskid);
       this.taskid = id;
-      this.taskInfo = TasksData.data.tasks[id];
+      // this.taskInfo = TasksData.data.tasks[id];
+      // 修改api
+      // todo
       console.log('EditMyTask end');
     }
     onShow() {

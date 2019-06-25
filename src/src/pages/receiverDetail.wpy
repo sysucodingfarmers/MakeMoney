@@ -1,0 +1,34 @@
+<script>
+  
+</script>
+<template>
+  <view style="position: fixed; height: 100%; width: 100%;">
+    <mynavbar title="用户情况" lefttext="返回" leftarrow="true" ></mynavbar>
+    
+    <mytabbar></mytabbar>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import MyNavBar from '../components/mynavbar'
+
+  export default class ReceiverDetail extends wepy.page {
+    components = {
+      mynavbar: MyNavBar
+    }
+    data = {
+      template_id: 0
+    }
+    methods = {
+      
+    }
+    onLoad(options) {
+      this.template_id = options.template_id;
+      console.log(this.template_id);
+    }
+    onShow() {
+      console.log('ReceiverDetail onshow');
+      console.log('ReceiverDetail end');
+    }
+  }  
+</script>

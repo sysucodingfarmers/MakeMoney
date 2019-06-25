@@ -320,7 +320,7 @@
         });
         var _this = this
         wx.request({
-          url: 'http://makemoney.ink:5050/register',
+          url: this.$parent.globalData.ip + 'register',
           method: 'POST',
           data: {
             id: this.studentId,
