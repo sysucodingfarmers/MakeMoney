@@ -66,7 +66,7 @@
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
-  import TasksData from '../data/TempTaskData'
+  // import TasksData from '../data/TempTaskData'
   import Dialog from '../components/van/dialog/dialog'
 
   export default class TaskDetail extends wepy.page {
@@ -103,13 +103,33 @@
           }).then(()=>{
             var len = this.taskInfo.receiver.length;
             if (len < this.taskInfo.receiver_limit) {
-              this.taskInfo.receiver.push({
-                name: this.$root.$parent.globalData.userInfo.username,
-                id: this.taskInfo.receiver.length,
-                isfinished: false,
-                ispaid: false
-              });
-              TasksData.data.tasks[this.id].receiver = this.taskInfo.receiver;
+              // this.taskInfo.receiver.push({
+              //   name: this.$root.$parent.globalData.userInfo.username,
+              //   id: this.taskInfo.receiver.length,
+              //   isfinished: false,
+              //   ispaid: false
+              // });
+              // TasksData.data.tasks[this.id].receiver = this.taskInfo.receiver;
+
+              //接受任务
+              var task_id = this.id;
+              wx.request({
+                url: this.$parent.globalData.ip + 'task/receive',
+                method: 'POST',
+                header: {
+                  'content-type': 'application/json'
+                },
+                data: {
+                  id: task_id
+                },
+                success(res) {
+                  console.log(res.data);
+                },
+                fail(res) {
+                  console.log('fail');
+                }
+              })
+
               this.button_left = '完成';
               this.button_right = '取消';
               this.$apply();
@@ -143,14 +163,21 @@
         //完成
         else if (val === '完成') {
           if (this.finishRate === 100) {
-            //todo
-            //将完成的信息发送至后端
-            TasksData.data.tasks[this.id].receiver.forEach(receiver=>{
-              if (receiver.name == this.$root.$parent.globalData.userInfo.username) {
-                receiver.isfinished = true;
-                receiver.ispaid = true;
-              }
-            });
+            
+            // this.taskInfo.receiver.forEach(receiver=>{
+            //   if (receiver.name == this.$root.$parent.globalData.userInfo.username) {
+            //     receiver.isfinished = true;
+            //     receiver.ispaid = true;
+            //   }
+            // });
+
+            
+            //完成任务
+            var user_id = this.$root.$parent.globalData.userInfo.username;
+            var task_id = this.id;
+            //1.有问卷
+            //2.无问卷
+
             this.button_left = '已完成';
             //...
             console.log("完成");
@@ -171,13 +198,17 @@
           wepy.navigateBack();
         }
       },
-      //左边button，包括取消，收藏以及删除
+      //左边button，包括取消，收藏以及删除,放弃
       RightSubbmit() {
         var val = this.button_right;
         //收藏
         if (val === '收藏') {
           console.log('收藏');
           wepy.navigateBack();
+        }
+        //放弃
+        if (val === '放弃') {
+          console.log('放弃');
         }
         //取消
         else if (val === '取消') {
@@ -200,7 +231,9 @@
               message: '删除就无法恢复'
             }).then(()=>{
               console.log('删除成功');
-              TasksData.data.tasks.splice(this.id, 1);
+              // TasksData.data.tasks.splice(this.id, 1);
+              //删除任务
+              //todo
               wepy.navigateBack();
             });
           }
@@ -209,41 +242,53 @@
       //发布者查看接受者信息
       ShowReceiverDetail(id) {
         console.log(id);
+        wx.navigateTo({
+          url: 'receiverDetail?template_id=' + id
+        })
       }
     }
     onLoad(options) {
       console.log("taskDetail onLoad");
       this.id = options.id;
-      this.taskInfo = TasksData.data.tasks[this.id];
-      this.query = this.taskInfo.extra_content.query;
+      // this.taskInfo = TasksData.data.tasks[this.id];
+      // this.query = this.taskInfo.extra_content.query;
       console.log('打开任务', this.id);
-      console.log('taskDetail end');
-      // wx.request({
-      //   url: 'http://makemoney.ink:5050/search/task_id',
-      //   method: 'POST',
-      //   header: {
-      //     'content-type': 'application/json'
-      //   },
-      //   data: {
-      //     'task_id': '1'
-      //   },
-      //   success: (res) => {
-      //     console.log(res.data);
-      //   },
-      //   fail: (res) => {
-      //     console.log(res)
-      //   },
-      //   complete: (res) => {
-      //     console.log('complete')
-      //   }
-      // });
+      
+
+      //根据任务id查看任务
+      var that = this;
+      wx.request({
+        url: this.$parent.globalData.ip + 'search/task_id',
+        method: 'POST',
+        header: {
+          'content-type': 'application/json'
+        },
+        data: {
+          tid: this.id
+        },
+        success: (res) => {
+          that.taskInfo = res.data;
+          console.log(res.data);
+        },
+        fail: (res) => {
+          console.log(res)
+        },
+        complete: (res) => {
+          console.log('complete')
+        }
+      });
+      this.query = this.taskInfo.extra_content.query;
       // console.log(TasksData.data.tasks);
+
+
+      console.log('taskDetail end');
     }
     onShow() {
       console.log("taskDetail onShow");
       var mes;
       var userInfo = this.$root.$parent.globalData.userInfo;
-      var titem = TasksData.data.tasks[this.id]
+      var titem = this.taskInfo;
+      // var titem = TasksData.data.tasks[this.id]
       if (userInfo.username == undefined) {
         mes = ['登录', '取消'];
       }
@@ -258,7 +303,7 @@
         titem.receiver.forEach(item=>{
           if (item.name === userInfo.username) {
             if (!item.isfinished) {
-              mes = ['完成', '取消'];
+              mes = ['完成', '放弃'];
             }
             else {
               mes = ['已完成', '取消'];

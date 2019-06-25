@@ -35,7 +35,7 @@
       </view>
       <!-- 任务列表 -->
       <view class="tasklistboard">
-        <myMainPageTitle></myMainPageTitle>
+        <TopTitle title="热门推荐"></TopTitle>
         <scroll-view
           id="scroll-wrap"
           class="tasklist-view"
@@ -44,17 +44,27 @@
           lower-threshold="100"
           >
           <view
+            style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;"
+            wx:if="{{init}}"
+          >
+            <van-loading type="spinner" size="40px"></van-loading>
+          </view>
+          <view
             id="inner-wrap"
             style="width: 100%;"
             bindtouchstart="touch_start"
             bindtouchend="touch_end"
+            wx:else
             >
             <view style="width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10rpx;">
               <van-loading hide="{{loadingHide}}" type="spinner" size="20px"></van-loading>
             </view>
             <tasklist :tasks.sync="tasks"></tasklist>
-            <view style="width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10rpx;">
-              <van-loading type="spinner" size="20px"></van-loading>
+            <view wx:if="{{nomore}}">
+              <BottomTitle title="已经到底啦"></BottomTitle>
+            </view>
+            <view wx:else style="width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10rpx;">
+              <van-loading opacity="{{loadingOpacity}}" type="spinner" size="20px"></van-loading>
             </view>
           </view>
         </scroll-view>
@@ -95,7 +105,8 @@
       tasklist: TaskList,
       mytabbar: MyTabbar,
       mynavbar: MyNavBar,
-      myMainPageTitle: MyMainPageTitle,
+      TopTitle: MyMainPageTitle,
+      BottomTitle: MyMainPageTitle,
       CategoryBtnOnline: MyMainPageCategoryBtn,
       CategoryBtnOffline: MyMainPageCategoryBtn
     }
@@ -111,8 +122,11 @@
       },
       // 获取任务相关
       loadingHide: true, // 下拉刷新是否显示加载符号
+      loadingOpacity: 1,
       canDragUp: true, // 是否可以下拉（防止重复）
       canDragDown: true, // 是否可以上拉加载更多
+      init: true,
+      nomore: true,
 
       height: 0, // scroll-wrap 的高度
       inner_height: 0, // inner-wrap 的高度
@@ -212,12 +226,6 @@
     }
     onLoad() {
       var _this = this
-      wx.createSelectorQuery().select('#scroll-wrap').boundingClientRect((rect) => {
-        _this.height = rect.height;
-      }).exec()
-      wx.createSelectorQuery().select('#inner-wrap').boundingClientRect((rect) => {
-        _this.inner_height = rect.height;
-      }).exec()
 
       wx.request({
         url: 'http://makemoney.ink:5050/recommend',
@@ -225,32 +233,54 @@
         header: {
           'content-type': 'application/json'
         },
+        data: {
+          batch_size: this.batch_size
+        },
         success: (res) => {
           console.log(res.data);
+          // 为了展示
+          setTimeout((t) => {
+            _this.init = false
+            _this.loadingOpacity = 0
+            for (var i = 0; i < res.data.task_number; i++) {
+              this.tasks.push(res.data.task_info[i])
+              this.tasks[i].itemid = "task_item_id" + i
+              // this.dataIndex += 1
+            }
+            _this.$apply()
+            wx.createSelectorQuery().select('#scroll-wrap').boundingClientRect((rect) => {
+              _this.height = rect.height;
+            }).exec()
+            wx.createSelectorQuery().select('#inner-wrap').boundingClientRect((rect) => {
+              _this.inner_height = rect.height;
+            }).exec()
+            if (res.data.task_number == 0) this.nomore = true;
+            else this.nomore = false
+          }, 2000)
         },
         fail: (res) => {
           console.log(res)
+          this.nomore = true
         },
         complete: (res) => {
           console.log('complete')
         }
       });
 
-
-      if (TasksData.data.tasks.length < 5) {
-        this.tasks = TasksData.data.tasks;
-        this.dataIndex = TasksData.data.tasks.length;
-        this.canDragDown = false;
-        for (var i = 0; i < this.dataIndex; i++)
-          this.tasks[i].itemid = "task_item_id" + i
-      }
-      else {
-        for (var i = 0; i < this.batch_size; i++) {
-          this.tasks.push(TasksData.data.tasks[i])
-          this.tasks[i].itemid = "task_item_id" + i
-          this.dataIndex += 1
-        }
-      }
+      // if (TasksData.data.tasks.length < 5) {
+      //   this.tasks = TasksData.data.tasks;
+      //   this.dataIndex = TasksData.data.tasks.length;
+      //   this.canDragDown = false;
+      //   for (var i = 0; i < this.dataIndex; i++)
+      //     this.tasks[i].itemid = "task_item_id" + i
+      // }
+      // else {
+      //   for (var i = 0; i < this.batch_size; i++) {
+      //     this.tasks.push(TasksData.data.tasks[i])
+      //     this.tasks[i].itemid = "task_item_id" + i
+      //     this.dataIndex += 1
+      //   }
+      // }
       // this.areaList = AreaList;
       // wepy.getLocation({
       //   type: 'gcj02',

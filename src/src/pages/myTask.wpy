@@ -30,7 +30,7 @@
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
-  import TasksData from '../data/TempTaskData'
+  // import TasksData from '../data/TempTaskData'
   import TaskList from '../components/tasklist'
 
   export default class MyTask extends wepy.page {
@@ -65,34 +65,114 @@
     onShow() {
       console.log('mytask onshow');
       
-      var tasks = TasksData.data.tasks;
+      // var tasks = TasksData.data.tasks;
       this.tasks = [];
       
       if (this.type == 0) {
         this.title = "我的发布";
         var that = this;
         this.category.list = ['进行中', '已结束']
-        tasks.forEach(item=>{
-          if (item.publisher == this.$root.$parent.globalData.userInfo.username) {
-            that.tasks.push(item);
+        // tasks.forEach(item=>{
+        //   if (item.publisher == this.$root.$parent.globalData.userInfo.username) {
+        //     that.tasks.push(item);
+        //   }
+        // });
+
+        //通过发起者id查看taskid
+        var id = this.$root.$parent.globalData.userInfo.id;
+        var tasks_id;
+        wx.request({
+          url: 'http://makemoney.ink:5050/task/mysponsor',
+          method: 'POST',
+          header: {
+            'content-type': 'application/json'
+          },
+          data: id,
+          success(res) {
+            console.log(res.data);
+            tasks_id = res.data;
+          },
+          fail(res) {
+            console.log('fail');
           }
         });
+
+        //通过taskid查看task
+        //todo
+        var tasks = [];
+        wx.request({
+          url: 'http://makemoney.ink:5050/search/task_id',
+          method: 'POST',
+          header: {
+            'content-type': 'application/json'
+          },
+          data: {
+            tid: tasks_id[i]
+          },
+          success(res) {
+            console.log(res.data);
+          },
+          fail(res) {
+            console.log('fail');
+          }
+        });
+        
       }
       else if (this.type == 1) {
         this.title = "我的接单";
         var that = this;
         this.category.list = ['未完成', '已完成']
-        tasks.forEach(item=>{
-          var isReceive = false;
-          item.receiver.forEach(i=>{
-            if (i.name == this.$root.$parent.globalData.userInfo.username) {
-              isReceive = true;
-            }
-          });
-          if (isReceive) {
-            that.tasks.push(item);
+        // tasks.forEach(item=>{
+        //   var isReceive = false;
+        //   item.receiver.forEach(i=>{
+        //     if (i.name == this.$root.$parent.globalData.userInfo.username) {
+        //       isReceive = true;
+        //     }
+        //   });
+        //   if (isReceive) {
+        //     that.tasks.push(item);
+        //   }
+        // })
+
+        //通过接受者id查看taskid
+        var id = this.$root.$parent.globalData.userInfo.id;
+        var tasks_id;
+        wx.request({
+          url: 'http://makemoney.ink:5050/task/myreceive',
+          method: 'POST',
+          header: {
+            'content-type': 'application/json'
+          },
+          data: id,
+          success(res) {
+            console.log(res.data);
+            tasks_id = res.data;
+          },
+          fail(res) {
+            console.log('fail');
           }
-        })
+        });
+
+        //通过taskid查看task
+        //todo
+        var tasks = [];
+        wx.request({
+          url: 'http://makemoney.ink:5050/search/task_id',
+          method: 'POST',
+          header: {
+            'content-type': 'application/json'
+          },
+          data: {
+            tid: tasks_id[i]
+          },
+          success(res) {
+            console.log(res.data);
+          },
+          fail(res) {
+            console.log('fail');
+          }
+        });
+
       }
       this.$broadcast("setTitle", this.title);
       console.log('mytask end');

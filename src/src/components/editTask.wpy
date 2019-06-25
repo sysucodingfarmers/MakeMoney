@@ -181,7 +181,7 @@
 <script>
   import wepy from 'wepy'
   import caculateDate from '../data/CaculateDate'
-  import TasksData from '../data/TempTaskData'
+  // import TasksData from '../data/TempTaskData'
   import Dialog from './van/dialog/dialog'
 
   export default class EditTask extends wepy.component {
@@ -388,15 +388,97 @@
           // ...
           var id = this.taskid;
           var mes = JSON.stringify(["修改","删除"]);
-          if (id == TasksData.data.tasks.length) {
-            TasksData.data.tasks.push(this.taskInfo);
-          }
-          else {
-            TasksData.data.tasks[id] = this.taskInfo;
-          }
-          wepy.redirectTo({
-            url: 'taskDetail?id=' + id + '&mes=' + mes
+          // if (id == TasksData.data.tasks.length) {
+          //   TasksData.data.tasks.push(this.taskInfo);
+          // }
+          // else {
+          //   TasksData.data.tasks[id] = this.taskInfo;
+          // }
+
+          //处理问卷
+          var query = this.taskInfo.extra_content.query;
+          var questions = [];
+          var options = [];
+          var types = [];
+          query.forEach(item=>{
+            //types
+            if (item.type == '问答题' && item.limit == 'number') {
+              types.push('数字题');
+            }
+            else {
+              types.push(item.type);
+            }
+            //questions
+            questions.push(item.content.question);
+            //options
+            if (item.type == '问答题') {
+              options.push([]);
+            }
+            else {
+              var ops = [];
+              item.content.option.forEach(op=>{
+                ops.push(op.ans);
+              });
+              options.push(ops);
+            }
           });
+
+          
+          var task = {
+            title: this.taskInfo.name,
+            type: this.taskInfo.type,
+            pay: this.taskInfo.pay,
+            detail: this.taskInfo.detail,
+            // start_time = caculateDate.StringToDate(this.taskInfo.start_time),
+            // end_time = caculateDate.StringToDate(this.taskInfo.end_time),
+            receiver_limit: this.taskInfo.receiver_limit,
+            receiver_number: 0,
+            state: 0,
+            questions: questions,
+            options: options,
+            types: types
+            // images: this.images
+          }
+          //上传任务，并且得到该任务的id
+          var tid;
+          
+          wx.request({
+            url: this.$parent.$parent.globalData.ip + 'task/sponsor',
+            method: 'POST',
+            header: {
+              'content-type': 'application/json',
+              'session_id' : this.$parent.$parent.globalData.session_id,
+              'user_id': this.$parent.$parent.globalData.userInfo.id
+            },
+            data: task,
+            success: (res) => {
+              console.log(res.data);
+              tid = res.data;
+              console.log('success');
+            },
+            fail: (res) => {
+              console.log(res);
+              console.log('fail');
+            }
+          });
+          //通过任务的id，将图片一张张download进去
+          for (var i = 0; i < this.images.length; ++i) {
+            wx.uploadFile({
+              url: this.$parent.$parent.globalData.ip + 'task/postImage',
+              filePath: this.images[i],
+              name: 'image',
+              header: {'content-type': 'multipart/form-data'},
+              formData: {
+                'task_id': tid
+              },
+              success(res) {
+                console.log(res.data); // 返回那边的链接
+              }
+            });
+          }
+          // wepy.redirectTo({
+          //   url: 'taskDetail?id=' + id + '&mes=' + mes
+          // });
         }
       }
     }

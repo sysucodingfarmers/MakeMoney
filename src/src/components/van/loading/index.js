@@ -18,8 +18,8 @@ VantComponent({
             value: false
         },
         opacity: {
-            type: String,
-            value: "1"
+            type: Number,
+            value: 0
         },
         hide: {
             type: Boolean,

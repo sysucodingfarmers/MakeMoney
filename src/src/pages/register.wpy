@@ -146,13 +146,15 @@
   import Dialog from '../components/van/dialog/dialog'
   import zhenzisms from '../sdk/zhenzisms'
 
-  var phone_reg = /^[1](([3][0-9])|([4][5-9])|([5][0-3,5-9])|([6][5,6])|([7][0-8])|([8][0-9])|([9][1,8,9]))[0-9]{8}$/;
-  var email_reg = /^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/;
-  var studentId_reg = /^[0-9]{8,8}$/;
+  var phone_reg = null
+  var email_reg = null
+  var studentId_reg = null
   var timer = null;
 
   export default class Register extends wepy.page {
     data = {
+
+
       imageData: "https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1560754276&di=9e6e09a4563fa27b2b4c20b7a5a58df7&src=http://pic.51yuansu.com/pic3/cover/01/69/80/595f67bf2026f_610.jpg",
 
       studentId: "",
@@ -311,7 +313,7 @@
         }
 
         //禁用所有按钮
-        if (timer) clearTimeout(timer)
+        clearTimeout(this.$parent.globalData.timer)
         console.log('registering...');
         Toast.loading({
           mask: true,
@@ -319,10 +321,22 @@
           duration: 0
         });
         var _this = this
+<<<<<<< Updated upstream
         wx.request({
-          url: 'http://makemoney.ink:5050/register',
+          url: this.$parent.globalData.ip + 'register',
           method: 'POST',
           data: {
+=======
+
+        wx.uploadFile({
+          url: 'http://makemoney.ink:5050/register',
+          filePath: this.imageData,
+          name: 'profile',
+          header: {
+            'content-type': 'application/json'
+          },
+          formData: {
+>>>>>>> Stashed changes
             id: this.studentId,
             password: this.password,
             username: this.username,
@@ -332,10 +346,8 @@
             major: this.major,
             wx_number: ''
           },
-          header: {
-            'content-type': 'application/json'
-          },
           complete: function (res) {
+            console.log(res)
             if (res.data == 'succeed') {
               // Toast('注册成功');
               Dialog.alert({
@@ -350,9 +362,48 @@
               })
             } else {
               Toast('注册失败');
+              _this.btn_msg = "发送验证码"
+              _this.cur_time = 120;
+              _this.issend = false
+              _this.$apply()
             }
           }
-        });
+        })
+
+        // wx.request({
+        //   url: 'http://makemoney.ink:5050/register',
+        //   method: 'POST',
+        //   data: {
+        //     id: this.studentId,
+        //     password: this.password,
+        //     username: this.username,
+        //     email: this.email,
+        //     phone: this.phone,
+        //     school: this.school,
+        //     major: this.major,
+        //     wx_number: ''
+        //   },
+        //   header: {
+        //     'content-type': 'application/json'
+        //   },
+        //   complete: function (res) {
+        //     if (res.data == 'succeed') {
+        //       // Toast('注册成功');
+        //       Dialog.alert({
+        //         title: "注册成功",
+        //         message: "是否前去登录？"
+        //       }).then(() => {
+        //         _this.$parent.globalData.loginData.studentId = _this.studentId
+        //         _this.$parent.globalData.loginData.password = _this.password
+        //         wx.navigateBack({
+        //           delta: 1
+        //         })
+        //       })
+        //     } else {
+        //       Toast('注册失败');
+        //     }
+        //   }
+        // });
       },
       chooseAvatar() {
         var that = this;
@@ -363,7 +414,7 @@
           success: function(res) {
             console.log(res);
             console.log(res.tempFilePaths);
-            var tempFilePaths = res.tempFilePaths;
+            var tempFilePaths = res.tempFilePaths[0];
             // wx.uploadFile({
             //   url: 'http://makemoney.ink:5050/uploadAvatar',
             //   header: {
@@ -372,8 +423,8 @@
             //   }
             // })
             // uploadFile上传头像
-            that.userinfo.avatar = tempFilePaths;
-            that.$parent.globalData.userInfo.avatar = tempFilePaths;
+            that.imageData = tempFilePaths;
+            // that.$parent.globalData.userInfo.avatar = tempFilePaths;
             that.$apply();
           },
           fail: function(e) {
@@ -386,6 +437,7 @@
       },
       sendPhoneCode() {
         console.log("phone: " + this.phone)
+        console.log(phone_reg)
         if (this.phone.length == 0) {
           Toast('请输入手机号码')
         }
@@ -442,8 +494,12 @@
       // console.log(prepage.__data__)
       // console.log("studentId")
       // console.log("studentId: " + prepage.__data__.studentId)
+      phone_reg = this.$parent.globalData.phone_reg;
+      email_reg = this.$parent.globalData.email_reg;
+      studentId_reg = this.$parent.globalData.studentId_reg;
       if (options.type == 'phone') {
         this.isphone = true
+
         // 初始化榛子短信平台sdk
         console.log('初始化榛子短信平台sdk')
         zhenzisms.client.init(

@@ -38,7 +38,8 @@ export default class extends wepy.app {
       'pages/editMyTask',
       'pages/login',
       'pages/register',
-      'pages/searchResult'
+      'pages/searchResult',
+      'pages/receiverDetail'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -102,6 +103,8 @@ export default class extends wepy.app {
   }
 
   globalData = {
+    ip: 'http://makemoney.ink:5050/',
+    session_id: '',
     userInfo: {},
     mainPageUrl: 'mainPage',
     myInfoUrl: 'myInfo',
@@ -113,7 +116,10 @@ export default class extends wepy.app {
       password: "",
       state: false
     },
-    timer: null
+    timer: null,
+    phone_reg: /^[1](([3][0-9])|([4][5-9])|([5][0-3,5-9])|([6][5,6])|([7][0-8])|([8][0-9])|([9][1,8,9]))[0-9]{8}$/,
+    email_reg: /^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/,
+    studentId_reg: /^[0-9]{8,8}$/
   }
 
   constructor () {
