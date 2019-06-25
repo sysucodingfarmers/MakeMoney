@@ -35,7 +35,7 @@ class User(UserMixin, db.Model):
 	#兴趣爱好(修改了变量名，从hobit改为hobbit)
 	hobbit = db.Column(db.String(100))
 	# 头像图片的编码
-	profile = db.Column(db.String(125000))
+	profile = db.Column(db.String(10000))
 	
 	def set_password(self, password):
 		self.password_hash = generate_password_hash(password)
@@ -89,6 +89,7 @@ class Task(db.Model):
 		if 'finished_number' not in kwargs:
 			kwargs['finished_number'] = self.__table__.c.finished_number.default.arg
 		self.template = Template()
+		self.images = []
 		super(Task, self).__init__(**kwargs)
 	#任务id
 	id = db.Column(db.Integer, primary_key=True)
@@ -127,7 +128,7 @@ class Task(db.Model):
 	template = db.relationship('Template', backref=db.backref('task', lazy=False, uselist=False))
 
 	#图片
-	images = db.Column(db.LargeBinary)
+	images = db.Column(db.PickleType)
 
 	def __repr__(self):
 		return '<Task {} {} sponsor:{}>'.format(self.id, self.title, self.sponsor_id)
@@ -148,7 +149,12 @@ class Answer(db.Model):
 	def __repr__(self):
 		return '<Answer {} {} {}>'.format(self.id, self.receiver_id, self.answers)
 
+class Session(db.Model):
+	sid = db.Column(db.Integer, primary_key=True)
+	uid = db.Column(db.Integer)
+
 #login的配置，使login生效
 @login.user_loader
 def load_user(id):
+	print('jasdkjfak')
 	return User.query.get(int(id))

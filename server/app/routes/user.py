@@ -1,13 +1,14 @@
 # -- coding:UTF-8 --
-from flask import render_template, redirect, url_for, request, json
-from flask_login import current_user,login_user,logout_user, login_required
+from flask import render_template, redirect, url_for, request, json, make_response
+from flask_login import current_user,login_user,logout_user
 from app import app,db
-from app.models import Template,Answer
+from app.models import Template,Answer,Session
 from app.models import User,Task,Receiver,receivers
 from app.utils.trans import UserToJson, TaskToJson
 
 json_true = json.dumps('succeed')
 json_false = json.dumps('failed')
+
 
 @app.route('/')
 @app.route('/index')
@@ -40,6 +41,7 @@ def register():
 		profile = json_data['profile'] if 'profile' in json_data else None
 		)
 	user.set_password(json_data['password'])
+	
 	db.session.add(user)
 	db.session.commit()
 	print('register user {}!'.format(user))
@@ -57,30 +59,59 @@ def login():
 		if current_user.is_active:
 			print('Error, user is active!')
 			return json.dumps({'errmsg': '用户已登陆'})
+		#获取post来的数据
 		json_data = json.loads(request.data)
-		# print(json_data)
 		user = User.query.filter_by(id=json_data['id']).first()
 		if user is None or not user.check_password(json_data['password']):
 			print('username or password isn\'t correct!')
 			return json.dumps({'errmsg': '用户名或密码错误'})
-		login_user(user, remember=True)
+		login_user(user)
+		
+		#建立session数据库
+		se = Session.query.filter_by(uid=user.id).first()
+		if se==None:
+			se = Session(uid=user.id)
+			db.session.add(se)
+			db.session.commit()
+			print('Create a new session {}'.format(se.sid))
+		else:
+			print('Resume Session {}'.format(se.sid))
+
 		print('login user {}!'.format(user))
-		return json.dumps(user, default=UserToJson, sort_keys=False) 
+		data = json.dumps(user, default=UserToJson, sort_keys=False) 
+		
+		#生成返回的resp，增加session的选项
+		resp = make_response()
+		resp.headers['session_id'] = str(se.sid)
+		resp.data = data
+		return resp
 	return json.dumps({'errmsg': '没有使用POST请求'})
 
 #登出
-@app.route('/logout')
-@login_required
+@app.route('/logout', methods=['POST'])
 def logout():
+	# print(request.)
+	se = Session.query.filter_by(sid=request.session_id, uid=request.user_id).first()
+	#删除session
+	if se!=None:
+		db.session.delete(se)
+		db.session.commit()
+	#登出
 	logout_user()
 	print('logout user succeed!')
 	return json_true
 
 '''
-修改用户信息
+修改用户信息，需要登录
 '''
 @app.route('/modify/user_info', methods=['POST'])
 def modify_user_info():
+	headers = request.headers
+	se = Session.query.filter_by(sid=int(headers['session_id']), uid=int(headers['user_id'])).first()
+	if se==None:
+		print('session is not connected')
+		return json.dumps({'errmsg': '没有建立会话或者会话信息出错'})
+	
 	if request.method == 'POST':
 		json_data = json.loads(request.data)
 		if 'id' in json_data:
@@ -108,6 +139,35 @@ def modify_user_info():
 		return json.dumps({'errmsg': '没有指定用户'})
 	return json.dumps({'errmsg': '没有使用POST请求'})
 
+'''上传头像
+接受用户的id
+'''
+@app.route('/task/postProfile', methods=['POST'])
+def postProfile():
+    if request.method == 'POST':
+        json_data = json.loads(request.data)
+        if 'user_id' in json_data:
+            #查找用户
+            user = User.query.filter_by(id=json_data['user_id']).first()
+            if user==None:
+                return json.dumps({'errmsg': '用户id错误，无该用户'})
+            filename = str(uuid.uuid1()) + ".jpg"
+            user.profile = filename
+            
+            #取出数据
+            f = request.files['image']
+            user_input = request.form.get("task_id")
+            #获得参数path和name
+            path = os.path.join(app.config['PROFILE_FOLDER'])
+            #存入服务器
+            if os.path.exists(path)==False:
+                os.makedirs(path)
+            f.save(path + filename)
+            #返回
+            return send_from_directory(app.config['PROFILE_FOLDER'], filename)
+        return json.dumps({'errmsg': '没有传递user_id'})
+    return json.dumps({'errmsg': '没有使用POST请求'})
+
 # 测试
 @app.route('/test', methods=['GET', 'POST'])
 def test():
@@ -118,7 +178,7 @@ def test():
 	template = Template.query.all()
 	answer = Answer.query.all()
 	print('{}\n\n{}\n\n{}\n\n{}\n\n{}\n'.format(user,task,receiver,template,answer))
-
+	print(1)
 	return json_true
 
 

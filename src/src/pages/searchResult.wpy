@@ -2,6 +2,9 @@
   .tasklist-view {
     height: 450px;
   }
+  .vanbutton {
+    width: 30%;
+  }
 </style>
 <template>
   <view style="position: fixed; height: 100%; width: 100%;">
@@ -12,6 +15,7 @@
     <!-- 搜索框 -->
     <van-search
       class="search"
+      label="{{searchTypeCN}}"
       value="{{ keyword }}"
       placeholder="搜索"
       shape="round"
@@ -21,7 +25,11 @@
       bind:change="onChange"
       focus
     ></van-search>
-
+    <van-row>
+      <van-col offset="1" span="6"><van-button class="vanbutton" size="large" type="info" bind:click="onClickSearchByTitle">按标题</van-button></van-col>
+      <van-col offset="2" span="6"><van-button class="vanbutton" size="large" type="info" bind:click="onClickSearchByDetail">按任务详情</van-button></van-col>
+      <van-col offset="2" span="6"><van-button class="vanbutton" size="large" type="info" bind:click="onClickSearchBySponsor">按发布者</van-button></van-col>
+    </van-row>
     <view class="tasklistboard" wx:if="{{issearch}}">
       <!-- 搜索结果 -->
       <van-cell title="{{resultMessage}}" label="{{keyword}}" />
@@ -70,10 +78,27 @@
       search_histories: [],
       history: "",
       dataIndex: 0,
-      resultMessage: ""
+      resultMessage: "",
+      searchType: "title_key_word",
+      searchTypeCN: "按标题"
     }
 
     methods = {
+      onClickSearchByTitle () {
+        this.searchType = "title_key_word",
+        this.searchTypeCN = "按标题"
+      },
+
+      onClickSearchByDetail () {
+        this.searchType = "detail_key_word",
+        this.searchTypeCN = "按详情"
+      },
+
+      onClickSearchBySponsor () {
+        this.searchType = "sponsor",
+        this.searchTypeCN = "按发布者"
+      },
+
       onChange (e) {
           this.keyword = e.detail;
       },
@@ -103,6 +128,9 @@
         // 搜索框不为空时搜索
         this.issearch = true;
 
+        // 先清空任务列表
+        this.tasks = [];
+
         // 只保存6个最近记录
         var _keyword = this.keyword;
         if (this.search_histories.length <= 0) {
@@ -124,7 +152,7 @@
             this.search_histories.splice(index, 1);
           }
         }
-        this.search_histories.push(this.keyword);
+        this.search_histories.unshift(this.keyword);
         console.log(this.search_histories);
 
         // 将历史搜索记录保存到本地缓存
@@ -132,6 +160,8 @@
           'searchHistory',
           this.search_histories
         );
+
+
 
         //console.log(this.keyword);
 
@@ -147,20 +177,48 @@
         }
         this.$apply();
         console.log(this.dataIndex);*/
-
-        wx.request({
-          url: 'http://makemoney.ink:5050/search/title_key_word',
-          method: 'POST',
-          data: {
+        var fieldData = {};
+        if (this.searchType == "sponsor") {
+          fieldData = {
+            'sponsor': this.keyword
+          };
+        } else {
+          fieldData = {
             'key_word': this.keyword
-          },
+          };
+        }
+        wx.request({
+          url: 'http://makemoney.ink:5050/search/' + this.searchType,
+          method: 'POST',
+          data: fieldData,
           header: {
             'content-type': 'application/json'
           },
           success: (res) => {
             console.log(res.data);
             if (res.data.hasOwnProperty('task_id')) {
-              this.tasks = res.data.task_id;
+              var tasks_id = res.data.task_id;
+              for (var i = 0; i < tasks_id.length; i++) {
+                wx.request({
+                  url: 'http://makemoney.ink:5050/search/task_id',
+                  method: 'POST',
+                  data: {
+                    'task_id': tasks_id[i]
+                  },
+                  success: (res2) => {
+                    if (res2.data.hasOwnProperty('id')) {
+                      this.tasks.push(res2.data);
+                      console.log('get task success');
+                    } else {
+                      console.log('get task failed');
+                    }
+
+                  },
+                  fail: (res2) => {
+                    console.log('get task failed');
+                  }
+                });
+              }
               this.resultMessage = "搜索到" + this.tasks.length + "条结果";
               this.$apply();
               console.log('search success!');
