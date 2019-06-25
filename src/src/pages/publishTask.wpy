@@ -6,7 +6,7 @@
     <mynavbar title="发布任务" lefttext="返回" leftarrow="true"></mynavbar> 
     <view class="page">
       <scroll-view scroll-y="true" style="height: 87%;">
-        <edittask :query.sync="query" :images.sync="images" :taskInfo.sync="taskInfo" :taskid.sync="taskid"></edittask>
+        <edittask :query.sync="query" :images.sync="images" :taskInfo.sync="taskInfo" :taskid.sync="taskid" :isEdit.sync="isEdit"></edittask>
       </scroll-view>
     </view>
   </view>
@@ -23,6 +23,8 @@
       edittask: EditTask
     }
     data = {
+      //判断是否是修改
+      isEdit: false,
       //任务的id
       taskid: 0,
       //辅助参数
@@ -33,9 +35,9 @@
       images: [],
       //任务
     	taskInfo: {
-        id: 0,             //用于辨别任务的id
-        name: '',           //任务名称
-        publisher: '',      //任务发起者
+        // id: 0,             //用于辨别任务的id
+        title: '',           //任务名称
+        sponsor: '',      //任务发起者
         type: '',           //任务类型
         start_time: '',     //任务开始时间:xxxx-xx-xx xx:xx
         end_time: '',       //任务结束时间:xxxx-xx-xx xx:xx
@@ -43,7 +45,7 @@
         detail: '',         //任务详情
         receiver: [],       //任务接收者
         receiver_limit: 0,  //接收者人数限制
-        finish_rate: 0,     //完成程度
+        finished_number: 0,     //完成程度
         extra_content:{     //额外内容：包括图片数据以及问卷数据
           query: [],        //问卷
           images:[]         //图片

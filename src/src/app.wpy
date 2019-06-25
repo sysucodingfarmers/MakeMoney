@@ -103,7 +103,7 @@ export default class extends wepy.app {
   }
 
   globalData = {
-    ip: 'http://makemoney.ink:5050/',
+    ip: 'http://172.26.96.247:5050/',
     session_id: '',
     userInfo: {},
     mainPageUrl: 'mainPage',

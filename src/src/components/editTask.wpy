@@ -49,7 +49,7 @@
 <template>
   <van-cell-group title="基本信息">
     <van-field
-      value="{{taskInfo.name}}"
+      value="{{taskInfo.title}}"
       label="任务名称"
       placeholder="请输入任务名称"
       clearable
@@ -204,6 +204,10 @@
       taskid: {
         type: Number,
         twoWay: true
+      },
+      isEdit: {
+        type: Boolean,
+        twoWay: true
       }
     }
     data = {
@@ -224,7 +228,7 @@
           this.$apply();
         }
         else {
-          this.taskInfo.name = val;
+          this.taskInfo.title = val;
           this.name_error = '';
           this.$apply();
         }
@@ -337,14 +341,9 @@
         Dialog.confirm({
           title: '是否删除',
           message: '删除就无法回复'
-        }).then(res => {
-          if (res.confirm) {
+        }).then(() => {
             that.images.splice(index,1);
             that.$apply();
-          }
-          else {
-            console.log("用户取消删除");
-          }
         });
       },
       //编辑问卷
@@ -358,7 +357,7 @@
       subbmit(e) {
         var canSubmmit = true;
         //判断任务名称
-        this.name_error = this.taskInfo.name === '' ? '名字不能为空' : this.name_error;
+        this.name_error = this.taskInfo.title === '' ? '名字不能为空' : this.name_error;
         canSubmmit = this.name_error != '' ? false : canSubmmit;
         //判断任务详情
         this.detail_error = this.taskInfo.detail === '' ? '详情不能为空' : this.detail_error;
@@ -383,18 +382,7 @@
         //提交任务并关闭页面
         this.$apply();
         if (canSubmmit) {
-          // todo
-          // 将task传入后端并得到id
-          // ...
-          var id = this.taskid;
           var mes = JSON.stringify(["修改","删除"]);
-          // if (id == TasksData.data.tasks.length) {
-          //   TasksData.data.tasks.push(this.taskInfo);
-          // }
-          // else {
-          //   TasksData.data.tasks[id] = this.taskInfo;
-          // }
-
           //处理问卷
           var query = this.taskInfo.extra_content.query;
           var questions = [];
@@ -425,7 +413,7 @@
 
           
           var task = {
-            title: this.taskInfo.name,
+            title: this.taskInfo.title,
             type: this.taskInfo.type,
             pay: this.taskInfo.pay,
             detail: this.taskInfo.detail,
@@ -441,44 +429,57 @@
           }
           //上传任务，并且得到该任务的id
           var tid;
+          var _this = this;
           
-          wx.request({
-            url: this.$parent.$parent.globalData.ip + 'task/sponsor',
-            method: 'POST',
-            header: {
-              'content-type': 'application/json',
-              'session_id' : this.$parent.$parent.globalData.session_id,
-              'user_id': this.$parent.$parent.globalData.userInfo.id
-            },
-            data: task,
-            success: (res) => {
-              console.log(res.data);
-              tid = res.data;
-              console.log('success');
-            },
-            fail: (res) => {
-              console.log(res);
-              console.log('fail');
-            }
-          });
-          //通过任务的id，将图片一张张download进去
-          for (var i = 0; i < this.images.length; ++i) {
-            wx.uploadFile({
-              url: this.$parent.$parent.globalData.ip + 'task/postImage',
-              filePath: this.images[i],
-              name: 'image',
-              header: {'content-type': 'multipart/form-data'},
-              formData: {
-                'task_id': tid
-              },
-              success(res) {
-                console.log(res.data); // 返回那边的链接
-              }
-            });
+          //修改问卷
+          if (this.isEdit) {
+
           }
-          // wepy.redirectTo({
-          //   url: 'taskDetail?id=' + id + '&mes=' + mes
-          // });
+          //提交任务并存入后端
+          else {
+            wx.request({
+              url: this.$parent.$parent.globalData.ip + 'task/sponsor',
+              method: 'POST',
+              header: {
+                'content-type': 'application/json',
+                'session_id' : this.$parent.$parent.globalData.session_id,
+                'user_id': this.$parent.$parent.globalData.userInfo.id
+              },
+              data: task,
+              success: (res) => {
+                console.log(res.data);
+                tid = res.data;
+                console.log('success');
+                //通过任务的id，将图片一张张download进去
+                var l = 0;
+                for (var i = 0; i < _this.images.length; ++i) {
+                  wx.uploadFile({
+                    url: _this.$parent.$parent.globalData.ip + 'task/postImage',
+                    filePath: _this.images[i],
+                    name: 'image',
+                    header: {'content-type': 'multipart/form-data'},
+                    formData: {
+                      'task_id': tid
+                    },
+                    success(res) {
+                      console.log(res.data); // 返回那边的链接
+                    }
+                  });
+                }
+                // console.log(_this.images.length)
+                if (_this.images.length == l) {
+                  wepy.redirectTo({
+                    url: 'taskDetail?id=' + tid + '&mes=' + mes
+                  });
+                }
+
+              },
+              fail: (res) => {
+                console.log(res);
+                console.log('fail');
+              }
+            })
+          }
         }
       }
     }

@@ -82,12 +82,14 @@
         var id = this.$root.$parent.globalData.userInfo.id;
         var tasks_id;
         wx.request({
-          url: 'http://makemoney.ink:5050/task/mysponsor',
+          url: this.$parent.globalData.ip + 'task/mysponsor',
           method: 'POST',
           header: {
             'content-type': 'application/json'
           },
-          data: id,
+          data: {
+            id: id
+          },
           success(res) {
             console.log(res.data);
             tasks_id = res.data;
@@ -99,23 +101,23 @@
 
         //通过taskid查看task
         //todo
-        var tasks = [];
-        wx.request({
-          url: 'http://makemoney.ink:5050/search/task_id',
-          method: 'POST',
-          header: {
-            'content-type': 'application/json'
-          },
-          data: {
-            tid: tasks_id[i]
-          },
-          success(res) {
-            console.log(res.data);
-          },
-          fail(res) {
-            console.log('fail');
-          }
-        });
+        // var tasks = [];
+        // wx.request({
+        //   url: this.$parent.globalData.ip + 'search/task_id',
+        //   method: 'POST',
+        //   header: {
+        //     'content-type': 'application/json'
+        //   },
+        //   data: {
+        //     tid: tasks_id[i]
+        //   },
+        //   success(res) {
+        //     console.log(res.data);
+        //   },
+        //   fail(res) {
+        //     console.log('fail');
+        //   }
+        // });
         
       }
       else if (this.type == 1) {
@@ -138,12 +140,14 @@
         var id = this.$root.$parent.globalData.userInfo.id;
         var tasks_id;
         wx.request({
-          url: 'http://makemoney.ink:5050/task/myreceive',
+          url: this.$parent.globalData.ip + 'task/myreceive',
           method: 'POST',
           header: {
             'content-type': 'application/json'
           },
-          data: id,
+          data: {
+            id: id
+          },
           success(res) {
             console.log(res.data);
             tasks_id = res.data;
@@ -155,23 +159,23 @@
 
         //通过taskid查看task
         //todo
-        var tasks = [];
-        wx.request({
-          url: 'http://makemoney.ink:5050/search/task_id',
-          method: 'POST',
-          header: {
-            'content-type': 'application/json'
-          },
-          data: {
-            tid: tasks_id[i]
-          },
-          success(res) {
-            console.log(res.data);
-          },
-          fail(res) {
-            console.log('fail');
-          }
-        });
+        // var tasks = [];
+        // wx.request({
+        //   url: 'http://makemoney.ink:5050/search/task_id',
+        //   method: 'POST',
+        //   header: {
+        //     'content-type': 'application/json'
+        //   },
+        //   data: {
+        //     tid: tasks_id[i]
+        //   },
+        //   success(res) {
+        //     console.log(res.data);
+        //   },
+        //   fail(res) {
+        //     console.log('fail');
+        //   }
+        // });
 
       }
       this.$broadcast("setTitle", this.title);

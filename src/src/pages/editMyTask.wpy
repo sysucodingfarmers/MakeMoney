@@ -6,7 +6,7 @@
     <mynavbar title="修改任务" lefttext="返回" leftarrow="true"></mynavbar> 
     <view class="page">
       <scroll-view scroll-y="true" style="height: 87%;">
-        <edittask :query.sync="query" :images.sync="images" :taskInfo.sync="taskInfo" :taskid.sync="taskid"></edittask>
+        <edittask :query.sync="query" :images.sync="images" :taskInfo.sync="taskInfo" :taskid.sync="taskid" :isEdit.sync="isEdit"></edittask>
       </scroll-view>
     </view>
   </view>
@@ -15,6 +15,7 @@
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
   import EditTask from '../components/editTask'
+  import TemplateToQuery from '../data/TemplateToQuery'
   // import TasksData from '../data/TempTaskData'
 
   export default class EditMyTask extends wepy.page {
@@ -23,6 +24,8 @@
       edittask: EditTask
     }
     data = {
+      //判断是否是修改
+      isEdit: true,
       //任务的id
       taskid: 0,
       //辅助参数
@@ -43,9 +46,59 @@
       console.log("EditMyTask onload");
       var id = JSON.parse(options.taskid);
       this.taskid = id;
-      // this.taskInfo = TasksData.data.tasks[id];
-      // 修改api
-      // todo
+      var that = this;
+      
+      wx.request({
+        url: this.$parent.globalData.ip + 'search/task_id',
+        method: 'POST',
+        header: {
+          'content-type': 'application/json'
+        },
+        data: {
+          task_id: id
+        },
+        success: (res) =>{
+
+          //问卷
+          wx.request({
+            url: that.$parent.globalData.ip + 'search/template_id',
+            method: 'POST',
+            header: {
+              'content-type': 'application/json'
+            },
+            data: {
+              template_id: res.data.template_id
+            },
+            success(r) {
+              // console.log(r.data);
+              var query = TemplateToQuery.change(r.data);
+              var task = {
+                title: res.data.title,
+                sponsor: res.data.sponsor,
+                type: res.data.type,
+                start_time: res.data.start_time,
+                end_time: res.data.end_time,
+                pay: res.data.pay,
+                detail: res.data.detail,
+                receiver_limit: res.data.receiver_limit,
+                finished_number: res.data.finished_number,
+                state: res.data.state,
+                extra_content: {
+                  query: query,
+                  images: []
+                },
+                receiver: []
+              }
+              that.taskInfo = task;
+              console.log(task);
+            },
+            fail(res) {
+              console.log('fail');
+            }
+          })
+        }
+      })
+
       console.log('EditMyTask end');
     }
     onShow() {
