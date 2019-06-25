@@ -463,10 +463,10 @@
           });
           //通过任务的id，将图片一张张download进去
           for (var i = 0; i < this.images.length; ++i) {
-            wx.upLoadFile({
-              url: this.$parent.$parent.globalData.ip + 'task/sponsor',
+            wx.uploadFile({
+              url: this.$parent.$parent.globalData.ip + 'task/postImage',
               filePath: this.images[i],
-              name: 'images',
+              name: 'image',
               header: {'content-type': 'multipart/form-data'},
               formData: {
                 'task_id': tid
