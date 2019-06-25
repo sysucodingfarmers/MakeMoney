@@ -1,8 +1,8 @@
 # -- coding:UTF-8 --
 from flask import request, json
-from flask_login import current_user,login_user,logout_user, login_required
+from flask_login import current_user,login_user,logout_user
 from app import app,db
-from app.models import Template,Answer
+from app.models import Template,Answer,Session
 from app.models import User,Task,Receiver,receivers
 from app.utils.trans import UserToJson, TaskToJson
 
@@ -45,7 +45,6 @@ def my_sponsor_task():
 只能查询当前登录的所有接受任务
 '''
 @app.route('/task/myreceive', methods=['GET', 'POST'])
-@login_required
 def my_receive_task():
     if request.method == 'POST':
         json_data = json.loads(request.data)
@@ -70,8 +69,8 @@ def my_receive_task():
 # 任务广场的推荐
 @app.route('/recommend', methods=['GET', 'POST'])
 def recommend():
-    json_data = json.loads(request.data)
     batch_size = 5
+    json_data = json.loads(request.data)
     if 'batch_size' in json_data:
         batch_size = json_data['batch_size']
     task_list = Task.query.order_by(-Task.received_number).limit(batch_size).all()

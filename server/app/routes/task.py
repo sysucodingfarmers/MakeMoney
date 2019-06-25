@@ -1,10 +1,13 @@
 # -- coding:UTF-8 --
-from flask import render_template, redirect, url_for, request, json
-from flask_login import current_user,login_user,logout_user, login_required
+from flask import render_template, redirect, url_for, request, json, send_from_directory
+from flask_login import current_user,login_user,logout_user
 from app import app,db
-from app.models import Template,Answer
+from app.models import Template,Answer, Session
 from app.models import User,Task,Receiver,receivers
 from app.utils.trans import UserToJson, TaskToJson
+import os
+import uuid
+import cv2
 
 json_true = json.dumps('succeed')
 json_false = json.dumps('failed')
@@ -13,12 +16,20 @@ json_false = json.dumps('failed')
 接收新建任务的所有需求信息，以当前登录user进行发布
 '''
 @app.route('/task/sponsor', methods=['POST'])
-@login_required
 def sponsor_task():
-    print(request.method)
+    #需要登录
+    headers = request.headers
+    se = Session.query.filter_by(sid = int(headers['session_id']), uid=int(headers['user_id'])).first()
+    if se==None:
+        print('session is not connected')
+        return json.dumps({'errmsg': '没有建立会话或者会话信息出错'})
+    user = User.query.filter_by(id=se.uid).first()
+    login_user(user)
+
     if request.method == 'POST':
         #获得post来的task数据
         json_data = json.loads(request.data)
+        print(json_data)
         if 'title' not in json_data:
             return json.dumps({'errmsg': '没有传递title'})
         task = Task(
@@ -33,14 +44,14 @@ def sponsor_task():
             received_number = json_data['received_number'] if 'received_number' in json_data else 0,
             extra_content = json_data['extra_content'] if 'extra_content' in json_data else None,
             state = 0,
-            images = json_data['images'] if 'images'in json_data else None
+            # images = json_data['images'].encode() if 'images'in json_data else b''
             )
 
         task.template = Template()
         task.template.questions = json_data['questions'] if 'questions' in json_data else []
         task.template.options = json_data['options'] if 'options' in json_data else []
         task.template.types = json_data['types'] if 'types' in json_data else []
-        
+
         db.session.add(task)
         db.session.commit()
 
@@ -53,8 +64,16 @@ def sponsor_task():
 接收任务的task_id，以当前user进行接收
 '''
 @app.route('/task/receive', methods=['POST'])
-@login_required
 def receive_task():
+    #需要登录
+    headers = request.headers
+    se = Session.query.filter_by(sid=int(headers['session_id']), uid=int(headers['user_id'])).first()
+    if se==None:
+        print('session is not connected')
+        return json.dumps({'errmsg': '没有建立会话或者会话信息出错'})
+    user = User.query.filter_by(id=se.uid).first()
+    login_user(user)
+
     if request.method == 'POST':
         #获得POST来的task id
         json_data = json.loads(request.data)
@@ -180,3 +199,32 @@ def task_cancel():
         return json.dumps({'errmsg': '没有传递task_id'})
     return json.dumps({'errmsg': '没有使用POST请求'})
 
+
+'''上传任务图片
+接受任务的id
+'''
+@app.route('/task/postImage', methods=['POST'])
+def postImage():
+    if request.method == 'POST':
+        json_data = json.loads(request.data)
+        if 'task_id' in json_data:
+            #查找任务
+            task = Task.query.filter_by(id=json_data['task_id']).first()
+            if task==None:
+                return json.dumps({'errmsg': '任务id错误，无该任务'})
+            filename = str(uuid.uuid1()) + ".jpg"
+            task.images.append(filename)
+            
+            #取出数据
+            f = request.files['image']
+            user_input = request.form.get("task_id")
+            #获得参数path和name
+            path = os.path.join(app.config['TASK_FOLDER'])
+            #存入服务器
+            if os.path.exists(path)==False:
+                os.makedirs(path)
+            f.save(path + filename)
+            #返回
+            return send_from_directory(app.config['TASK_FOLDER'], filename)
+        return json.dumps({'errmsg': '没有传递task_id'})
+    return json.dumps({'errmsg': '没有使用POST请求'})
