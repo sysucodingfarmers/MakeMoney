@@ -26,5 +26,7 @@ def TaskToJson(task):
 		'detail': task.detail,
 		'receiver_limit': task.receiver_limit,
 		'received_number': task.received_number,
-		'extra_content': task.extra_content
+		'extra_content': task.extra_content,
+		'state': task.state,
+		'images': task.images
 	}

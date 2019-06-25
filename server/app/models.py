@@ -95,7 +95,7 @@ class Task(db.Model):
 	#题目
 	title = db.Column(db.String(20), nullable=False)
 	#任务类型
-	type = db.Column(db.String(20), default='query')
+	type = db.Column(db.String(20), default='问卷')
 	#时间，默认结束时间为10天后
 	start_time = db.Column(db.DateTime, nullable=False, default=datetime.now())
 	end_time = db.Column(db.DateTime, nullable=False, default=datetime.now()+timedelta(days=10))
@@ -111,6 +111,8 @@ class Task(db.Model):
 	finished_number = db.Column(db.Integer, default=0)
 	#额外内容
 	extra_content = db.Column(db.Text)
+	#任务状态，整数
+	state = db.Column(db.Integer)
 
 	#任务发起者
 	sponsor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
