@@ -17,6 +17,12 @@ receivers = db.Table('receivers',
 # )
 
 class User(UserMixin, db.Model):
+	def __init__(self, **kwargs):
+		self.exMoney = 0
+		self.income = 0
+		self.expend = 0
+		super(User, self).__init__(**kwargs)
+	
 	#学号(账号)
 	id = db.Column(db.Integer, primary_key=True)
 	#用户名
@@ -37,6 +43,11 @@ class User(UserMixin, db.Model):
 	# 头像图片的编码
 	profile = db.Column(db.String(10000))
 	
+	#钱包状态
+	exMoney = db.Column(db.Float) #余额
+	income = db.Column(db.Float) #收入
+	expend = db.Column(db.Float) #支出
+
 	def set_password(self, password):
 		self.password_hash = generate_password_hash(password)
 	def check_password(self, password):

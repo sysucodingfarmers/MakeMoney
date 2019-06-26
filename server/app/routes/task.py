@@ -30,6 +30,7 @@ def sponsor_task():
         #获得post来的task数据
         json_data = json.loads(request.data)
         print(json_data)
+        print(type(json_data['start_time']))
         if 'title' not in json_data:
             return json.dumps({'errmsg': '没有传递title'})
         task = Task(
@@ -102,10 +103,11 @@ def receive_task():
         # if(receiver==None):
         receiver = Receiver(tid = json_data['task_id'], uid = current_user.id)
 
-        #接收任务
+        #接收任务，修改任务状态
         task.receivers.append(receiver)
         task.received_number += 1
-        task.state = 1
+        if task.state = 0:
+            task.state = 1
         print(task.receivers)
 
         db.session.add(receiver)

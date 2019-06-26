@@ -37,8 +37,7 @@ def register():
 		major = json_data['major'] if 'major' in json_data else None, 
 		phone = json_data['phone'] if 'phone' in json_data else None, 
 		wx_number = json_data['wx_number'] if 'wx_number' in json_data else None, 
-		hobbit = json_data['hobbit'] if 'hobbit' in json_data else None,
-		profile = json_data['profile'] if 'profile' in json_data else None
+		hobbit = json_data['hobbit'] if 'hobbit' in json_data else None
 		)
 	user.set_password(json_data['password'])
 	
@@ -142,7 +141,7 @@ def modify_user_info():
 '''上传头像
 接受用户的id
 '''
-@app.route('/task/postProfile', methods=['POST'])
+@app.route('/postProfile', methods=['POST'])
 def postProfile():
     if request.method == 'POST':
         json_data = json.loads(request.data)
@@ -166,6 +165,57 @@ def postProfile():
             #返回
             return send_from_directory(app.config['PROFILE_FOLDER'], filename)
         return json.dumps({'errmsg': '没有传递user_id'})
+    return json.dumps({'errmsg': '没有使用POST请求'})
+#查看钱包状态
+@app.route('/wallet', methods=['POST'])
+def wallet():
+    if request.method == 'POST':
+        json_data = json.loads(request.data)
+        if 'user_id' in json_data:
+            #查找用户
+            user = User.query.filter_by(id=json_data['user_id']).first()
+            if user==None:
+                return json.dumps({'errmsg': '用户id错误，无该用户'})
+            return json.dumps({'exMoney': user.exMoney, 'income': user.income, 'expend': user.expend})
+        return json.dumps({'errmsg': '没有传递user_id'})
+    return json.dumps({'errmsg': '没有使用POST请求'})
+
+#充值
+@app.route('/recharge', methods=['POST'])
+def recharge():
+    if request.method == 'POST':
+        json_data = json.loads(request.data)
+        if 'user_id' in json_data and 'value' in json_data:
+            #查找用户
+            user = User.query.filter_by(id=json_data['user_id']).first()
+            if user==None:
+                return json.dumps({'errmsg': '用户id错误，无该用户'})
+            print(user.exMoney)
+            user.exMoney = user.exMoney + json_data['value']
+            db.session.commit()
+            print(user.exMoney)
+            return json.dumps({'exMoney': user.exMoney})
+        return json.dumps({'errmsg': '没有传递user_id或没有传递充值金额value'})
+    return json.dumps({'errmsg': '没有使用POST请求'})
+
+#提现
+@app.route('/recharge', methods=['POST'])
+def recharge():
+    if request.method == 'POST':
+        json_data = json.loads(request.data)
+        if 'user_id' in json_data and 'value' in json_data:
+            #查找用户
+            user = User.query.filter_by(id=json_data['user_id']).first()
+            if user==None:
+                return json.dumps({'errmsg': '用户id错误，无该用户'})
+            print(user.exMoney)
+            if user.exMoney - json_data['value'] < 0:
+            	return json.dumps({'errmsg': '账户余额不足'})
+            user.exMoney = user.exMoney - json_data['value']
+            db.session.commit()
+            print(user.exMoney)
+            return json.dumps({'exMoney': user.exMoney})
+        return json.dumps({'errmsg': '没有传递user_id或没有传递充值金额value'})
     return json.dumps({'errmsg': '没有使用POST请求'})
 
 # 测试
