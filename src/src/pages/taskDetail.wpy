@@ -396,6 +396,7 @@
       }
       
       var pages = getCurrentPages();
+      console.log(pages)
       var currPage = pages[pages.length - 1];
       if (currPage.data.query.length != 0 && this.canEditQuery) {
         this.query = currPage.data.query;
