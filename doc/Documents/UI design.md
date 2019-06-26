@@ -1,5 +1,5 @@
 # UI Design
-- 已将 UI 原型导出为 html 静态，放置在 uideign 的一个子目录下。[点击跳转]()
+- 已将 UI 原型导出为 html 静态，放置在 [uideign](https://github.com/sysucodingfarmers/MakeMoney/tree/master/doc/Documents/uideign2.0) 的一个子目录下
 
 ## UI 界面原型
 ### 1. 任务广场（首页）
