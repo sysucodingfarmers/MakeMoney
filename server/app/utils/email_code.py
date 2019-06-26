@@ -13,15 +13,9 @@ def send_email_code(email_code, target_email):
   sender = 'sysu_makemoney@163.com'
   receiver = target_email
 
-  mail_msg = """
-  <p><b>欢迎注册挣闲钱</b></p>
-  <h2>你的验证码是：
-  """
+  mail_msg = "欢迎注册挣闲钱\n你的验证码是："
   mail_msg += email_code
-  mail_msg += """
-  </h2>
-  """
-  message = MIMEText(mail_msg, 'html', 'utf-8')
+  message = MIMEText(mail_msg, 'plain', 'utf-8')
   message['Subject'] = Header(subject, 'utf-8')
   message['From'] = sender
   message['To'] = receiver
