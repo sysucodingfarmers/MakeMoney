@@ -207,7 +207,14 @@
                   },
                   success: (res2) => {
                     if (res2.data.hasOwnProperty('id')) {
-                      this.tasks.push(res2.data);
+                      var task_item = {
+                        'id': res2.data.id,
+                        'itemid': res2.data.id,
+                        'name': res2.data.title,
+                        'detail': res2.data.detail,
+                        'type': res2.data.type
+                      };
+                      this.tasks.push(task_item);
                       console.log('get task success');
                     } else {
                       console.log('get task failed');
