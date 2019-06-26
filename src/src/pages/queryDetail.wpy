@@ -288,6 +288,10 @@
       this.finish_rate = fRate;
       this.finish = finish;
       this.canEditQuery = canEditQuery;
+      // console.log(this.query);
+      // console.log(this.finish_rate);
+      // console.log(this.finish);
+      // console.log(this.canEditQuery);
       this.$apply();
       console.log("QueryDetail end");
     }

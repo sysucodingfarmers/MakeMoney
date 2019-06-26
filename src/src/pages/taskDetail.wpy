@@ -34,9 +34,9 @@
     <view class="page">
       <scroll-view scroll-y="true" style="height: 87%;">
         <van-cell-group title="基本内容">
-          <van-cell-for-taskDetail title="任务名称" value="{{taskInfo.name}}" ></van-cell-for-taskDetail>
+          <van-cell-for-taskDetail title="任务名称" value="{{taskInfo.title}}" ></van-cell-for-taskDetail>
           <van-cell-for-taskDetail title="任务详情" value="{{taskInfo.detail}}" ></van-cell-for-taskDetail>
-          <van-cell-for-taskDetail title="发起者" value="{{taskInfo.publisher}}"></van-cell-for-taskDetail>
+          <van-cell-for-taskDetail title="发起者" value="{{taskInfo.sponsor}}"></van-cell-for-taskDetail>
           <van-cell-for-taskDetail title="任务报酬" value="{{taskInfo.pay}}元" ></van-cell-for-taskDetail>
           <van-cell-for-taskDetail title="任务限制" value="{{taskInfo.receiver_limit}}人" ></van-cell-for-taskDetail>
           <van-cell-for-taskDetail title="开始时间" value="{{taskInfo.start_time}}" ></van-cell-for-taskDetail>
@@ -68,6 +68,7 @@
   import MyNavBar from '../components/mynavbar'
   // import TasksData from '../data/TempTaskData'
   import Dialog from '../components/van/dialog/dialog'
+  import TemplateToQuery from '../data/TemplateToQuery'
 
   export default class TaskDetail extends wepy.page {
     data = {
@@ -101,26 +102,20 @@
           Dialog.confirm({
             message: '是否接受'
           }).then(()=>{
-            var len = this.taskInfo.receiver.length;
+            var len = this.taskInfo.receivers.length;
             if (len < this.taskInfo.receiver_limit) {
-              // this.taskInfo.receiver.push({
-              //   name: this.$root.$parent.globalData.userInfo.username,
-              //   id: this.taskInfo.receiver.length,
-              //   isfinished: false,
-              //   ispaid: false
-              // });
-              // TasksData.data.tasks[this.id].receiver = this.taskInfo.receiver;
-
               //接受任务
               var task_id = this.id;
               wx.request({
                 url: this.$parent.globalData.ip + 'task/receive',
                 method: 'POST',
                 header: {
-                  'content-type': 'application/json'
+                  'content-type': 'application/json',
+                  'session_id' : this.$parent.globalData.session_id,
+                  'user_id': this.$parent.globalData.userInfo.id
                 },
                 data: {
-                  id: task_id
+                  task_id: task_id
                 },
                 success(res) {
                   console.log(res.data);
@@ -163,17 +158,9 @@
         //完成
         else if (val === '完成') {
           if (this.finishRate === 100) {
-            
-            // this.taskInfo.receiver.forEach(receiver=>{
-            //   if (receiver.name == this.$root.$parent.globalData.userInfo.username) {
-            //     receiver.isfinished = true;
-            //     receiver.ispaid = true;
-            //   }
-            // });
-
-            
+           
             //完成任务
-            var user_id = this.$root.$parent.globalData.userInfo.username;
+            var user_id = this.$root.$parent.globalData.userInfo.id;
             var task_id = this.id;
             //1.有问卷
             //2.无问卷
@@ -208,7 +195,25 @@
         }
         //放弃
         if (val === '放弃') {
-          console.log('放弃');
+          Dialog.confirm({
+            message: '是否放弃',
+          }).then(()=>{
+            wx.request({
+              url: this.$parent.globalData.ip + 'task_quit',
+              method: 'POST',
+              header: {
+                'content-type': 'application/json'
+              },
+              data: {
+                task_id: this.id,
+                user_id: this.$root.$parent.globalData.userInfo.id
+              },
+              success(res) {
+                console.log('放弃成功');
+                wepy.navigateBack();
+              }
+            })
+          })
         }
         //取消
         else if (val === '取消') {
@@ -217,7 +222,7 @@
         }
         //删除
         else if (val === '删除') {
-          if (this.taskInfo.receiver.length != 0) {
+          if (this.taskInfo.receivers.length != 0) {
             Dialog.alert({
               title: '无法删除',
               message: '任务进行中'
@@ -230,12 +235,22 @@
               title: '是否删除',
               message: '删除就无法恢复'
             }).then(()=>{
-              console.log('删除成功');
-              // TasksData.data.tasks.splice(this.id, 1);
-              //删除任务
-              //todo
-              wepy.navigateBack();
-            });
+              wx.request({
+                url: this.$parent.globalData.ip + 'task_cancel',
+                method: 'POST',
+                header: {
+                  'content-type': 'application/json'
+                },
+                data: {
+                  task_id: this.id,
+                  user_id: this.$root.$parent.globalData.userInfo.id
+                },
+                success(res) {
+                  console.log('删除成功');
+                  wepy.navigateBack();
+                }
+              })
+            })
           }
         }
       },
@@ -264,11 +279,58 @@
           'content-type': 'application/json'
         },
         data: {
-          tid: this.id
+          task_id: this.id
         },
         success: (res) => {
           that.taskInfo = res.data;
           console.log(res.data);
+          var mes;
+          var userInfo = that.$root.$parent.globalData.userInfo;
+          var titem = that.taskInfo;
+          if (userInfo == null) {
+            mes = ['登录', '取消'];
+          }
+          else if (userInfo.id == titem.sponsor_id) {
+            mes = ["修改","删除"];
+          }
+          else {
+            mes = ["接受","收藏"];
+          }
+          if (titem.receivers.length != 0 && userInfo != null) {
+            titem.receivers.forEach(item=>{
+              if (item === userInfo.id) {
+                // if (!item.isfinished) {
+                  mes = ['完成', '放弃'];
+                // }
+                // else {
+                  // mes = ['已完成', '取消'];
+                // }
+              }
+            })
+          }
+          that.button_left = mes[0];
+          that.button_right = mes[1];
+
+          //问卷
+          wx.request({
+            url: that.$parent.globalData.ip + 'search/template_id',
+            method: 'POST',
+            header: {
+              'content-type': 'application/json'
+            },
+            data: {
+              template_id: titem.template_id
+            },
+            success(res) {
+              console.log(res.data);
+              var query = TemplateToQuery.change(res.data);
+              that.query = query;
+              console.log(query);
+            },
+            fail(res) {
+              console.log('fail');
+            }
+          })
         },
         fail: (res) => {
           console.log(res)
@@ -277,42 +339,15 @@
           console.log('complete')
         }
       });
-      this.query = this.taskInfo.extra_content.query;
-      // console.log(TasksData.data.tasks);
-
 
       console.log('taskDetail end');
     }
     onShow() {
       console.log("taskDetail onShow");
-      var mes;
-      var userInfo = this.$root.$parent.globalData.userInfo;
-      var titem = this.taskInfo;
-      // var titem = TasksData.data.tasks[this.id]
-      if (userInfo.username == undefined) {
-        mes = ['登录', '取消'];
-      }
-      else if (userInfo.username == titem.publisher) {
-        mes = ["修改","删除"];
+
+      if (this.button_left == '修改') {
         this.canEditQuery = false;
       }
-      else {
-        mes = ["接受","收藏"];
-      }
-      if (titem.receiver.length != 0 && userInfo != null) {
-        titem.receiver.forEach(item=>{
-          if (item.name === userInfo.username) {
-            if (!item.isfinished) {
-              mes = ['完成', '放弃'];
-            }
-            else {
-              mes = ['已完成', '取消'];
-            }
-          }
-        })
-      }
-      this.button_left = mes[0];
-      this.button_right = mes[1];
       
       var pages = getCurrentPages();
       var currPage = pages[pages.length - 1];

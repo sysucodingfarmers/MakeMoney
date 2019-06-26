@@ -321,13 +321,6 @@
           duration: 0
         });
         var _this = this
-<<<<<<< Updated upstream
-        wx.request({
-          url: this.$parent.globalData.ip + 'register',
-          method: 'POST',
-          data: {
-=======
-
         wx.uploadFile({
           url: 'http://makemoney.ink:5050/register',
           filePath: this.imageData,
@@ -336,7 +329,6 @@
             'content-type': 'application/json'
           },
           formData: {
->>>>>>> Stashed changes
             id: this.studentId,
             password: this.password,
             username: this.username,
