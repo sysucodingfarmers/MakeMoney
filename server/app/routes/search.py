@@ -197,11 +197,12 @@ def getTask_by_id():
                     'pay':task.pay, 'detail':task.detail, 'receiver_limit':task.receiver_limit,
                     'received_number':task.received_number, 'finished_number':task.finished_number,
                     'extra_content':task.extra_content, 'sponsor_id':task.sponsor.id,
-                    'sponsor':task.sponsor.username, 'template_id':task.template.id}
+                    'sponsor':task.sponsor.username, 'template_id':task.template.id, 'state':task.state}
             receivers_id = []
             for rec in task.receivers:
-                receivers_id.append(rec.id)
+                receivers_id.append(rec.uid)
             data['receivers'] = receivers_id
+            # data['receivers'] = task.receivers
             return json.dumps(data, sort_keys=False)
 
         else:
