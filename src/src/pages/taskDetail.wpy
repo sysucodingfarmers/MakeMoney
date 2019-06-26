@@ -36,7 +36,7 @@
         <van-cell-group title="基本内容">
           <van-cell-for-taskDetail title="任务名称" value="{{taskInfo.title}}" ></van-cell-for-taskDetail>
           <van-cell-for-taskDetail title="任务详情" value="{{taskInfo.detail}}" ></van-cell-for-taskDetail>
-          <van-cell-for-taskDetail title="发起者" value="{{taskInfo.sponsor}}"></van-cell-for-taskDetail>
+          <van-cell-for-taskDetail title="发起者" value="{{taskInfo.sponsor}}" is-link bind:click="ShowSponsorMessage"></van-cell-for-taskDetail>
           <van-cell-for-taskDetail title="任务报酬" value="{{taskInfo.pay}}元" ></van-cell-for-taskDetail>
           <van-cell-for-taskDetail title="任务限制" value="{{taskInfo.receiver_limit}}人" ></van-cell-for-taskDetail>
           <van-cell-for-taskDetail title="开始时间" value="{{taskInfo.start_time}}" ></van-cell-for-taskDetail>
@@ -69,6 +69,7 @@
   // import TasksData from '../data/TempTaskData'
   import Dialog from '../components/van/dialog/dialog'
   import TemplateToQuery from '../data/TemplateToQuery'
+  import caculateDate from '../data/CaculateDate'
 
   export default class TaskDetail extends wepy.page {
     data = {
@@ -85,6 +86,13 @@
       mynavbar: MyNavBar
     }
     methods = {
+      //查看发起者信息
+      ShowSponsorMessage() {
+        console.log(this.taskInfo.sponsor_id);
+        wx.navigateTo({
+          url: 'sponsorInfo?user_id=' + this.taskInfo.sponsor_id
+        })
+      },
       //问卷
       EditQuery() {
         var query = JSON.stringify(this.query);
@@ -140,7 +148,7 @@
         else if (val === '修改') {
           console.log('修改');
           var taskid = JSON.stringify(this.id);
-          wepy.redirectTo({
+          wx.redirectTo({
             url: "editMyTask?taskid=" + taskid
           });
         }
@@ -150,7 +158,7 @@
             message: '即将跳转登录页面'
           }).then(()=>{
             console.log('登录');
-            wepy.redirectTo({
+            wx.redirectTo({
               url: 'login'
             })
           });
@@ -171,14 +179,17 @@
               }
               else {
                 var answer = [];
+                // console.log(item.content.option);
                 for (var i = 0; i < item.content.option.length; ++i) {
-                  if (item.content.option.isSelected == true) {
+                  if (item.content.option[i].isSelected) {
                     answer.push(i);
                   }
                 }
+                // console.log(answer);
                 answers.push(answer);
               }
             })
+            // console.log(answers);
             wx.request({
               url: this.$parent.globalData.ip + 'summit/answer',
               method: 'POST',
@@ -222,7 +233,7 @@
         //收藏
         if (val === '收藏') {
           console.log('收藏');
-          wepy.navigateBack();
+          wx.navigateBack();
         }
         //放弃
         if (val === '放弃') {
@@ -241,7 +252,7 @@
               },
               success(res) {
                 console.log('放弃成功');
-                wepy.navigateBack();
+                wx.navigateBack();
               }
             })
           })
@@ -249,7 +260,7 @@
         //取消
         else if (val === '取消') {
           console.log('取消');
-          wepy.navigateBack();
+          wx.navigateBack();
         }
         //删除
         else if (val === '删除') {
@@ -278,7 +289,7 @@
                 },
                 success(res) {
                   console.log('删除成功');
-                  wepy.navigateBack();
+                  wx.navigateBack();
                 }
               })
             })
@@ -297,80 +308,85 @@
       console.log("taskDetail onLoad");
       this.id = options.id;
       console.log('打开任务', this.id);
-      
-
-      //根据任务id查看任务
+      //临时变量
+      //....................................................
       var that = this;
-      wx.request({
-        url: this.$parent.globalData.ip + 'search/task_id',
-        method: 'POST',
-        header: {
-          'content-type': 'application/json'
-        },
-        data: {
-          task_id: this.id
-        },
-        success: (res) => {
-          that.taskInfo = res.data;
-          console.log(res.data);
-          var mes;
-          var userInfo = that.$root.$parent.globalData.userInfo;
-          var titem = that.taskInfo;
-          if (userInfo.id == undefined) {
-            mes = ['登录', '取消'];
-          }
-          else if (userInfo.id == titem.sponsor_id) {
-            mes = ["修改","删除"];
+      var url = that.$parent.globalData.ip;
+      var header = {
+        'content-type': 'application/json'
+      };
+      var data = {
+        task_id: that.id
+      };
+      var method = 'POST';
+      var userInfo = that.$root.$parent.globalData.userInfo;
+      var mes;
+      var task_id = that.id;
+      //.....................................................
+      //根据任务id查看任务
+      wepy.request({
+        url: url + 'search/task_id',
+        method: method,
+        header: header,
+        data: data
+      })
+      .then(function(res){
+        that.taskInfo = res.data;
+        that.taskInfo.start_time = caculateDate.DateToString(that.taskInfo.start_time);
+        that.taskInfo.end_time = caculateDate.DateToString(that.taskInfo.end_time);
+        console.log(that.taskInfo);
+        if (userInfo.id == undefined) {
+          mes = ['登录', '取消'];
+        }
+        else if (userInfo.id == that.taskInfo.sponsor_id) {
+          mes = ["修改","删除"];
+        }
+        else {
+          mes = ["接受","取消"];
+        }
+        //查询是否是接受者
+        data = {
+          task_id: task_id,
+          user_id: userInfo.id
+        };
+        return wepy.request({
+                  url: url + 'search/receiver',
+                  method: method,
+                  header: header,
+                  data: data
+                });
+      })
+      .then(function(res){
+        console.log(res.data);
+        if (res.data.errmsg == undefined) {
+          if (!res.data.isfinished) {
+            mes = ['完成', '放弃'];
           }
           else {
-            mes = ["接受","收藏"];
+            mes = ['已完成', '取消'];
           }
-          if (titem.receivers.length != 0 && userInfo != null) {
-            titem.receivers.forEach(item=>{
-              if (item === userInfo.id) {
-                // if (!item.isfinished) {
-                  mes = ['完成', '放弃'];
-                // }
-                // else {
-                  // mes = ['已完成', '取消'];
-                // }
-              }
-            })
-          }
-          that.button_left = mes[0];
-          that.button_right = mes[1];
-          that.$apply();
-
-          //问卷
-          wx.request({
-            url: that.$parent.globalData.ip + 'search/template_id',
-            method: 'POST',
-            header: {
-              'content-type': 'application/json'
-            },
-            data: {
-              template_id: titem.template_id
-            },
-            success(res) {
-              console.log(res.data);
-              var query = TemplateToQuery.change(res.data);
-              that.query = query;
-              console.log(query);
-            },
-            fail(res) {
-              console.log('fail');
-            }
-          })
-        },
-        fail: (res) => {
-          console.log(res)
-        },
-        complete: (res) => {
-          console.log('complete')
         }
-      });
+        that.button_left = mes[0];
+        that.button_right = mes[1];
+        that.$apply();
 
-      console.log('taskDetail end');
+        //查询是否有问卷信息
+        data = {
+          template_id: that.taskInfo.template_id
+        }
+        return wepy.request({
+                  url: url + 'search/template_id',
+                  method: method,
+                  header: header,
+                  data: data
+                });
+      })
+      .then(function(res){
+        that.query = TemplateToQuery.change(res.data);
+        console.log(that.query);
+        console.log('taskDetail end');
+      })
+
     }
     onShow() {
       console.log("taskDetail onShow");
