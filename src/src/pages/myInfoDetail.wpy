@@ -84,6 +84,7 @@
       this.schoolurl = "myEditInfo?type=3&value=" + this.userinfo.school
       this.majorurl = "myEditInfo?type=4&value=" + this.userinfo.major
       this.interests.list = this.userinfo.interests;
+      this.$apply()
       this.$broadcast('setTitle', this.userinfo.username + " 的信息")
     }
   }

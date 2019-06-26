@@ -15,32 +15,31 @@
         border="{{true}}"
         bind:change="onChange"
         use-button-slot
-        disabled="{{!verify}}"
       >
       </van-field>
       <van-field
-        value="{{phone_sms}}"
+        value="{{sms}}"
         center
         clearable
         label="验证码"
-        placeholder="{{ phone_sms_placeholder }}"
-        errorMessage="{{ phone_sms_error_msg }}"
+        placeholder="{{ sms_placeholder }}"
+        errorMessage="{{ sms_error_msg }}"
         border="{{false}}"
         use-button-slot
-        bind:change="onPhoneSMSchange"
+        bind:change="onSMSchange"
       >
         <van-button 
           slot="button"
           size="small"
           type="info"
-          bind:click="sendPhoneCode"
+          bind:click="sendCode"
           disabled="{{issend}}"
         >
           {{btn_msg}}
         </van-button>
       </van-field>
       <view class="button">
-        <van-button type="info" size="large" @tap="btntap">{{big_btn_msg}}</van-button>
+        <van-button type="info" size="large" @tap="btntap">更改</van-button>
       </view>
     </view>
     <view wx:else>
@@ -66,8 +65,7 @@
   import Dialog from '../components/van/dialog/dialog'
   import zhenzisms from '../sdk/zhenzisms'
 
-  var phone_reg = null;
-  var email_reg = null;
+  var reg_detector = null;
 
   export default class MyEditInfo extends wepy.page {
     data = {
@@ -81,13 +79,12 @@
       cur_time: 120,
       issend: false,
 
-      phone_sms: "",
-      phone_sms_error_msg: "",
-      phone_sms_placeholder: "请输入验证码",
-      phone_sms_len: 6,
-      send_phone_sms: "",
-
-      big_btn_msg: "验证"
+      sms: "",
+      sms_error_msg: "",
+      sms_placeholder: "请输入验证码",
+      sms_len: 6,
+      send_sms: "",
+      send_addr: ""
     }
     components = {
       mynavbar: MyNavBar
@@ -107,12 +104,6 @@
         if (this.type == 0) {
           _data.username = this.value
         }
-        else if (this.type == 1) {
-          _data.email = this.value;
-        }
-        else if (this.type == 2) {
-          _data.phone = this.value;
-        }
         else if (this.type == 3) {
           _data.school = this.value;
         }
@@ -124,14 +115,24 @@
           method: 'POST',
           data: _data,
           header: {
-            'content-type': 'application/json'
+            'content-type': 'application/json',
+            'session_id' : this.$parent.globalData.session_id,
+            'user_id': this.$parent.globalData.userInfo.id
           },
           success: (res) => {
             Toast.clear()
             console.log(res)
-            this.$parent.globalData.userInfo = res.data
-            if (res.data.profile == undefined)
-              this.$parent.globalData.userInfo.avatar = 'https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1560754276&di=9e6e09a4563fa27b2b4c20b7a5a58df7&src=http://pic.51yuansu.com/pic3/cover/01/69/80/595f67bf2026f_610.jpg'
+            if (res.data.username || res.data.school || res.data.major) {
+              if (this.type == 0) {
+                this.$parent.globalData.userInfo.username = res.data.username
+              }
+              else if (this.type == 3) {
+                this.$parent.globalData.userInfo.school = res.data.school
+              }
+              else if (this.type == 4) {
+                this.$parent.globalData.userInfo.major = res.data,major
+              }
+            }
             Dialog.alert({
               message: '保存成功'
             }).then((res) => {
@@ -146,95 +147,141 @@
           }
         })
       },
-      onPhoneSMSchange(e) {
-        this.phone_sms = e.detail;
+      onSMSchange(e) {
+        this.sms = e.detail;
       },
-      sendPhoneCode() {
-        console.log("phone: " + this.value)
-        console.log(phone_reg)
+      sendCode() {
+        console.log("sms: " + this.value)
+        console.log(reg_detector)
+        this.send_addr = this.value
         if (this.value.length == 0) {
-          Toast('请输入手机号码')
+          if (this.type == 1)
+            Toast('请输入邮箱')
+          else if (this.type == 2)
+            Toast('请输入手机号码')
         }
-        else if (!phone_reg.test(this.value)) {
-          Toast('手机号码有误，请检查后重新输入')
+        else if (!reg_detector.test(this.value)) {
+          if (this.type == 1)
+            Toast('邮箱地址有误，请检查后重新输入')
+          else if (this.type ==2)
+            Toast('手机号码有误，请检查后重新输入')
         }
         else {
-          console.log('手机号码正确')
           this.generateCode()
-          zhenzisms.client.send((res) => {
-            console.log(res)
-            this.issend = true;
-            this.btn_msg = "已发送 " + this.cur_time
-            this.$apply()
-            this.setTimer();
-          }, this.value, '你的注册验证码为' + this.send_phone_sms)
-        }
-      },
-      btntap() {
-        if (!this.verify) {
-          // 未验证
-          console.log(this.phone_sms == this.send_phone_sms)
-          if (this.phone_sms == "" || this.phone_sms != this.send_phone_sms) {
-            this.phone_sms_error_msg = "验证码错误"
-          }
-          else {
-            this.verify = true
-            this.phone_sms_error_msg = ""
-            this.phone_sms = ""
-            this.send_phone_sms = ""
-            this.btn_msg = "发送验证码"
-            this.big_btn_msg = "更改"
-            this.issend = false
-            clearTimeout(this.$parent.globalData.timer)
-            this.title = "更改手机号码"
-            this.$broadcast("setTitle", this.title)
-            Toast.success("验证成功")
-          }
-        }
-        else {
-          // 已验证
-          var _data = {}
-          _data.id = this.$parent.globalData.userInfo.id;
-          if (this.phone_sms == "" || this.phone_sms != this.send_phone_sms) {
-            this.phone_sms_error_msg = "验证码错误"
-          }
-          else {
-            _data.phone = this.value
+          if (this.type == 1) {
+            this.send_email = this.email
+            console.log('邮箱地址正确')
+            console.log("send email sms: " + this.send_sms)
             wx.request({
-              url: 'http://makemoney.ink:5050/modify/user_info',
+              url: 'http://makemoney.ink:5050/emailcode',
               method: 'POST',
-              data: _data,
+              data: {
+                code: this.send_sms,
+                target_email: this.value
+              },
               header: {
                 'content-type': 'application/json'
               },
               success: (res) => {
-                Toast.clear()
                 console.log(res)
-                this.$parent.globalData.userInfo.phone = res.data.phone
-                clearTimeout(this.$parent.globalData.timer)
-                Dialog.alert({
-                  message: '保存成功'
-                }).then((res) => {
-                  wx.navigateBack()
-                })
+                if (res.statusCode == 200) {
+                  this.issend = true;
+                  this.btn_msg = "已发送 " + this.cur_time
+                  this.$apply()
+                  this.setTimer();
+                }
+                else {
+                  Toast('网络错误')
+                }
               },
-              fail: (res)=>{
-                Toast.fail({
-                  message: '保存失败',
-                  duration: 2000
-                })
+              fail: (res) => {
+                console.log(res)
               }
             })
           }
+          else if (this.type == 2) {
+            console.log('手机号码正确')
+            zhenzisms.client.send((res) => {
+              console.log(res)
+              this.issend = true;
+              this.btn_msg = "已发送 " + this.cur_time
+              this.$apply()
+              this.setTimer();
+            }, this.value, '你的注册验证码为' + this.send_sms)
+          }
+        }
+      },
+      btntap() {
+        var _data = {}
+        _data.id = this.$parent.globalData.userInfo.id;
+        if (this.sms == "" || this.sms != this.send_sms) {
+          this.sms_error_msg = "验证码错误"
+        }
+        else if (this.send_addr != this.value) {
+          if (this.type == 1)
+            Toast.fail({
+              message: '验证的电子邮箱与当前输入不一致'
+            })
+          else if (this.type == 2)
+            Toast.fail({
+              message: '验证的手机号码与当前输入不一致'
+            })
+        }
+        else {
+          if (this.type == 1)
+            _data.email = this.value
+          else if (this.type == 2)
+            _data.phone = this.value
+          console.log(_data)
+          wx.request({
+            url: 'http://makemoney.ink:5050/modify/user_info',
+            method: 'POST',
+            data: _data,
+            header: {
+              'content-type': 'application/json',
+              'session_id' : this.$parent.globalData.session_id,
+              'user_id': this.$parent.globalData.userInfo.id
+            },
+            success: (res) => {
+              Toast.clear()
+              console.log(res)
+              if (res.data.phone || res.data.email) {
+                clearTimeout(this.$parent.globalData.timer)
+                Dialog.alert({
+                  message: '保存成功'
+                }).then((r) => {
+                  console.log("res.data")
+                  console.log(res.data)
+                  if (this.type == 2)
+                    this.$parent.globalData.userInfo.phone = res.data.phone
+                  else if (this.type == 1)
+                    this.$parent.globalData.userInfo.email = res.data.email
+                  console.log(this.$parent.globalData.userInfo.email)
+                  wx.navigateBack()
+                })
+              }
+              else {
+                Toast.fail({
+                  message: '网络错误'
+                })
+              }
+            },
+            fail: (res)=>{
+              Toast.fail({
+                message: '保存失败',
+                duration: 2000
+              })
+            }
+          })
         }
       }
     }
     generateCode() {
-      this.send_phone_sms = ""
-      for (var i = 0; i < this.phone_sms_len; i++) {
-        this.send_phone_sms += Math.floor(Math.random()*10)
+      this.send_sms = ""
+      for (var i = 0; i < this.sms_len; i++) {
+        this.send_sms += Math.floor(Math.random()*10)
       }
-      console.log("生成的验证码为： " + this.send_phone_sms)
+      console.log("生成的验证码为： " + this.send_sms)
     }
     setTimer() {
       this.$parent.globalData.timer = setTimeout((res) => {
@@ -242,14 +289,14 @@
         if (this.cur_time > 0) {
           this.btn_msg = "已发送 " + this.cur_time;
           this.$apply()
-          console.log(this.btn_msg)
+          // console.log(this.btn_msg)
           this.setTimer()
         }
         else {
           this.issend = false;
-          this.send_phone_sms = ""
-          this.btn_msg = "重新发送"
-          console.log(this.btn_msg)
+          this.send_sms = ""
+          this.btn_msg = "超时，重新发送"
+          // console.log(this.btn_msg)
           this.init = false
           this.cur_time = 120
           this.$apply()
@@ -268,12 +315,12 @@
       }
       else if (this.type == 1) {
         // 更改邮箱
-        this.title = "验证旧邮箱"
+        this.title = "更改邮箱"
         this.placeholder = "请输入邮箱"
       }
       else if (this.type == 2) {
         // 更改手机号码
-        this.title = "验证旧手机号码"
+        this.title = "更改手机号码"
         this.placeholder = "请输入手机号码"
         console.log('初始化榛子短信平台sdk')
         zhenzisms.client.init(
@@ -296,8 +343,10 @@
     }
     onShow() {
       this.$broadcast("setTitle", this.title)
-      phone_reg = this.$parent.globalData.phone_reg
-      email_reg = this.$parent.globalData.email_reg
+      if (this.type == 1)
+        reg_detector = this.$parent.globalData.email_reg
+      else if (this.type == 2)
+        reg_detector = this.$parent.globalData.phone_reg
     }
   }
 </script>
