@@ -417,8 +417,8 @@
             type: this.taskInfo.type,
             pay: this.taskInfo.pay,
             detail: this.taskInfo.detail,
-            // start_time = caculateDate.StringToDate(this.taskInfo.start_time),
-            // end_time = caculateDate.StringToDate(this.taskInfo.end_time),
+            start_time: caculateDate.StringToDate(this.taskInfo.start_time),
+            end_time: caculateDate.StringToDate(this.taskInfo.end_time),
             receiver_limit: this.taskInfo.receiver_limit,
             receiver_number: 0,
             state: 0,
@@ -427,6 +427,7 @@
             types: types
             // images: this.images
           }
+          console.log(task);
           //上传任务，并且得到该任务的id
           var tid;
           var _this = this;

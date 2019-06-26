@@ -1,0 +1,61 @@
+<style lang="less">
+  
+</style>
+<template>
+  <view style="position: fixed; height: 100%; width: 100%;">
+    <mynavbar lefttext="返回" leftarrow="true" title="发起者详情"></mynavbar>
+    <!-- 主体 -->
+    <van-cell-for-infodetail title="头像" />
+    <van-cell-for-infodetail title="用户名" value="{{userInfo.username}}" />
+    <van-cell-for-infodetail title="邮箱" value="{{userInfo.email}}" />
+    <van-cell-for-infodetail title="手机号码" value="{{userInfo.phone}}"/>
+    <van-cell-for-infodetail title="学号" value="{{userInfo.id}}" />
+    <van-cell-for-infodetail title="学院" value="{{userInfo.school}}" />
+    <van-cell-for-infodetail title="专业" value="{{userInfo.major}}" />
+  </view>
+  <!-- <van-toast id="van-toast" ></van-toast> -->
+</template>
+<script>
+  import wepy from 'wepy'
+  import MyNavBar from '../components/mynavbar'
+  // import Toast from '../components/van/toast/toast'
+
+  export default class SponsorInfo extends wepy.page {
+    data = {
+      userInfo: {}
+    }
+    components = {
+      mynavbar: MyNavBar
+    }
+    methods = {
+    
+    }
+    onLoad(options) {
+      console.log('sponsorInfo onload');
+      var user_id = options.user_id;
+      var that = this;
+      wx.request({
+        url: this.$parent.globalData.ip + 'search/user_id',
+        method: 'POST',
+        header: {
+          'content-type': 'application/json'
+        },
+        data: {
+          user_id: user_id
+        },
+        success(res) {
+          // console.log(res.data);
+          that.userInfo = res.data;
+          that.$apply();
+          console.log(that.userInfo);
+          console.log('end');
+        }
+      })
+    }
+    onShow() {
+      console.log('sponsorInfo show');
+      // this.$broadcast('setTitle', this.userInfo.username + " 的信息")
+      console.log('end');
+    }
+  }
+</script>

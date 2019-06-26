@@ -16,6 +16,7 @@
   import MyNavBar from '../components/mynavbar'
   import EditTask from '../components/editTask'
   import TemplateToQuery from '../data/TemplateToQuery'
+  import caculateDate from '../data/CaculateDate'
   // import TasksData from '../data/TempTaskData'
 
   export default class EditMyTask extends wepy.page {
@@ -76,8 +77,8 @@
                 title: res.data.title,
                 sponsor: res.data.sponsor,
                 type: res.data.type,
-                start_time: res.data.start_time,
-                end_time: res.data.end_time,
+                start_time: caculateDate.DateToString(res.data.start_time),
+                end_time: caculateDate.DateToString(res.data.end_time),
                 pay: res.data.pay,
                 detail: res.data.detail,
                 receiver_limit: res.data.receiver_limit,
