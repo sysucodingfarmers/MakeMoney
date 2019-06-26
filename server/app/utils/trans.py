@@ -11,7 +11,10 @@ def UserToJson(user):
 	    'phone': user.phone,
 	    'wx_number': user.wx_number,
 	    'hobbit': user.hobbit,
-	    'profile': user.profile
+	    'profile': user.profile,
+	    'exMoney': user.exMoney,
+	    'income': user.income,
+	    'expend': user.expend
 	}
 
 def TaskToJson(task):
