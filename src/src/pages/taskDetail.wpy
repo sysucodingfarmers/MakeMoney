@@ -46,11 +46,11 @@
         <van-cell-group title="额外内容">
           <van-cell-for-taskDetail title="任务图片"></van-cell-for-taskDetail>
           <van-cell-for-taskDetail title="问卷链接" is-link bind:click="EditQuery" wx:if="{{taskInfo.type === '问卷调查' && (button_left === '完成' || button_left === '修改')}}"></van-cell-for-taskDetail>
-          <van-cell-for-taskDetail title="请先接受任务再进行问卷填写" wx:if="{{button_left === '接受'}}"></van-cell-for-taskDetail>
+          <van-cell-for-taskDetail title="请先接受任务再进行问卷填写" wx:if="{{button_left === '接受' && taskInfo.type == '问卷调查'}}"></van-cell-for-taskDetail>
         </van-cell-group> 
         <van-cell-group title="接收者信息" wx:if="{{button_left == '修改'}}">
-          <repeat for="{{taskInfo.receiver}}" item="item" index="index">
-            <van-cell title="接收者{{index+1}}" is-link bind:click="ShowReceiverDetail({{item.id}})" value="{{item.isfinished ? '已完成' : '未完成'}}"></van-cell>
+          <repeat for="{{taskInfo.receivers}}" item="item" index="index">
+            <van-cell title="接收者{{index+1}}" is-link bind:click="ShowReceiverDetail({{item}})" value="{{item.isfinished ? '已完成' : '未完成'}}"></van-cell>
           </repeat>
         </van-cell-group>
         <view style="margin-top:30px; width:100%;">
@@ -150,7 +150,7 @@
             message: '即将跳转登录页面'
           }).then(()=>{
             console.log('登录');
-            wepy.navigateTo({
+            wepy.redirectTo({
               url: 'login'
             })
           });
@@ -163,6 +163,37 @@
             var user_id = this.$root.$parent.globalData.userInfo.id;
             var task_id = this.id;
             //1.有问卷
+            var answers = [];
+            console.log(this.query);
+            this.query.forEach(item=>{
+              if (item.type == '问答题') {
+                answers.push(item.content.answer);
+              }
+              else {
+                var answer = [];
+                for (var i = 0; i < item.content.option.length; ++i) {
+                  if (item.content.option.isSelected == true) {
+                    answer.push(i);
+                  }
+                }
+                answers.push(answer);
+              }
+            })
+            wx.request({
+              url: this.$parent.globalData.ip + 'summit/answer',
+              method: 'POST',
+              header: {
+                'content-type': 'application/json'
+              },
+              data: {
+                user_id: user_id,
+                task_id: task_id,
+                answers: answers
+              },
+              success(res) {
+                console.log(res.data);
+              }
+            })
             //2.无问卷
 
             this.button_left = '已完成';
@@ -258,15 +289,13 @@
       ShowReceiverDetail(id) {
         console.log(id);
         wx.navigateTo({
-          url: 'receiverDetail?template_id=' + id
+          url: 'receiverDetail?user_id=' + id + '&task_id=' + this.id
         })
       }
     }
     onLoad(options) {
       console.log("taskDetail onLoad");
       this.id = options.id;
-      // this.taskInfo = TasksData.data.tasks[this.id];
-      // this.query = this.taskInfo.extra_content.query;
       console.log('打开任务', this.id);
       
 
@@ -287,7 +316,7 @@
           var mes;
           var userInfo = that.$root.$parent.globalData.userInfo;
           var titem = that.taskInfo;
-          if (userInfo == null) {
+          if (userInfo.id == undefined) {
             mes = ['登录', '取消'];
           }
           else if (userInfo.id == titem.sponsor_id) {
@@ -310,6 +339,7 @@
           }
           that.button_left = mes[0];
           that.button_right = mes[1];
+          that.$apply();
 
           //问卷
           wx.request({

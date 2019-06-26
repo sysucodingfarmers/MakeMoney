@@ -17,14 +17,31 @@
       mynavbar: MyNavBar
     }
     data = {
-      template_id: 0
+      user_id: 0,
+      task_id: 0
     }
     methods = {
       
     }
     onLoad(options) {
-      this.template_id = options.template_id;
-      console.log(this.template_id);
+      this.user_id = options.user_id;
+      this.task_id = options.task_id;
+      console.log(this.user_id);
+      console.log(this.task_id);
+      wx.request({
+        url: this.$parent.globalData.ip + 'search/answer',
+        method: 'POST',
+        header: {
+          'content-type': 'application/json'
+        },
+        data: {
+          user_id: this.user_id,
+          task_id: this.task_id
+        },
+        success(res) {
+          console.log(res.data);
+        }
+      })
     }
     onShow() {
       console.log('ReceiverDetail onshow');

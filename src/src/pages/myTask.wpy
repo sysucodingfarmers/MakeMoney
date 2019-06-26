@@ -23,7 +23,7 @@
       </repeat>
     </van-tabs>
     <scroll-view scroll-y="true" style="height: 80%; margin-top: 5%;">
-      <tasklist :tasks.sync="tasks"></tasklist>
+      <tasklist :tasks.sync="showTasks"></tasklist>
     </scroll-view>
   </view>
 </template>
@@ -40,7 +40,9 @@
       tasks: [],
       category: {
         list: []
-      }
+      },
+      listType: 0,
+      showTasks: []
     }
     components = {
       mynavbar: MyNavBar,
@@ -49,38 +51,54 @@
     methods = {
       onChange() {
         console.log("change list")
-        // 下面切换list
+        this.listType = this.listType == 0 ? 1 : 0;
+        this.showTasks = [];
+        if (this.type == 0) {
+          if (this.listType == 0) {
+            this.tasks.forEach(item=>{
+              if (item.state == 0 || item.state == 1) {
+                this.showTasks.push(item);
+              }
+            })
+          }
+          else {
+            this.tasks.forEach(item=>{
+              if (item.state == 2) {
+                this.showTasks.push(item);
+              }
+            })
+          }
+        }
+        else if (this.type == 1) {
+          if (this.listType == 0) {
+            this.tasks.forEach(item=>{
+              if (!item.finished) {
+                this.showTasks.push(item);
+              }
+            })
+          }
+          else {
+            this.tasks.forEach(item=>{
+              if (item.finished) {
+                this.showTasks.push(item);
+              }
+            })
+          }
+        }
+        this.$apply();
       }
     }
     onLoad(options) {
       console.log('mytask onload');
+      this.tasks = [];
       if (options.type == "publish") {
         this.type = 0;
-      }
-      else {
-        this.type = 1;
-      }
-      console.log('mytask end');
-    }
-    onShow() {
-      console.log('mytask onshow');
-      
-      // var tasks = TasksData.data.tasks;
-      this.tasks = [];
-      
-      if (this.type == 0) {
         this.title = "我的发布";
         var that = this;
         this.category.list = ['进行中', '已结束']
-        // tasks.forEach(item=>{
-        //   if (item.publisher == this.$root.$parent.globalData.userInfo.username) {
-        //     that.tasks.push(item);
-        //   }
-        // });
-
+        
         //通过发起者id查看taskid
         var id = this.$root.$parent.globalData.userInfo.id;
-        var tasks_id;
         wx.request({
           url: this.$parent.globalData.ip + 'task/mysponsor',
           method: 'POST',
@@ -92,49 +110,43 @@
           },
           success(res) {
             console.log(res.data);
-            tasks_id = res.data;
+            for (var i = 0; i < res.data.task_number; ++i) {
+              that.tasks.push({
+                id: res.data.task_id[i],
+                title: res.data.task_title[i],
+                detail: res.data.task_detail[i],
+                type: res.data.task_type[i],
+                state: res.data.task_state[i]
+              });
+            }
+
+            if (that.listType == 0) {
+              that.tasks.forEach(item=>{
+                if (item.state == 0 || item.state == 1) {
+                  that.showTasks.push(item);
+                }
+              })
+            }
+            else {
+              that.tasks.forEach(item=>{
+                if (item.state == 2) {
+                  that.showTasks.push(item);
+                }
+              })
+            }
+
+            that.$apply();
           },
           fail(res) {
             console.log('fail');
           }
-        });
-
-        //通过taskid查看task
-        //todo
-        // var tasks = [];
-        // wx.request({
-        //   url: this.$parent.globalData.ip + 'search/task_id',
-        //   method: 'POST',
-        //   header: {
-        //     'content-type': 'application/json'
-        //   },
-        //   data: {
-        //     tid: tasks_id[i]
-        //   },
-        //   success(res) {
-        //     console.log(res.data);
-        //   },
-        //   fail(res) {
-        //     console.log('fail');
-        //   }
-        // });
-        
+        });       
       }
-      else if (this.type == 1) {
+      else {
+        this.type = 1;
         this.title = "我的接单";
         var that = this;
         this.category.list = ['未完成', '已完成']
-        // tasks.forEach(item=>{
-        //   var isReceive = false;
-        //   item.receiver.forEach(i=>{
-        //     if (i.name == this.$root.$parent.globalData.userInfo.username) {
-        //       isReceive = true;
-        //     }
-        //   });
-        //   if (isReceive) {
-        //     that.tasks.push(item);
-        //   }
-        // })
 
         //通过接受者id查看taskid
         var id = this.$root.$parent.globalData.userInfo.id;
@@ -150,34 +162,42 @@
           },
           success(res) {
             console.log(res.data);
-            tasks_id = res.data;
+            for (var i = 0; i < res.data.task_number; ++i) {
+              that.tasks.push({
+                id: res.data.task_id[i],
+                title: res.data.task_title[i],
+                detail: res.data.task_detail[i],
+                type: res.data.task_type[i],
+                finished: res.data.finished[i]
+              });
+            }
+
+            if (that.listType == 0) {
+              that.tasks.forEach(item=>{
+                if (!item.finished) {
+                  that.showTasks.push(item);
+                }
+              })
+            }
+            else {
+              that.tasks.forEach(item=>{
+                if (item.finished) {
+                  that.showTasks.push(item);
+                }
+              })
+            }
+
+            that.$apply();
           },
           fail(res) {
             console.log('fail');
           }
         });
-
-        //通过taskid查看task
-        //todo
-        // var tasks = [];
-        // wx.request({
-        //   url: 'http://makemoney.ink:5050/search/task_id',
-        //   method: 'POST',
-        //   header: {
-        //     'content-type': 'application/json'
-        //   },
-        //   data: {
-        //     tid: tasks_id[i]
-        //   },
-        //   success(res) {
-        //     console.log(res.data);
-        //   },
-        //   fail(res) {
-        //     console.log('fail');
-        //   }
-        // });
-
       }
+      console.log('mytask end');
+    }
+    onShow() {
+      console.log('mytask onshow');
       this.$broadcast("setTitle", this.title);
       console.log('mytask end');
     }
