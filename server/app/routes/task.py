@@ -55,6 +55,7 @@ def sponsor_task():
         if paySum > current_user.exMoney:
             return json.dumps({'errmsg': '账户余额不足'})
 
+        #建立任务模板
         task.template = Template()
         task.template.questions = json_data['questions'] if 'questions' in json_data else []
         task.template.options = json_data['options'] if 'options' in json_data else []
@@ -320,7 +321,52 @@ def pay():
         return json.dumps({'errmsg': '没有传递user_id或没有task_id'})
     return json.dumps({'errmsg': '没有使用POST请求'})
 
-'''修改任务
-传入要修改的信息
+'''修改任务，需要登录
+传入要修改的信息（必须包括task的id）
 返回true or false
 '''
+@app.route('/modify/task_info', methods=['POST'])
+def modify_task_info():
+    headers = request.headers
+    se = Session.query.filter_by(sid=int(headers['session_id']), uid=int(headers['user_id'])).first()
+    if se==None:
+        print('session is not connected')
+        return json.dumps({'errmsg': '没有建立会话或者会话信息出错'})
+    
+    if request.method == 'POST':
+        json_data = json.loads(request.data)
+        if 'id' in json_data:
+            #查询task
+            task = Task.query.filter_by(id=json_data['id']).first()
+            print(task)
+            #如果任务已经进行则无法修改
+            if task.state != 0:
+                return json.dumps({'errmsg': '任务已在进行中，无法修改'})
+            #先记录之前的费用
+            former_pay = task.pay * task.receiver_limit
+
+            #修改基础信息
+            task.title = json_data['title'] if 'title' in json_data else task.title
+            task.type = json_data['type'] if 'type' in json_data else task.type
+            task.pay = json_data['pay'] if 'pay' in json_data else task.pay
+            task.detail = json_data['detail'] if 'detail' in json_data else task.detail
+            task.receiver_limit = json_data['receiver_limit'] if 'receiver_limit' in json_data else task.receiver_limit
+            task.received_number = json_data['received_number'] if 'received_number' in json_data else task.received_number
+            task.extra_content = json_data['extra_content'] if 'extra_content' in json_data else task.extra_content
+            
+            #重新收取费用
+            paySum = task.pay * task.receiver_limit
+            current_user.exMoney = current_user.exMoney + former_pay - paySum
+            current_user.expend = current_user.expend - former_pay + paySum
+
+            #重新建立任务模板
+            task.template = Template()
+            task.template.questions = json_data['questions'] if 'questions' in json_data else []
+            task.template.options = json_data['options'] if 'options' in json_data else []
+            task.template.types = json_data['types'] if 'types' in json_data else []
+
+            db.session.commit()
+            return json.dumps(task.id) 
+
+        return json.dumps({'errmsg': '没有指定任务'})
+    return json.dumps({'errmsg': '没有使用POST请求'})
