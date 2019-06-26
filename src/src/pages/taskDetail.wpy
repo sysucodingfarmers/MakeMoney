@@ -302,7 +302,7 @@
       //根据任务id查看任务
       var that = this;
       wx.request({
-        url: this.$parent.globalData.ip + 'search/task_id',
+        url: 'http://makemoney.ink:5050/search/task_id',
         method: 'POST',
         header: {
           'content-type': 'application/json'
@@ -380,6 +380,7 @@
       }
       
       var pages = getCurrentPages();
+      console.log(pages)
       var currPage = pages[pages.length - 1];
       if (currPage.data.query.length != 0 && this.canEditQuery) {
         this.query = currPage.data.query;

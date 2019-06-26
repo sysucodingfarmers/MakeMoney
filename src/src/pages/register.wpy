@@ -6,7 +6,7 @@
 <template>
   <view style="position: fixed; width: 100%; height: 100%;">
     <mynavbar title="注册" lefttext="登录" leftarrow="true"></mynavbar>
-    <van-cell-for-infodetail title="头像" is-link imgurl="{{imageData}}" @tap="chooseAvatar()" />
+<!--     <van-cell-for-infodetail title="头像" is-link imgurl="{{imageData}}" @tap="chooseAvatar()" /> -->
     <van-cell-group title="学号与密码">
       <van-field
         value="{{ studentId }}"
@@ -321,51 +321,14 @@
           duration: 0
         });
         var _this = this
-        wx.uploadFile({
-          url: 'http://makemoney.ink:5050/register',
-          filePath: this.imageData,
-          name: 'profile',
-          header: {
-            'content-type': 'application/json'
-          },
-          formData: {
-            id: this.studentId,
-            password: this.password,
-            username: this.username,
-            email: this.email,
-            phone: this.phone,
-            school: this.school,
-            major: this.major,
-            wx_number: ''
-          },
-          complete: function (res) {
-            console.log(res)
-            if (res.data == 'succeed') {
-              // Toast('注册成功');
-              Dialog.alert({
-                title: "注册成功",
-                message: "是否前去登录？"
-              }).then(() => {
-                _this.$parent.globalData.loginData.studentId = _this.studentId
-                _this.$parent.globalData.loginData.password = _this.password
-                wx.navigateBack({
-                  delta: 1
-                })
-              })
-            } else {
-              Toast('注册失败');
-              _this.btn_msg = "发送验证码"
-              _this.cur_time = 120;
-              _this.issend = false
-              _this.$apply()
-            }
-          }
-        })
-
-        // wx.request({
+        // wx.uploadFile({
         //   url: 'http://makemoney.ink:5050/register',
-        //   method: 'POST',
-        //   data: {
+        //   filePath: this.imageData,
+        //   name: 'profile',
+        //   header: {
+        //     'content-type': 'application/json'
+        //   },
+        //   formData: {
         //     id: this.studentId,
         //     password: this.password,
         //     username: this.username,
@@ -375,10 +338,8 @@
         //     major: this.major,
         //     wx_number: ''
         //   },
-        //   header: {
-        //     'content-type': 'application/json'
-        //   },
         //   complete: function (res) {
+        //     console.log(res)
         //     if (res.data == 'succeed') {
         //       // Toast('注册成功');
         //       Dialog.alert({
@@ -393,9 +354,48 @@
         //       })
         //     } else {
         //       Toast('注册失败');
+        //       _this.btn_msg = "发送验证码"
+        //       _this.cur_time = 120;
+        //       _this.issend = false
+        //       _this.$apply()
         //     }
         //   }
-        // });
+        // })
+
+        wx.request({
+          url: 'http://makemoney.ink:5050/register',
+          method: 'POST',
+          data: {
+            id: this.studentId,
+            password: this.password,
+            username: this.username,
+            email: this.email,
+            phone: this.phone,
+            school: this.school,
+            major: this.major,
+            wx_number: ''
+          },
+          header: {
+            'content-type': 'application/json'
+          },
+          complete: function (res) {
+            if (res.data == 'succeed') {
+              // Toast('注册成功');
+              Dialog.alert({
+                title: "注册成功",
+                message: "是否前去登录？"
+              }).then(() => {
+                _this.$parent.globalData.loginData.studentId = _this.studentId
+                _this.$parent.globalData.loginData.password = _this.password
+                wx.navigateBack({
+                  delta: 1
+                })
+              })
+            } else {
+              Toast('注册失败');
+            }
+          }
+        });
       },
       chooseAvatar() {
         var that = this;

@@ -103,9 +103,9 @@ export default class extends wepy.app {
   }
 
   globalData = {
-    ip: 'http://172.19.49.73:5050/',       //小强本地服务器
+    // ip: 'http://172.19.49.73:5050/',       //小强本地服务器
     // ip: 'http://172.26.35.226:5050/',      //小钊本地服务器
-    // ip: 'http://makemoney.ink:5050/',         //最终服务器
+    ip: 'http://makemoney.ink:5050/',         //最终服务器
     session_id: '',
     userInfo: {},
     mainPageUrl: 'mainPage',

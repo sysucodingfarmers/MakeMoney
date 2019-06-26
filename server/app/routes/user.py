@@ -5,6 +5,7 @@ from app import app,db
 from app.models import Template,Answer,Session
 from app.models import User,Task,Receiver,receivers
 from app.utils.trans import UserToJson, TaskToJson
+from app.utils.email_code import send_email_code
 
 json_true = json.dumps('succeed')
 json_false = json.dumps('failed')
@@ -217,6 +218,23 @@ def recharge():
             return json.dumps({'exMoney': user.exMoney})
         return json.dumps({'errmsg': '没有传递user_id或没有传递充值金额value'})
     return json.dumps({'errmsg': '没有使用POST请求'})
+
+@app.route('/sendemailcode', methods=['POST'])
+def sendemailcode():
+	if (request.method == 'POST'):
+		json_data = json.load(request.data)
+		print(json_data)
+		if 'code' in json_data and 'target_email' in json_data:
+			code = json_data['code']
+			target_email = json_data['target_email']
+			if (send_email_code(code, target_email)):
+				return json_true
+			else:
+				return json.dump({'errmsg': '发送错误，请检查邮箱是否正确'})
+		return json.dump({'errmsg': '没有验证码或邮箱地址'})
+	return json.dump({'errmsg': '没有使用POST请求'})
+
+
 
 # 测试
 @app.route('/test', methods=['GET', 'POST'])
