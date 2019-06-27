@@ -146,9 +146,9 @@
       icon="description"
       bind:click="EditQuery"
     ></van-cell>
-    <van-cell>
+    <!-- <van-cell>
       <image src="{{test}}"></image>
-    </van-cell>
+    </van-cell> -->
   </van-cell-group>
   <view class="subbmit-button">
     <van-button type="primary" round size="large" bindtap="subbmit">发布</van-button>
@@ -235,7 +235,8 @@
       showStartTimeSelector: false, //开始时间选择
       showEndTimeSelector: false,   //结束时间选择
       task: {},
-      showPay: false
+      showPay: false,
+      test: ''
     }
     methods = {
       //编辑任务名称
@@ -550,7 +551,8 @@
                 },
                 success(res) {
                   // console.log(res.data); // 返回那边的链接
-                  console.log('图片', i);
+                  // console.log('图片', i);
+                  // that.test = 'data:image/jpeg;base64,' + JSON.parse(res.data);
                   //全部上传成功，跳转页面
                   if (i == that.images.length) {
                     Toast.clear();

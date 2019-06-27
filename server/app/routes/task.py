@@ -174,9 +174,10 @@ def task_quit():
                     return json.dumps({'errmsg': '该任务已完成，无法退出'})
                 if (task==None or rec==None):
                     return json.dumps({'errmsg': '用户id或任务id错误'})
-                #如果已完成，则完成人数减一
+                #如果已完成，则无法退出
                 if rec.finished == True:
-                    task.finished_number -= 1
+                    # task.finished_number -= 1
+                    return json.dumps({'errmsg': '用户已完成'})
                 #接受人数减一并删除receiver
                 task.received_number -= 1
                 for current_rec in task.receivers:
@@ -304,11 +305,17 @@ def pay():
             task = Task.query.filter_by(id=json_data['task_id']).first()
             if task==None:
                 return json.dumps({'errmsg': '任务id错误，无该任务'})
+            #查找接受者
+            receiver = Receiver.query.filter_by(uid=json_data['user_id'], tid=json_data['task_id']).first()
+            if receiver==None:
+                return json.dumps({'errmsg': '用户无接受该任务'})
             #用户收钱
             pay = task.pay
             user.exMoney = user.exMoney + pay
             user.income = user.expend + pay
             task.paid_number = task.paid_number + 1
+            receiver.paid = True
+
 
             db.session.commit()
 

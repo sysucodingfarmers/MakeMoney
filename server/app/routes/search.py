@@ -299,10 +299,38 @@ def getReceiver_by_id():
                 rec = Receiver.query.filter_by(uid=json_data['user_id'], tid=json_data['task_id']).first()
                 if rec==None:
                     return json.dumps({'errmsg': '没有这个任务或者该用户没有接受该任务'})
-                data = {'isfinished': rec.finished, 'isPaid': rec.paid}
+                data = {'isfinished': rec.finished, 'ispaid': rec.paid}
                 return json.dumps(data, sort_keys=False)
 
             return json.dumps({'errmsg': '没有传递user_id'})
+        return json.dumps({'errmsg': '没有传递task_id'})
+    return json.dumps({'errmsg': '没有使用POST请求'})
+
+'''
+根据任务task_id查看任务接受者的状态
+'''
+
+@app.route('/search/myreceiver', methods=['POST'])
+def getMyReceiver_by_taskid():
+    if request.method == 'POST':
+        json_data = json.loads(request.data)
+        if 'task_id' in json_data:
+            recs = Receiver.query.filter_by(tid=json_data['task_id']).all()
+            if recs==None:
+                return json.dumps({'errmsg': '没有这个任务或者该用户没有接受该任务'})
+            print(recs)
+            receivers_id = []
+            receivers_name = []
+            receivers_isfinished = []
+            receivers_ispaid = []
+            for rec in recs:
+                receivers_id.append(rec.uid)
+                receivers_name.append(User.query.filter_by(id=rec.uid).first().username)
+                receivers_isfinished.append(rec.finished)
+                receivers_ispaid.append(rec.paid)
+
+            data = {'receivers_id': receivers_id, 'receivers_name': receivers_name, 'receivers_isfinished': receivers_isfinished, 'receivers_ispaid': receivers_ispaid}
+            return json.dumps(data, sort_keys=False)
         return json.dumps({'errmsg': '没有传递task_id'})
     return json.dumps({'errmsg': '没有使用POST请求'})
 
