@@ -6,7 +6,7 @@
 <template>
   <view style="position: fixed; width: 100%; height: 100%;">
     <mynavbar title="注册" lefttext="登录" leftarrow="true"></mynavbar>
-<!--     <van-cell-for-infodetail title="头像" is-link imgurl="{{imageData}}" @tap="chooseAvatar()" /> -->
+    <!-- 学号和密码 -->
     <van-cell-group title="学号与密码">
       <van-field
         value="{{ studentId }}"
@@ -40,7 +40,7 @@
         bind:change="onPasswordAgainChange"
       />
     </van-cell-group>
-
+    <!-- 昵称，学院，专业 -->
     <van-cell-group title="其他信息">
       <van-field
         value="{{ username }}"
@@ -68,7 +68,9 @@
         errorMessage="{{ majorErrorMessage }}"
         bind:change="onMajorChange"
       />
+      <!-- 手机或者邮箱 -->
       <view wx:if="{{isphone}}">
+        <!-- 手机验证 -->
         <van-field
           value="{{ phone }}"
           clearable
@@ -93,7 +95,7 @@
             slot="button"
             size="small"
             type="info"
-            bind:click="sendPhoneCode"
+            bind:click="sendCode"
             disabled="{{issend}}"
           >
             {{btn_msg}}
@@ -101,6 +103,7 @@
         </van-field>
       </view>
       <view wx:else>
+        <!-- 邮箱验证 -->
         <van-field
           value="{{ email }}"
           clearable
@@ -116,17 +119,19 @@
           clearable
           label="验证码"
           placeholder="请输入邮箱验证码"
-          
+          errorMessage="{{ email_sms_error_msg }}"
           border="{{false}}"
           use-button-slot
+          bind:change="onEmialSMSchange"
         >
           <van-button 
             slot="button"
             size="small"
             type="info"
-            
+            bind:click="sendCode"
+            disabled="{{issend}}"
           >
-            发送验证码
+            {{btn_msg}}
           </van-button>
         </van-field>
       </view>
@@ -153,55 +158,58 @@
 
   export default class Register extends wepy.page {
     data = {
-
-
-      imageData: "https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1560754276&di=9e6e09a4563fa27b2b4c20b7a5a58df7&src=http://pic.51yuansu.com/pic3/cover/01/69/80/595f67bf2026f_610.jpg",
-
+      // 学号
       studentId: "",
       studentIdErrorMessage: "",
       studentIdPlaceholder: "请输入学号",
-
+      // 密码
       password: "",
       passwordErrorMessage: "",
       passwordPlaceholder: "请输入密码",
-
+      // 确认密码
       passwordAgain: "",
       passwordAgainPlaceholder: "请再次输入密码",
       passwordAgainErrorMessage: "",
-
+      // 昵称
       username: "",
       usernameErrorMessage: "",
       usernamePlaceholder: "请输入昵称",
-
+      // 学院
       school: "",
       schoolErrorMessage: "",
       schoolPlaceholder: "请输入学院名称",
-
+      // 专业
       major: "",
       majorErrorMessage: "",
       majorPlaceholder: "请输入专业名称",
-
+      // 邮箱注册还是手机注册
+      isphone: true,
+      // 邮箱
       email: "",
       emailErrorMessage: "",
       emailPlaceholder: "请输入邮箱",
+      // 邮箱验证码
+      email_sms: "",                        // 输入的验证码
+      email_sms_error_msg: "",              // 错误信息
+      email_sms_placeholder: "请输入验证码", // 占位信息
+      send_email_sms: "",                   // 发送的邮箱验证码
 
-      phone: "",
+      // 手机
+      phone: "",                           
       phoneErrorMessage: "",
       phonePlaceholder: "请输入手机号码",
+      // 手机验证码
+      phone_sms: "",                        // 输入的验证码
+      phone_sms_error_msg: "",              // 错误信息
+      phone_sms_placeholder: "请输入验证码", // 占位信息
+      send_phone_sms: "",                   // 发送的手机验证码
 
-      isphone: true,
-
-      btn_msg: "发送验证码",
-      cur_time: 120,
-      issend: false,
-
-      phone_sms: "",
-      phone_sms_error_msg: "",
-      phone_sms_placeholder: "请输入验证码",
-      phone_sms_len: 6,
-      send_phone_sms: "",
-
-      email_sms: ""
+      // 验证码发送
+      btn_msg: "发送验证码", // 发送验证码按钮
+      cur_time: 120,        // 验证码有效时间
+      issend: false,        // 是否发送
+      sms_len: 6,           // 验证码的长度
+      send_addr: ""         // 要验证的邮箱或者手机
     }
 
     components = {
@@ -232,20 +240,87 @@
       onMajorChange(e) {
         this.major = e.detail;
       },
-
+      // 输入的邮箱
       onEmailChange(e) {
         this.email = e.detail;
       },
-
+      // 输入的手机
       onPhoneChange(e) {
         this.phone = e.detail;
       },
-
+      // 输入的手机验证码
       onPhoneSMSchange(e) {
-        console.log(this.phone_sms)
         this.phone_sms = e.detail
       },
-
+      // 输入的邮箱验证码
+      onEmialSMSchange(e) {
+        this.email_sms = e.detail
+      },
+      // 发送验证码
+      sendCode() {
+        if (this.isphone) {
+          // 发送手机验证码
+          console.log("phone: " + this.phone)
+          console.log(phone_reg)
+          this.send_addr = this.phone
+          if (this.phone.length == 0) {
+            Toast('请输入手机号码')
+          }
+          else if (!phone_reg.test(this.phone)) {
+            Toast('手机号码有误，请检查后重新输入')
+          }
+          else {
+            console.log('手机号码正确')
+            this.generateCode()
+            zhenzisms.client.send((res) => {
+              console.log(res)
+              this.issend = true;
+              this.btn_msg = "已发送 " + this.cur_time
+              this.$apply()
+              this.setTimer();
+            }, this.phone, '你的注册验证码为' + this.send_phone_sms)
+          }
+        }
+        else {
+          // 发送邮箱验证码
+          this.send_addr = this.email
+          if (this.email.length == 0) {
+            Toast('请输入邮箱地址')
+          }
+          else if (!email_reg.test(this.email)) {
+            Toast('邮箱地址有误，请检查后重新输入')
+          }
+          else {
+            this.generateCode()
+            wx.request({
+              url: 'http://makemoney.ink:5050/sendemailcode',
+              method: 'POST',
+              data: {
+                code: this.send_email_sms,
+                target_email: this.email
+              },
+              header: {
+                'content-type': 'application/json'
+              },
+              success: (res) => {
+                console.log(res)
+                if (res.statusCode == 200) {
+                  this.issend = true;
+                  this.btn_msg = "已发送 " + this.cur_time
+                  this.$apply()
+                  this.setTimer();
+                }
+                else {
+                  Toast('网络错误')
+                }
+              },
+              fail: (res) => {
+                console.log(res)
+              }
+            })
+          }
+        }
+      },
       onClickRegister() {
         // 检查学号
         var isEverythingGood = true;
@@ -281,7 +356,12 @@
           if (!this.phone.length == 0 && !phone_reg.test(this.phone)) {
             this.phoneErrorMessage = "输入的手机号码格式错误";
             isEverythingGood = false;
-          } else {
+          } 
+          else if (this.phone != this.send_addr) {
+            this.phoneErrorMessage = "输入的手机号码和验证的手机号码不一致"
+            isEverythingGood = false
+          }
+          else {
             this.phoneErrorMessage = "";
           }
 
@@ -301,10 +381,22 @@
           if (!this.email.length == 0 && !email_reg.test(this.email)) {
             this.emailErrorMessage = "输入的邮箱格式错误";
             isEverythingGood = false;
-          } else {
+          } 
+          else if (this.email != this.send_addr) {
+            this.emailErrorMessage = "输入的邮箱地址和验证的邮箱地址不一致"
+            isEverythingGood = false
+          }
+          else {
             this.emailErrorMessage = "";
           }
           // 检查邮箱验证码
+          if (this.email_sms == this.send_phone_sms) {
+            this.email_sms_error_msg = "验证码错误"
+            isEverythingGood = false
+          }
+          else {
+            this.email_sms_error_msg = ""
+          }
         }
 
         //只有所有检查通过才向后端提交信息
@@ -321,46 +413,6 @@
           duration: 0
         });
         var _this = this
-        // wx.uploadFile({
-        //   url: 'http://makemoney.ink:5050/register',
-        //   filePath: this.imageData,
-        //   name: 'profile',
-        //   header: {
-        //     'content-type': 'application/json'
-        //   },
-        //   formData: {
-        //     id: this.studentId,
-        //     password: this.password,
-        //     username: this.username,
-        //     email: this.email,
-        //     phone: this.phone,
-        //     school: this.school,
-        //     major: this.major,
-        //     wx_number: ''
-        //   },
-        //   complete: function (res) {
-        //     console.log(res)
-        //     if (res.data == 'succeed') {
-        //       // Toast('注册成功');
-        //       Dialog.alert({
-        //         title: "注册成功",
-        //         message: "是否前去登录？"
-        //       }).then(() => {
-        //         _this.$parent.globalData.loginData.studentId = _this.studentId
-        //         _this.$parent.globalData.loginData.password = _this.password
-        //         wx.navigateBack({
-        //           delta: 1
-        //         })
-        //       })
-        //     } else {
-        //       Toast('注册失败');
-        //       _this.btn_msg = "发送验证码"
-        //       _this.cur_time = 120;
-        //       _this.issend = false
-        //       _this.$apply()
-        //     }
-        //   }
-        // })
 
         wx.request({
           url: 'http://makemoney.ink:5050/register',
@@ -396,65 +448,17 @@
             }
           }
         });
-      },
-      chooseAvatar() {
-        var that = this;
-        wx.chooseImage({
-          count: 1,
-          sizeType: ['original', 'compressed'],
-          sourceType: ['album', 'camera'],
-          success: function(res) {
-            console.log(res);
-            console.log(res.tempFilePaths);
-            var tempFilePaths = res.tempFilePaths[0];
-            // wx.uploadFile({
-            //   url: 'http://makemoney.ink:5050/uploadAvatar',
-            //   header: {
-            //     'Content-Type': 'multipart/form-data',
-            //     'token': wx.getStorageSync('token')
-            //   }
-            // })
-            // uploadFile上传头像
-            that.imageData = tempFilePaths;
-            // that.$parent.globalData.userInfo.avatar = tempFilePaths;
-            that.$apply();
-          },
-          fail: function(e) {
-            console.log(e);
-          },
-          complete: function(e) {
-            console.log(e)
-          }
-        });
-      },
-      sendPhoneCode() {
-        console.log("phone: " + this.phone)
-        console.log(phone_reg)
-        if (this.phone.length == 0) {
-          Toast('请输入手机号码')
-        }
-        else if (!phone_reg.test(this.phone)) {
-          Toast('手机号码有误，请检查后重新输入')
-        }
-        else {
-          console.log('手机号码正确')
-          this.generateCode()
-          zhenzisms.client.send((res) => {
-            console.log(res)
-            this.issend = true;
-            this.btn_msg = "已发送 " + this.cur_time
-            this.$apply()
-            this.setTimer();
-          }, this.phone, '你的注册验证码为' + this.send_phone_sms)
-        }
       }
     }
+    // 生成验证码
     generateCode() {
-      this.send_phone_sms = ""
-      for (var i = 0; i < this.phone_sms_len; i++) {
-        this.send_phone_sms += Math.floor(Math.random()*10)
+      var sms = ""
+      for (var i = 0; i < this.sms_len; i++) {
+        sms += Math.floor(Math.random()*10)
       }
-      console.log("生成的验证码为： " + this.send_phone_sms)
+      console.log("生成的验证码为： " + sms)
+      if (this.isphone) this.send_phone_sms = sms
+      else this.send_email_sms = sms
     }
     setTimer() {
       this.$parent.globalData.timer = setTimeout((res) => {
