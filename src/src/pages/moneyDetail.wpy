@@ -1,0 +1,79 @@
+<style lang="less">
+  .elementAlign{
+    display: table; 
+    vertical-align: middle;
+
+  }
+  .money{
+    margin:5% auto 5% auto;
+    border-bottom: 1px solid gray; 
+  }
+  .incomeNexpend{
+    margin:0 auto 5% auto;
+    border-bottom: 1px solid gray; 
+    
+    font-size: 20px;
+    font-weight: bold;
+
+  }
+
+
+</style>
+<template>
+  <view style="position: fixed; height: 100%; width: 100%;">
+    <mynavbar title="明细" lefttext="返回" leftarrow="true"></mynavbar>
+    <!-- 主体 -->
+    <text class="money elementAlign">收入</text>
+      
+
+
+    <text name="income" class="incomeNexpend elementAlign">
+      {{ userinfo.income }}元
+    </text>
+
+    <text class="money elementAlign">支出</text>
+      
+
+
+    <text name="expend" class="incomeNexpend elementAlign">
+      {{ userinfo.expend }}元
+    </text>
+
+<!--     <van-cell title="收入" is-link />
+    <van-cell title="支出" is-link /> -->
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import MyNavBar from '../components/mynavbar'
+
+  export default class MoneyDetail extends wepy.page {
+    data = {
+
+      userinfo: {
+        extraMoney: 100,
+        income: 30,
+        expend: 10
+      },
+      islogin: false
+    }
+    components = {
+      mynavbar: MyNavBar
+    }
+    methods = {
+      onChange() {
+        console.log("change ")
+      }
+    }
+
+    onShow() {
+      // 获取用户个人资料
+      // this.userinfo = this.$parent.globalData.userinfo;
+      console.log(this.userinfo);
+      // 切换登录状态
+      this.islogin = this.$parent.globalData.loginData.state;
+      console.log("islogin: " + this.islogin);
+      this.$apply()
+    }
+  }
+</script>

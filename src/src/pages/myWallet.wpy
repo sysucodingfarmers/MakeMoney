@@ -1,26 +1,207 @@
-<style lang="less">
-  
-</style>
 <template>
   <view style="position: fixed; height: 100%; width: 100%;">
-    <mynavbar title="我的钱包" lefttext="返回" leftarrow="true"></mynavbar>
+    <mynavbar title="" lefttext="返回" leftarrow="true"></mynavbar>
     <!-- 主体 -->
+    <van-dialog id="van-dialog"/>
+    <div class="WalletDiv elementAlign">
+      
+      <text class="money elementAlign">我的零钱</text>
+      
+
+      <text name="extraMoney" class="extraMoney elementAlign">
+        {{ userinfo.extraMoney }}元
+      </text>
+      
+      <van-button round class="recharge elementAlign" size = "large" type="primary" @tap="recharge()">
+        充值
+      </van-button>
+      <van-button round class="withdraw elementAlign" size = "large" type="danger" @tap="withdraw()">
+        提现
+      </van-button>
+      <van-button square class="balanceDetail elementAlign" size = "small" type="warning" @tap="tap()" >
+        明细
+      </van-button>
+
+      <van-popup
+        show="{{ enterMoney }}"
+        bind:close="onClose"
+        position="bottom"
+      >
+        <van-field
+          value="{{ amount }}"
+          type="digit"
+          label="金额"
+          placeholder="请输入金额"
+          input-align="right"
+          border="{{ false }}"
+          use-button-slot
+          bind:input="onChange"
+        >
+          <van-button slot="button" size="small" type="primary" 
+          @tap="amountComfirm()">
+            确认
+          </van-button>
+
+        </van-field>
+      </van-popup>
+    </div>
     
   </view>
 </template>
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
+  import Dialog from '../components/van/dialog/dialog'
 
   export default class MyWallet extends wepy.page {
     data = {
-
+      
+      userinfo: {
+        extraMoney: 0,
+        income: 0,
+        expend: 0
+      },
+      amount: 0,
+      islogin: false,
+      isRecharge: false,
+      isWithdraw: false,
+      enterMoney: false
     }
     components = {
       mynavbar: MyNavBar
     }
     methods = {
+      onChange(e) {
+        
+        if (this.enterMoney) {
+          console.log("change");
+          console.log(e.detail);
+          var num = Number(e.detail.replace(/[^\d]/g,''));
+          var exMoney = Number(this.userinfo.extraMoney);
+          console.log(num);
+          this.amount = num;
+        }
+        
+      },
+      tap() {
+        console.log("click");
+        wx.navigateTo({
+          url: 'moneyDetail'
+        });
+      },
+      onClose() {
+        console.log("close");
+
+        this.enterMoney = false;
+        this.isRecharge = false;
+        this.isWithdraw = false;
+        this.amount = "";
+      },
+      recharge() {
+        console.log("recharge");
+
+        this.isRecharge = true;
+        this.enterMoney = true;
+
+      },
+      amountComfirm() {
+        console.log("amountComfirm");
+
+        if (this.amount == "") {
+          this.amount = 0;
+        }
+        var exMoney = Number(this.userinfo.extraMoney);
+
+        this.amount = (this.isWithdraw 
+                  && (exMoney < this.amount)) ? exMoney : this.amount;
+        console.log(this.amount);
+        this.enterMoney = false;
+        
+        Dialog.confirm({
+          title: '确认金额',
+          message: this.amount
+        }).then(() => {
+          // on confirm
+
+          if (this.isRecharge) {
+            console.log("recharge: " + this.amount);
+
+          }
+          else if (this.isWithdraw) {
+            
+            console.log("withdraw: " + this.amount);
+
+          } 
+          this.isRecharge = false;
+          this.isWithdraw = false;
+          this.amount = "";
+
+        }).catch(() => {
+          // on cancel
+          this.isRecharge = false;
+          this.isWithdraw = false;
+          this.amount = "";
+        });
+        
+        
+      },
+      withdraw() {
+        console.log("withdraw");
+
+        this.isWithdraw = true;
+        this.enterMoney = true;
+
+      }
 
     }
+    onShow() {
+      // 获取用户个人资料
+      // this.userinfo = this.$parent.globalData.userinfo;
+      console.log(this.userinfo);
+      // 切换登录状态
+      this.islogin = this.$parent.globalData.loginData.state;
+      console.log("islogin: " + this.islogin);
+      this.$apply()
+    }
+
   }
 </script>
+<style lang="less">
+  .elementAlign{
+    display: table; 
+    vertical-align: middle;
+
+  }
+
+  .WalletDiv{
+    width: 80%;
+    height: 80%;
+    margin:0 auto;
+  }
+  .money{
+    margin:5% auto 5% auto;
+    
+  }
+
+  .extraMoney{
+    font-size: 20px;
+    font-weight: bold;
+    margin:0 auto 5% auto;
+
+  }
+
+  .recharge{
+    width: 50%;
+    margin:20% auto 5% auto;
+    
+  }
+  .withdraw{
+    width: 50%;
+    margin:0 auto 10% auto;
+    
+  }
+  .balanceDetail{
+    margin:0 auto 10% auto;
+
+  }
+</style>
