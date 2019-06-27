@@ -293,7 +293,7 @@
           else {
             this.generateCode()
             wx.request({
-              url: 'http://makemoney.ink:5050/sendemailcode',
+              url: this.$parent.globalData.ip + 'sendemailcode',
               method: 'POST',
               data: {
                 code: this.send_email_sms,
@@ -415,7 +415,7 @@
         var _this = this
 
         wx.request({
-          url: 'http://makemoney.ink:5050/register',
+          url: this.$parent.globalData.ip + 'register',
           method: 'POST',
           data: {
             id: this.studentId,

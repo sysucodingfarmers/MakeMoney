@@ -188,7 +188,7 @@
           };
         }
         wx.request({
-          url: 'http://makemoney.ink:5050/search/' + this.searchType,
+          url: this.$parent.globalData.ip + 'search/' + this.searchType,
           method: 'POST',
           data: fieldData,
           header: {
@@ -200,7 +200,7 @@
               var tasks_id = res.data.task_id;
               for (var i = 0; i < tasks_id.length; i++) {
                 wx.request({
-                  url: 'http://makemoney.ink:5050/search/task_id',
+                  url: this.$parent.globalData.ip + 'search/task_id',
                   method: 'POST',
                   data: {
                     'task_id': tasks_id[i]
