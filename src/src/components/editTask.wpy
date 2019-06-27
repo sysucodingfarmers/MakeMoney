@@ -519,6 +519,11 @@
         })
         .then(function(res){
           tid = res.data;
+          if (res.data.errmsg != undefined) {
+            console.log(res.data);
+            Toast({ message: '余额不足', duration: 1000});
+            return res.data;
+          }
           console.log('任务id为', tid);
 
           //通过任务id，上传任务图片

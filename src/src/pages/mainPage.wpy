@@ -173,7 +173,7 @@
           this.nomore = false
           this.$apply()
           wx.request({
-            url: 'http://makemoney.ink:5050/recommend',
+            url: this.$parent.globalData.ip + 'recommend',
             method: 'POST',
             header: {
               'content-type': 'application/json'
@@ -273,7 +273,7 @@
       this.nomore = false
       this.tasks = []
       wx.request({
-        url: 'http://makemoney.ink:5050/recommend',
+        url: this.$parent.globalData.ip + 'recommend',
         method: 'POST',
         header: {
           'content-type': 'application/json'
