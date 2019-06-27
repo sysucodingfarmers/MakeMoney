@@ -112,6 +112,7 @@
       },
 
       onClickHistory (e) {
+
         this.keyword = this.search_histories[e.target.id];
         this.search();
       }
@@ -122,6 +123,10 @@
     }
 
     search () {
+      // 考虑了无本地缓存的情况
+      if (this.search_histories == "") {
+        this.search_histories = [];
+      }
       if (this.keyword == '') {
         // 搜索框为空时不做任何事情
       } else {
