@@ -41,7 +41,8 @@ export default class extends wepy.app {
       'pages/searchResult',
       'pages/receiverDetail',
       'pages/userInfo',
-      'pages/queryInfo'
+      'pages/queryInfo',
+      'pages/resetPassword'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -107,8 +108,8 @@ export default class extends wepy.app {
   globalData = {
     // ip: 'http://172.26.87.133:5050/',       //小强本地服务器
     // ip: 'http://192.168.199.185:5050/',
-    ip: 'http://172.26.35.226:5050/',      //小钊本地服务器
-    // ip: 'http://makemoney.ink:5050/',         //最终服务器
+    // ip: 'http://172.26.35.226:5050/',      //小钊本地服务器
+    ip: 'http://makemoney.ink:5050/',         //最终服务器
     session_id: '',
     userInfo: {},
     mainPageUrl: 'mainPage',

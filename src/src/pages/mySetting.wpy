@@ -5,35 +5,55 @@
   <view style="position: fixed; height: 100%; width: 100%;">
     <mynavbar title="我的设置" lefttext="返回" leftarrow="true"></mynavbar>
     <!-- 主体 -->
-    <van-cell title="切换账号" is-link @tap="changeAccount"/>
-    <van-cell title="注销账号" is-link @tap="logout"/>
+    <view wx:if="{{islogin}}">
+      <van-cell title="重置密码" is-link @tap="resetPass"/>
+      <van-cell title="注销账号" is-link @tap="logout"/>
+    </view>
   </view>
+  <van-dialog id='van-dialog'></van-dialog>
 </template>
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
+  import Dialog from '../components/van/dialog/dialog'
 
   export default class MySetting extends wepy.page {
     data = {
-
+      islogin: false
     }
     components = {
       mynavbar: MyNavBar
     }
     methods = {
-      changeAccount() {
-
+      resetPass() {
+        wx.navigateTo({
+          url: 'resetPassword'
+        })
       },
       logout() {
         wx.request({
           url: 'http://makemoney.ink:5050/logout',
           method: 'POST',
           header: {
-            'content-type': 'application/json'
+            'content-type': 'application/json',
+            'session_id' : this.$parent.globalData.session_id,
+            'user_id': this.$parent.globalData.userInfo.id
           },
           complete: (res) => {
             console.log(res.data)
+            this.$parent.globalData.userInfo = {}
+            this.$parent.globalData.loginData.state = false
           }
+        })
+      }
+    }
+    onLoad() {
+      this.islogin = this.$parent.globalData.loginData.state;
+      if (!this.islogin) {
+        Dialog.alert({
+          message: '请先登录'
+        }).then((res) => {
+          wx.navigateBack()
         })
       }
     }
