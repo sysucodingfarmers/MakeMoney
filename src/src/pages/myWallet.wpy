@@ -1,9 +1,45 @@
 <style lang="less">
-  
+  .elementAlign{
+    display: table; 
+    vertical-align: middle;
+  }
+  .WalletDiv{
+    width: 80%;
+    height: 100%;
+    margin:0 auto;
+
+  }
+  .money{
+    margin:5% auto 5% auto;
+    border-bottom: 1px solid gray; 
+  }
+  .extraMoney{
+    margin:0 auto 5% auto;
+    border-bottom: 1px solid gray; 
+    
+    font-size: 20px;
+    font-weight: bold;
+  }
+  .recharge{
+    width: 50%;
+    margin:20% auto 5% auto;
+
+  }
+
+  .withdraw{
+    width: 50%;
+    margin:0 auto 5% auto;
+
+  }
+  .balanceDetail{
+    margin:0 auto 5% auto;
+
+  }
+
 </style>
 <template>
   <view style="position: fixed; height: 100%; width: 100%;">
-    <mynavbar title="我的钱包" lefttext="返回" leftarrow="true"></mynavbar>
+    <mynavbar title="" lefttext="返回" leftarrow="true"></mynavbar>
     <!-- 主体 -->
     <van-dialog id="van-dialog"/>
     <div class="WalletDiv elementAlign">
@@ -55,7 +91,7 @@
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
-
+  import Dialog from '../components/van/dialog/dialog'
   export default class MyWallet extends wepy.page {
     data = {
       
