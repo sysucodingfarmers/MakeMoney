@@ -437,6 +437,7 @@
 
           
           var task = {
+            id: this.taskInfo.id,
             title: this.taskInfo.title,
             type: this.taskInfo.type,
             pay: this.taskInfo.pay,
@@ -456,9 +457,38 @@
 
           var that = this;
           //修改问卷
+          //...............................................................
           if (that.isEdit) {
             console.log('修改');
+            var mes = JSON.stringify(["修改","删除"]);
+            Dialog.confirm({
+              message: '是否修改',
+            })
+            .then(function(res){
+              return wepy.request({
+                      url: that.$parent.$parent.globalData.ip + 'modify/task_info',
+                      method: 'POST',
+                      header: {
+                        'content-type': 'application/json',
+                        'session_id' : that.$parent.$parent.globalData.session_id,
+                        'user_id': that.$parent.$parent.globalData.userInfo.id
+                      },
+                      data: that.task
+                    });
+            })
+            .then(function(res){
+              console.log(res.data);
+              Toast.success({ message: '修改成功', duration: 1000 });
+              const timer2 = setInterval(() => {
+                clearInterval(timer2);
+                Toast.clear();
+                wx.redirectTo({
+                  url: 'taskDetail?id=' + that.taskid + '&mes=' + mes
+                });
+              }, 1000);
+            });
           }
+          //.................................................................
           //提交任务
           else {
             console.log('提交');

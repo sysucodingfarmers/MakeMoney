@@ -110,19 +110,19 @@
               </van-row>
               <!-- 单选题 -->
               <view wx:if="{{item.type === '单选题'}}">
-                <radio-group bindchange="radioChange({{index}})">
+                <!-- <radio-group bindchange="radioChange({{index}})"> -->
                   <view wx:for="{{item.content.option}}">
-                    <radio value="{{index}}" checked="{{item.isSelected}}" color="blue"></radio>{{item.ans}}
+                    <radio value="{{index}}" checked="{{item.isSelected}}" color="blue" disabled="true"></radio>{{item.ans}}
                   </view>
-                </radio-group>
+                <!-- </radio-group> -->
               </view>
               <!-- 多选题 -->
               <view wx:if="{{item.type === '多选题'}}">
-                <checkbox-group bindchange="checkboxChange({{index}})">
+                <!-- <checkbox-group bindchange="checkboxChange({{index}})"> -->
                   <view wx:for="{{item.content.option}}">
-                    <checkbox value="{{index}}" checked="{{item.isSelected}}" color="blue"></checkbox>{{item.ans}}
+                    <checkbox value="{{index}}" checked="{{item.isSelected}}" color="blue" disabled="true"></checkbox>{{item.ans}}
                   </view>
-                </checkbox-group>
+                <!-- </checkbox-group> -->
               </view>
               <!-- 问答题 -->
               <view wx:if="{{item.type === '问答题'}}">
@@ -130,7 +130,8 @@
                   placeholder="请输入答案" 
                   value="{{item.content.answer}}"
                   class="text"
-                  bindinput="textChange({{index}})"></textarea>
+                  bindinput="textChange({{index}})"
+                  disabled="true"></textarea>
               </view>
             </view>
           </view>
@@ -143,9 +144,17 @@
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
+  import TemplateToQuery from '../data/TemplateToQuery'
 
   export default class QueryInfo extends wepy.page {
     data = {
+      user_id: 0,
+      task_id: 0,
+      temp_id: 0,
+      answers: [],
+      questions: [],
+      types: [],
+      options: [],
       query: []
     }
     components = {
@@ -156,20 +165,54 @@
     }
     onLoad(options) {
       console.log('QueryInfo onload');
-      this.query = JSON.parse(options.query);
-      // var query = JSON.parse(options.query);
-      // var fRate = JSON.parse(options.fRate);
-      // var finish = JSON.parse(options.finish);
-      // var canEditQuery = JSON.parse(options.canEditQuery);
-      // this.query = query;
-      // this.finish_rate = fRate;
-      // this.finish = finish;
-      // this.canEditQuery = canEditQuery;
-      // console.log(this.query);
-      // console.log(this.finish_rate);
-      // console.log(this.finish);
-      // console.log(this.canEditQuery);
-      this.$apply();
+      this.user_id = options.user_id;
+      this.task_id = options.task_id;
+      this.temp_id = options.template_id;
+      console.log(this.user_id);
+      console.log(this.task_id);
+      console.log(this.temp_id);
+      //查询答案
+      //.......................................
+      var that = this;
+      wepy.request({
+        url: that.$parent.globalData.ip + 'search/answer',
+        method: 'POST',
+        header: {
+          'content-type': 'application/json'
+        },
+        data: {
+          user_id: that.user_id,
+          task_id: that.task_id
+        }
+      })
+      .then(function(res){
+        console.log(res.data.answers);
+        that.answers = res.data.answers;
+        //查询问卷内容
+        return wepy.request({
+                  url: that.$parent.globalData.ip + 'search/template_id',
+                  method: 'POST',
+                  header: {
+                    'content-type': 'application/json'
+                  },
+                  data: {
+                    template_id: that.temp_id
+                  }
+                });
+      })
+      .then(function(res){
+        that.questions = res.data.questions;
+        that.options = res.data.options;
+        that.types = res.data.types;
+        console.log(that.questions);
+        console.log(that.options);
+        console.log(that.types);
+        that.query = TemplateToQuery.changeAnswer(that.questions, that.options, that.answers, that.types);
+        console.log(that.query);
+        that.$apply();
+      })
+      //...................................
+      
       console.log("QueryInfo end");
     }
   }

@@ -14,7 +14,7 @@ function change(data) {
 				type: '问答题',
 				content: {
 					question: questions[i],
-					ans: ''
+					answer: ''
 				},
 				limit: limit
 			}
@@ -49,7 +49,7 @@ function changeAnswer(questions, options, answers, types) {
 				type: '问答题',
 				content: {
 					question: questions[i],
-					ans: answers[i]
+					answer: answers[i]
 				},
 				limit: limit
 			}
