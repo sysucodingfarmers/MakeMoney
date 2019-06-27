@@ -1,0 +1,91 @@
+<style lang="less">
+  .elementAlign{
+    display: table; 
+    vertical-align: middle;
+
+  }
+  .money{
+    margin:5% auto 5% auto;
+    border-bottom: 1px solid gray; 
+  }
+  .incomeNexpend{
+    margin:0 auto 5% auto;
+    border-bottom: 1px solid gray; 
+    
+    font-size: 20px;
+    font-weight: bold;
+
+  }
+
+
+</style>
+<template>
+  <view style="position: fixed; height: 100%; width: 100%;">
+    <mynavbar title="明细" lefttext="返回" leftarrow="true"></mynavbar>
+    <!-- 主体 -->
+    <text class="money elementAlign">收入</text>
+      
+
+
+    <text name="income" class="incomeNexpend elementAlign">
+      {{ userInfo.income }}元
+    </text>
+
+    <text class="money elementAlign">支出</text>
+      
+
+
+    <text name="expend" class="incomeNexpend elementAlign">
+      {{ userInfo.expend }}元
+    </text>
+
+<!--     <van-cell title="收入" is-link />
+    <van-cell title="支出" is-link /> -->
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import MyNavBar from '../components/mynavbar'
+
+  export default class MoneyDetail extends wepy.page {
+    data = {
+
+      userInfo: {
+        exMoney: 0,
+        income: 0,
+        expend: 0
+      }
+    }
+    components = {
+      mynavbar: MyNavBar
+    }
+    methods = {
+      onChange() {
+        console.log("change ")
+      }
+    }
+
+    onShow() {
+      var that = this;
+
+      wx.request({
+        url: this.$parent.globalData.ip + 'wallet',
+        method: 'POST',
+        header: {
+          'content-type': 'application/json'
+        },
+        data: {
+          user_id: this.$parent.globalData.userInfo.id
+        },
+        success(res) {
+          that.userInfo = res.data;
+
+          that.$apply();
+          console.log(that.userInfo);
+          console.log('end');
+        }
+      })
+      this.$apply()
+    }
+  }
+</script>
