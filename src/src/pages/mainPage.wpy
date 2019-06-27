@@ -228,7 +228,7 @@
       var _this = this
 
       wx.request({
-        url: 'http://makemoney.ink:5050/recommend',
+        url: this.$parent.globalData.ip + 'recommend',
         method: 'POST',
         header: {
           'content-type': 'application/json'
