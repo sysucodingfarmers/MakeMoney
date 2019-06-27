@@ -5,6 +5,50 @@
   <view style="position: fixed; height: 100%; width: 100%;">
     <mynavbar title="我的钱包" lefttext="返回" leftarrow="true"></mynavbar>
     <!-- 主体 -->
+    <van-dialog id="van-dialog"/>
+    <div class="WalletDiv elementAlign">
+      
+      <text class="money elementAlign">我的零钱</text>
+      
+
+      <text name="extraMoney" class="extraMoney elementAlign">
+        {{ userInfo.exMoney }}元
+      </text>
+      
+      <van-button round class="recharge elementAlign" size = "large" type="primary" @tap="recharge()">
+        充值
+      </van-button>
+      <van-button round class="withdraw elementAlign" size = "large" type="danger" @tap="withdraw()">
+        提现
+      </van-button>
+      <van-button square class="balanceDetail elementAlign" size = "small" type="warning" @tap="tap()" >
+        明细
+      </van-button>
+
+      <van-popup
+        show="{{ enterMoney }}"
+        bind:close="onClose"
+        position="bottom"
+      >
+        <van-field
+          value="{{ amount }}"
+          type="digit"
+          label="金额"
+          placeholder="请输入金额"
+          input-align="right"
+          border="{{ false }}"
+          use-button-slot
+          bind:input="onChange"
+        >
+          <van-button slot="button" size="small" type="primary" 
+          @tap="amountComfirm()">
+            确认
+          </van-button>
+
+        </van-field>
+      </van-popup>
+    </div>
+
     
   </view>
 </template>
@@ -14,6 +58,16 @@
 
   export default class MyWallet extends wepy.page {
     data = {
+      
+      userInfo: {
+        exMoney: 0,
+        expend: 0,
+        income: 0
+      },
+      amount: 0,
+      isRecharge: false,
+      isWithdraw: false,
+      enterMoney: false
 
     }
     components = {
@@ -21,6 +75,164 @@
     }
     methods = {
 
+      onChange(e) {
+        
+        if (this.enterMoney) {
+          // console.log("change");
+          // console.log(e.detail);
+          var num = Number(e.detail.replace(/[^\d]/g,''));
+          // console.log(num);
+          this.amount = num;
+        }
+        
+      },
+      tap() {
+        console.log("click");
+        wx.navigateTo({
+          url: 'moneyDetail'
+        });
+      },
+      onClose() {
+        console.log("close");
+
+        this.enterMoney = false;
+        this.isRecharge = false;
+        this.isWithdraw = false;
+        this.amount = "";
+      },
+      recharge() {
+        console.log("recharge");
+
+        this.isRecharge = true;
+        this.enterMoney = true;
+
+      },
+      withdraw() {
+        console.log("withdraw");
+
+        this.isWithdraw = true;
+        this.enterMoney = true;
+
+      },
+      amountComfirm() {
+        console.log("amountComfirm");
+
+        if (this.amount == "") {
+          this.amount = 0;
+        }
+        var exMoney = Number(this.userInfo.exMoney);
+
+        this.amount = (this.isWithdraw 
+                  && (exMoney < this.amount)) ? exMoney : this.amount;
+        console.log(this.amount);
+        this.enterMoney = false;
+        
+        Dialog.confirm({
+          title: '确认金额',
+          message: this.amount
+        }).then(() => {
+          // on confirm
+          var that = this;
+
+          if (this.isRecharge) {
+            console.log("recharge: " + this.amount);
+            wx.request({
+              url: this.$parent.globalData.ip + 'recharge',
+              method: 'POST',
+              header: {
+                'content-type': 'application/json'
+              },
+              data: {
+                user_id: this.$parent.globalData.userInfo.id,
+                value: this.amount
+              },
+              success(res) {
+                that.userInfo.exMoney = res.data.exMoney;
+
+                that.$apply();
+                console.log(that.userInfo);
+                console.log('end');
+              }
+            })
+          }
+          else if (this.isWithdraw) {
+            console.log("withdraw: " + this.amount);
+            wx.request({
+              url: this.$parent.globalData.ip + 'withdraw',
+              method: 'POST',
+              header: {
+                'content-type': 'application/json'
+              },
+              data: {
+                user_id: this.$parent.globalData.userInfo.id,
+                value: this.amount
+              },
+              success(res) {
+                that.userInfo.exMoney = res.data.exMoney;
+
+                that.$apply();
+                console.log(that.userInfo);
+                console.log('end');
+              }
+            })
+          } 
+
+          this.isRecharge = false;
+          this.isWithdraw = false;
+          this.amount = "";
+
+        }).catch(() => {
+          // on cancel
+          this.isRecharge = false;
+          this.isWithdraw = false;
+          this.amount = "";
+        });
+        
+        
+      }
+
     }
+    onShow() {
+      
+      // this.islogin = this.$parent.globalData.loginData.state;
+      // console.log("islogin: " + this.islogin);
+      // this.$apply()
+    }
+    onLoad() {
+      this.islogin = this.$parent.globalData.loginData.state;
+      if (!this.islogin) {
+        Dialog.alert({
+          message: '请先登录'
+        }).then((res) => {
+          wx.navigateBack()
+        })
+      }
+      else {
+        console.log(this.$parent.globalData);
+        var that = this;
+        wx.request({
+          url: this.$parent.globalData.ip + 'wallet',
+          method: 'POST',
+          header: {
+            'content-type': 'application/json'
+          },
+          data: {
+            user_id: this.$parent.globalData.userInfo.id
+          },
+          success(res) {
+            // console.log(res.data);
+            // exMoney:140015
+            // expend:18
+            // income:29
+            that.userInfo = res.data;
+
+            that.$apply();
+            console.log(that.userInfo);
+            console.log('end');
+          }
+        })
+      } 
+    }
+
   }
 </script>
