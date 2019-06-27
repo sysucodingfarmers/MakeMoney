@@ -19,13 +19,14 @@ json_false = json.dumps('failed')
 @app.route('/task/sponsor', methods=['POST'])
 def sponsor_task():
     #需要登录
-    headers = request.headers
-    se = Session.query.filter_by(sid = int(headers['session_id']), uid=int(headers['user_id'])).first()
-    if se==None:
-        print('session is not connected')
-        return json.dumps({'errmsg': '没有建立会话或者会话信息出错'})
-    user = User.query.filter_by(id=se.uid).first()
-    login_user(user)
+    if not current_user.is_active:
+        headers = request.headers
+        se = Session.query.filter_by(sid = int(headers['session_id']), uid=int(headers['user_id'])).first()
+        if se==None:
+            print('session is not connected')
+            return json.dumps({'errmsg': '没有建立会话或者会话信息出错'})
+        user = User.query.filter_by(id=se.uid).first()
+        login_user(user)
 
     if request.method == 'POST':
         #获得post来的task数据
@@ -68,6 +69,7 @@ def sponsor_task():
         db.session.add(task)
         db.session.commit()
 
+        print('sponsor task {}!'.format(task.id))
         return json.dumps(task.id)
 
     return json.dumps({'errmsg': '没有使用POST请求'})
@@ -79,13 +81,14 @@ def sponsor_task():
 @app.route('/task/receive', methods=['POST'])
 def receive_task():
     #需要登录
-    headers = request.headers
-    se = Session.query.filter_by(sid=int(headers['session_id']), uid=int(headers['user_id'])).first()
-    if se==None:
-        print('session is not connected')
-        return json.dumps({'errmsg': '没有建立会话或者会话信息出错'})
-    user = User.query.filter_by(id=se.uid).first()
-    login_user(user)
+    if not current_user.is_active:
+        headers = request.headers
+        se = Session.query.filter_by(sid=int(headers['session_id']), uid=int(headers['user_id'])).first()
+        if se==None:
+            print('session is not connected')
+            return json.dumps({'errmsg': '没有建立会话或者会话信息出错'})
+        user = User.query.filter_by(id=se.uid).first()
+        login_user(user)
 
     if request.method == 'POST':
         #获得POST来的task id
@@ -327,12 +330,15 @@ def pay():
 '''
 @app.route('/modify/task_info', methods=['POST'])
 def modify_task_info():
-    headers = request.headers
-    se = Session.query.filter_by(sid=int(headers['session_id']), uid=int(headers['user_id'])).first()
-    if se==None:
-        print('session is not connected')
-        return json.dumps({'errmsg': '没有建立会话或者会话信息出错'})
-    
+    if not current_user.is_active:
+        headers = request.headers
+        se = Session.query.filter_by(sid=int(headers['session_id']), uid=int(headers['user_id'])).first()
+        if se==None:
+            print('session is not connected')
+            return json.dumps({'errmsg': '没有建立会话或者会话信息出错'})
+        user = User.query.filter_by(id=se.uid).first()
+        login_user(user)
+        
     if request.method == 'POST':
         json_data = json.loads(request.data)
         if 'id' in json_data:

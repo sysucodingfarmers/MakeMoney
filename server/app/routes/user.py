@@ -90,15 +90,18 @@ def login():
 #登出
 @app.route('/logout', methods=['POST'])
 def logout():
-    headers = request.headers
-    se = Session.query.filter_by(sid=int(headers['session_id']), uid=int(headers['user_id'])).first()
-    if se==None:
-        print('session is not connected')
-        return json.dumps({'errmsg': '没有建立会话或者会话信息出错'})
-    
-    #删除session
-    db.session.delete(se)
-    db.session.commit()
+    if not current_user.is_active:
+        headers = request.headers
+        se = Session.query.filter_by(sid=int(headers['session_id']), uid=int(headers['user_id'])).first()
+        if se==None:
+            print('session is not connected')
+            return json.dumps({'errmsg': '没有建立会话或者会话信息出错'})
+        user = User.query.filter_by(id=se.uid).first()
+        login_user(user)
+
+        #删除session
+        db.session.delete(se)
+        db.session.commit()
     #登出
     logout_user()
     print('logout user succeed!')
@@ -109,12 +112,15 @@ def logout():
 '''
 @app.route('/modify/user_info', methods=['POST'])
 def modify_user_info():
-    headers = request.headers
-    se = Session.query.filter_by(sid=int(headers['session_id']), uid=int(headers['user_id'])).first()
-    if se==None:
-        print('session is not connected')
-        return json.dumps({'errmsg': '没有建立会话或者会话信息出错'})
-    
+    if not current_user.is_active:
+        headers = request.headers
+        se = Session.query.filter_by(sid=int(headers['session_id']), uid=int(headers['user_id'])).first()
+        if se==None:
+            print('session is not connected')
+            return json.dumps({'errmsg': '没有建立会话或者会话信息出错'})
+        user = User.query.filter_by(id=se.uid).first()
+        login_user(user)
+
     if request.method == 'POST':
         json_data = json.loads(request.data)
         if 'id' in json_data:
@@ -237,7 +243,7 @@ def withdraw():
 @app.route('/sendemailcode', methods=['POST'])
 def sendemailcode():
 	if (request.method == 'POST'):
-		json_data = json.load(request.data)
+		json_data = json.loads(request.data)
 		print(json_data)
 		if 'code' in json_data and 'target_email' in json_data:
 			code = json_data['code']
@@ -260,7 +266,7 @@ def test():
 	receiver = Receiver.query.all()
 	template = Template.query.all()
 	answer = Answer.query.all()
-	print('{}\n\n{}\n\n{}\n\n{}\n\n{}\n'.format(user,task,receiver,template,answer))
+	print('{}\n\n{}\n\n{}\n\n{}\n\n{}\n'.format(len(user),len(task),len(receiver),len(template),len(answer)))
 	print(1)
 	return json_true
 
