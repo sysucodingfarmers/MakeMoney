@@ -3,7 +3,7 @@
 </style>
 <template>
   <view style="position: fixed; height: 100%; width: 100%;">
-    <mynavbar lefttext="返回" leftarrow="true" title="发起者详情"></mynavbar>
+    <mynavbar lefttext="返回" leftarrow="true" title="用户详情"></mynavbar>
     <!-- 主体 -->
     <van-cell-for-infodetail title="头像" />
     <van-cell-for-infodetail title="用户名" value="{{userInfo.username}}" />
@@ -20,7 +20,7 @@
   import MyNavBar from '../components/mynavbar'
   // import Toast from '../components/van/toast/toast'
 
-  export default class SponsorInfo extends wepy.page {
+  export default class UserInfo extends wepy.page {
     data = {
       userInfo: {}
     }
@@ -31,7 +31,7 @@
     
     }
     onLoad(options) {
-      console.log('sponsorInfo onload');
+      console.log('UserInfo onload');
       var user_id = options.user_id;
       var that = this;
       wx.request({
@@ -53,7 +53,7 @@
       })
     }
     onShow() {
-      console.log('sponsorInfo show');
+      console.log('UserInfo show');
       // this.$broadcast('setTitle', this.userInfo.username + " 的信息")
       console.log('end');
     }

@@ -4,13 +4,15 @@
 <template>
   <view style="position: fixed; height: 100%; width: 100%;">
     <mynavbar title="用户情况" lefttext="返回" leftarrow="true" ></mynavbar>
-    
+      <van-cell-for-infodetail title="详情信息" is-link bind:click="ShowReceiverMessage"/>
+      <van-cell-for-infodetail title="问卷信息" is-link bind:click="ShowQueryMessage"/>
     <mytabbar></mytabbar>
   </view>
 </template>
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
+  import TemplateToQuery from '../data/TemplateToQuery'
 
   export default class ReceiverDetail extends wepy.page {
     components = {
@@ -18,30 +20,76 @@
     }
     data = {
       user_id: 0,
-      task_id: 0
+      task_id: 0,
+      temp_id: 0,
+      answers: [],
+      questions: [],
+      types: [],
+      options: [],
+      query: []
     }
     methods = {
-      
+      ShowReceiverMessage() {
+        console.log(this.user_id);
+        wx.navigateTo({
+            url: 'userInfo?user_id=' + this.user_id
+         })
+      },
+      ShowQueryMessage() {
+        console.log(this.query);
+        var query = JSON.stringify(this.query);
+        wx.navigateTo({
+          url: 'queryInfo?query=' + query
+        })
+      }
     }
     onLoad(options) {
       this.user_id = options.user_id;
       this.task_id = options.task_id;
+      this.temp_id = options.temp_id;
       console.log(this.user_id);
       console.log(this.task_id);
-      wx.request({
-        url: this.$parent.globalData.ip + 'search/answer',
+      console.log(this.temp_id);
+      //查询答案
+      //.......................................
+      var that = this;
+      wepy.request({
+        url: that.$parent.globalData.ip + 'search/answer',
         method: 'POST',
         header: {
           'content-type': 'application/json'
         },
         data: {
-          user_id: this.user_id,
-          task_id: this.task_id
-        },
-        success(res) {
-          console.log(res.data);
+          user_id: that.user_id,
+          task_id: that.task_id
         }
       })
+      .then(function(res){
+        console.log(res.data);
+        that.answers = res.data;
+        //查询问卷内容
+        return wepy.request({
+                  url: that.$parent.globalData.ip + 'search/template_id',
+                  method: 'POST',
+                  header: {
+                    'content-type': 'application/json'
+                  },
+                  data: {
+                    template_id: that.temp_id
+                  }
+                });
+      })
+      .then(function(res){
+        that.questions = res.data.questions;
+        that.options = res.data.options;
+        that.types = res.data.types;
+        console.log(that.questions);
+        console.log(that.options);
+        console.log(that.types);
+        that.query = TemplateToQuery.changeAnswer(that.questions, that.options, that.answers, that.types);
+        console.log(that.query);
+      })
+      //...................................
     }
     onShow() {
       console.log('ReceiverDetail onshow');
