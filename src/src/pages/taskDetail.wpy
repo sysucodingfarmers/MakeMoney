@@ -90,7 +90,7 @@
       ShowSponsorMessage() {
         console.log(this.taskInfo.sponsor_id);
         wx.navigateTo({
-          url: 'sponsorInfo?user_id=' + this.taskInfo.sponsor_id
+          url: 'userInfo?user_id=' + this.taskInfo.sponsor_id
         })
       },
       //问卷
@@ -109,7 +109,8 @@
           console.log('接受');
           Dialog.confirm({
             message: '是否接受'
-          }).then(()=>{
+          })
+          .then(()=>{
             var len = this.taskInfo.receivers.length;
             if (len < this.taskInfo.receiver_limit) {
               //接受任务
@@ -165,12 +166,10 @@
         }
         //完成
         else if (val === '完成') {
+          //1.有问卷
           if (this.finishRate === 100) {
-           
-            //完成任务
             var user_id = this.$root.$parent.globalData.userInfo.id;
             var task_id = this.id;
-            //1.有问卷
             var answers = [];
             console.log(this.query);
             this.query.forEach(item=>{
@@ -179,17 +178,14 @@
               }
               else {
                 var answer = [];
-                // console.log(item.content.option);
                 for (var i = 0; i < item.content.option.length; ++i) {
                   if (item.content.option[i].isSelected) {
                     answer.push(i);
                   }
                 }
-                // console.log(answer);
                 answers.push(answer);
               }
-            })
-            // console.log(answers);
+            });
             wx.request({
               url: this.$parent.globalData.ip + 'summit/answer',
               method: 'POST',
@@ -205,12 +201,20 @@
                 console.log(res.data);
               }
             })
-            //2.无问卷
-
             this.button_left = '已完成';
-            //...
             console.log("完成");
           }
+          //无问卷，需发起者确定
+          else if (this.taskInfo.type != '问卷调查') {
+            console.log('不能直接完成');
+            Dialog.alert({
+              title: '错误',
+              message: '完成需要发起者确认'
+            }).then(()=>{
+              // console.log('go');
+            });
+          }
+          //未完成
           else {
             console.log('未完成');
             Dialog.alert({
@@ -219,12 +223,12 @@
             }).then(()=>{
               // console.log('go');
             });
-            }
+          }
         }
         //已完成
         else if (val === '已完成') {
           console.log('已完成');
-          wepy.navigateBack();
+          wx.navigateBack();
         }
       },
       //左边button，包括取消，收藏以及删除,放弃
@@ -299,11 +303,13 @@
       //发布者查看接受者信息
       ShowReceiverDetail(id) {
         console.log(id);
+        var tid = this.taskInfo.template_id;
         wx.navigateTo({
-          url: 'receiverDetail?user_id=' + id + '&task_id=' + this.id
+          url: 'receiverDetail?user_id=' + id + '&task_id=' + this.id + '&template_id=' + tid
         })
       }
     }
+    //加载页面
     onLoad(options) {
       console.log("taskDetail onLoad");
       this.id = options.id;
@@ -388,6 +394,7 @@
       })
 
     }
+    //跳转页面
     onShow() {
       console.log("taskDetail onShow");
 
