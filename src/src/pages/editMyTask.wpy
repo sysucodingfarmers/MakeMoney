@@ -74,6 +74,7 @@
               // console.log(r.data);
               var query = TemplateToQuery.change(r.data);
               var task = {
+                id: res.data.id,
                 title: res.data.title,
                 sponsor: res.data.sponsor,
                 type: res.data.type,
@@ -88,7 +89,7 @@
                   query: query,
                   images: []
                 },
-                receiver: []
+                receivers: []
               }
               that.taskInfo = task;
               console.log(task);

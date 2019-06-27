@@ -1,18 +1,40 @@
-<script>
-  
-</script>
+<style lang="less">
+  .button-left {
+    width:50%;
+    float:left;
+    background-color:#07c160;
+    color:#fff;
+    border-radius:0;
+    font-weight:bold;
+    border: 1px solid #07c160;
+  }
+  .button-right {
+    width:50%;
+    float:right;
+    background-color:#f44;
+    color:#fff;
+    border-radius:0;
+    font-weight:bold;
+    border: 1px solid #f44;
+  }
+</style>
 <template>
   <view style="position: fixed; height: 100%; width: 100%;">
     <mynavbar title="用户情况" lefttext="返回" leftarrow="true" ></mynavbar>
       <van-cell-for-infodetail title="详情信息" is-link bind:click="ShowReceiverMessage"/>
-      <van-cell-for-infodetail title="问卷信息" is-link bind:click="ShowQueryMessage"/>
+      <van-cell-for-infodetail title="问卷信息" is-link bind:click="ShowQueryMessage" wx:if="{{type == '问卷调查'}}"/>
+      <view style="margin-top:30px; width:100%;">
+        <button class="button-left" bindtap="LeftSubbmit">{{button_left}}</button>
+        <button class="button-right" bindtap="RightSubbmit">{{button_right}}</button>
+      </view>
     <mytabbar></mytabbar>
+    <van-toast id="van-toast"></van-toast>
   </view>
 </template>
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
-  import TemplateToQuery from '../data/TemplateToQuery'
+  import Toast from '../components/van/toast/toast'
 
   export default class ReceiverDetail extends wepy.page {
     components = {
@@ -22,11 +44,11 @@
       user_id: 0,
       task_id: 0,
       temp_id: 0,
-      answers: [],
-      questions: [],
-      types: [],
-      options: [],
-      query: []
+      isfinished: false,
+      ispaid: false,
+      type: '',
+      button_left: '',
+      button_right: ''
     }
     methods = {
       ShowReceiverMessage() {
@@ -36,60 +58,92 @@
          })
       },
       ShowQueryMessage() {
-        console.log(this.query);
-        var query = JSON.stringify(this.query);
+        console.log(this.user_id);
+        console.log(this.task_id);
+        console.log(this.temp_id);
         wx.navigateTo({
-          url: 'queryInfo?query=' + query
+          url: 'queryInfo?user_id=' + this.user_id + '&task_id=' + this.task_id + '&template_id=' + this.temp_id
         })
+      },
+      LeftSubbmit() {
+        if (this.button_left == '已完成') {
+          Toast.success({ message: '用户已完成', duration: 1000 });
+        }
+        else if (this.button_left == '确认完成') {
+          var that = this;
+          if (this.type == '问卷调查') {
+            Toast.fail({message: "用户问卷还未完成", duration: 1000 });
+          }
+          else {
+            wepy.request({
+              url: that.$parent.globalData.ip + 'task/finished',
+              method: 'POST',
+              header: {
+                'content-type': 'application/json'
+              },
+              data: {
+                user_id: that.user_id,
+                task_id: that.task_id
+              }
+            })
+            .then(function(res) {
+              console.log(res.data);
+              that.isfinished = true;
+              that.button_left = '已完成';
+              that.$apply();
+            })
+          }
+        }
+      },
+      RightSubbmit() {
+        if (this.button_right == '已收款') {
+          Toast.success({ message: '用户已收款', duration: 1000 });
+        }
+        else if (this.button_right == '确认收款') {
+          var that = this;
+          if (!this.isfinished) {
+            Toast.fail({message: "用户还未完成", duration: 1000 });
+          }
+          else {
+            wepy.request({
+              url: that.$parent.globalData.ip + 'task/pay',
+              method: 'POST',
+              header: {
+                'content-type': 'application/json'
+              },
+              data: {
+                user_id: that.user_id,
+                task_id: that.task_id
+              }
+            })
+            .then(function(res) {
+              console.log(res.data);
+              that.ispaid = true;
+              that.button_right = '已收款';
+              that.$apply();
+            })
+          }
+        }
       }
     }
     onLoad(options) {
       this.user_id = options.user_id;
       this.task_id = options.task_id;
-      this.temp_id = options.temp_id;
+      this.temp_id = options.template_id;
+      this.isfinished = JSON.parse(options.isfinished);
+      this.ispaid = JSON.parse(options.ispaid);
+      this.type = options.type;
       console.log(this.user_id);
       console.log(this.task_id);
       console.log(this.temp_id);
-      //查询答案
-      //.......................................
-      var that = this;
-      wepy.request({
-        url: that.$parent.globalData.ip + 'search/answer',
-        method: 'POST',
-        header: {
-          'content-type': 'application/json'
-        },
-        data: {
-          user_id: that.user_id,
-          task_id: that.task_id
-        }
-      })
-      .then(function(res){
-        console.log(res.data);
-        that.answers = res.data;
-        //查询问卷内容
-        return wepy.request({
-                  url: that.$parent.globalData.ip + 'search/template_id',
-                  method: 'POST',
-                  header: {
-                    'content-type': 'application/json'
-                  },
-                  data: {
-                    template_id: that.temp_id
-                  }
-                });
-      })
-      .then(function(res){
-        that.questions = res.data.questions;
-        that.options = res.data.options;
-        that.types = res.data.types;
-        console.log(that.questions);
-        console.log(that.options);
-        console.log(that.types);
-        that.query = TemplateToQuery.changeAnswer(that.questions, that.options, that.answers, that.types);
-        console.log(that.query);
-      })
-      //...................................
+      console.log(this.isfinished);
+      console.log(this.ispaid);
+      console.log(this.type);
+      
+      this.button_left = this.isfinished ? '已完成' : '确认完成';
+      this.button_right = this.ispaid ? '已收款' : '确认收款';
+      // console.log(this.button_right, this.button_left);
+      this.$apply();
     }
     onShow() {
       console.log('ReceiverDetail onshow');
