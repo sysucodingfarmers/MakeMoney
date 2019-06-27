@@ -7,3 +7,5 @@ class Config(object):
         'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     TEMPLATES_AUTO_RELOAD = True
+    TASK_FOLDER = '/home/ubuntu/Img/TaskImg/'
+    PROFILE_FOLDER = '/home/ubuntu/Img/ProfileImg'

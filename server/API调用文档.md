@@ -4,6 +4,7 @@
 ```python
 我们约定
 json_true = json.dumps('succeed')
+json_false = json.dumps('failed')
 ```
 -----
 
@@ -29,7 +30,11 @@ json_true = json.dumps('succeed')
 
       'wx_number':
 
-      'hobbit':}
+      'hobbit':
+
+      'profile': }
+
+      'profile'为用户头像照片的base64编码后的字符串
 
 - 注册成功返回json_true, 失败则返回包含‘errmsg’的json文件
 
@@ -48,6 +53,8 @@ json_true = json.dumps('succeed')
 -----
 登出API 
 
+- POST或者GET
+
 - 地址：'/logout' 
 - 成功登出返回json_true
   
@@ -58,7 +65,7 @@ json_true = json.dumps('succeed')
 - 地址：'/task/sponsor' 
 - 接受POST请求，要求用户先登录才能发布
 - 接收的json格式应包含
-  - {‘id’: 任务的id
+  - {
     'title':
     'type':
     'pay':
@@ -66,17 +73,19 @@ json_true = json.dumps('succeed')
     'receiver_limit':
     'received_number':
     'extra_content':
-    'single_choices_question': []
-    'single_choices_options': [[], [], .. []]
-    'multiple_choices_question': []
-    'multiple_choices_options': [[], [], ..., []]
-    'essay_questions': []}
+    'questions': []
+    'options': [[], [], .. []]
+    'types': []
+    }
+  - questions是一个存储问题的list，比如 ['abc', 'dd']
+  - options是一个存储选项的list,每个元素也是一个list，存储对应问题的选项，如果对应问是个问答题，则，则对应的元素是一个空list，比如 [ ['a', 'b', 'c'],  ['a', 'b'] , [] ] （第三题是问答题）
+  - types是一个list，用记录对应问题是单选/多选/问答
 - 注册成功返回json_true, 失败则返回包含‘errmsg’的json文件
 
 -----
 接收任务API 
 
-- 地址：'/task/recevier' 
+- 地址：'/task/receive' 
 - 接受POST请求，要求用户先登录才能接收任务
 - 接收的json格式应包含
 
@@ -98,6 +107,8 @@ json_true = json.dumps('succeed')
   				'task_id':[]}
 -----
 查看接收的任务API 
+
+- 接受POST请求，要求用户先登录才能查看，可以传入查询的用户id，如果没有传入，则查询当前用户的接受任务
 
 - 地址：'/task/myreceive‘' 
 - 接受POST请求，若json中包含'id‘则查询改id用户的发布的任务
@@ -133,10 +144,10 @@ json_true = json.dumps('succeed')
 推荐任务API 
 
 - 地址：'/recommend’ 
-- 接受POST请求
+- POST或GET
 - 失败返回包含‘errmsg’的json文件
 - 成功返回如下json：{'task_number':
-					'task_id':[]}
+  				'task_info':[ {‘id’:  'title':   'detal':    'type':   }, {‘id’:  'title':   'detal':    'type':   } , ... ]}
 - 备注：这个API事实上返回了所有发布中的任务，推荐顺序跟task_id中的排序一致
 
 -----
@@ -222,8 +233,10 @@ json_true = json.dumps('succeed')
 
   ​					'hobbit':
 
+  ​					‘profile’：
+
   ​					}
-  
+
 ----
 
 根据id获得问卷模板API
@@ -234,11 +247,9 @@ json_true = json.dumps('succeed')
 - 查询成功返回如下json
 - {
     'id': template_id,
-    'single_choices_question':[],
-    'single_choices_options':[[],[],...,[]],
-    'mutiple_choices_question':[],
-    'multiple_choices_options':[[],[],...,[]],
-    'essay_questions':[]
+    'questions':[],
+    'options':[[],[],...,[]],
+    'types':[]
     }
 
 -----
@@ -246,13 +257,12 @@ json_true = json.dumps('succeed')
 - 地址: '/summit/answer'
 - 接收POST请求
 - 接收的json如下
-{
+  {
     'user_id': 任务接收者的user id，
     'task_id': 接收的任务的task id
-    'single_choices_options':[[],[],...,[]]，
-    'multiple_choices_options':[[],[],...,[]],
-    ‘essay_answers’:[]
-}
+    'answers':[]，
+  }
+- ‘answers’中的每一个元素表示对应问题的答案
 - 成功提交返回json_true，失败返回包含‘errmsg’的json文件
 
 ----
@@ -266,11 +276,9 @@ json_true = json.dumps('succeed')
 }
 - 查询失败返回包含‘errmsg’的json文件
 - 查询成功返回json
--{
-    'single_choices_options':[[], [], ..., []]
-    'mutiple_choices_options':[[], [], ..., []]
-    'essay_answers':[]
-}
+  -{
+    'answers':[]
+  }
 
 ---
 退出任务API
@@ -293,3 +301,23 @@ json_true = json.dumps('succeed')
     'task_id':
 }
 - 退出成功返回json_true, 失败返回包含‘errmsg’的json文件
+
+-----
+
+修改用户信息API
+
+- 地址‘/modify/user_info’
+
+- 接收POST请求
+
+- 接收的json必须包含‘id’信息，可包含以下信息
+  - ‘username’
+  - ‘email’
+  - ‘school’
+  - ‘major’
+  - ‘phone’
+  - ‘wx_number’
+  - ‘hobbit’
+  - 'profile'
+
+- 修改成功返回user信息json（与查询user信息APIi一致），失败返回包含‘errmsg’的json

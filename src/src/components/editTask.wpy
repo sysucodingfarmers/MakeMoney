@@ -49,7 +49,7 @@
 <template>
   <van-cell-group title="基本信息">
     <van-field
-      value="{{taskInfo.name}}"
+      value="{{taskInfo.title}}"
       label="任务名称"
       placeholder="请输入任务名称"
       clearable
@@ -146,6 +146,9 @@
       icon="description"
       bind:click="EditQuery"
     ></van-cell>
+    <van-cell>
+      <image src="{{test}}"></image>
+    </van-cell>
   </van-cell-group>
   <view class="subbmit-button">
     <van-button type="primary" round size="large" bindtap="subbmit">发布</van-button>
@@ -176,13 +179,26 @@
       bind:cancel="CancelEndTime"
     ></van-datetime-picker>
   </van-popup>
+  <van-toast id="van-toast"></van-toast>
   <van-dialog id="van-dialog" />
+  <van-dialog
+    title="是否支付"
+    use-slot
+    show="{{ showPay }}"
+    show-cancel-button
+    bind:close="onClose"
+    bind:confirm="pay"
+  >
+    <view style="text-align:center; margin-top:20px; margin-bottom:20px;">
+      <van-icon name="gold-coin" size="120px" color="green"></van-icon>
+    </view>
+  </van-dialog>
 </template>
 <script>
   import wepy from 'wepy'
   import caculateDate from '../data/CaculateDate'
-  import TasksData from '../data/TempTaskData'
   import Dialog from './van/dialog/dialog'
+  import Toast from './van/toast/toast'
 
   export default class EditTask extends wepy.component {
     events = {
@@ -204,6 +220,10 @@
       taskid: {
         type: Number,
         twoWay: true
+      },
+      isEdit: {
+        type: Boolean,
+        twoWay: true
       }
     }
     data = {
@@ -214,6 +234,8 @@
       time_error: '',               //时间错误提示
       showStartTimeSelector: false, //开始时间选择
       showEndTimeSelector: false,   //结束时间选择
+      task: {},
+      showPay: false
     }
     methods = {
       //编辑任务名称
@@ -224,7 +246,7 @@
           this.$apply();
         }
         else {
-          this.taskInfo.name = val;
+          this.taskInfo.title = val;
           this.name_error = '';
           this.$apply();
         }
@@ -337,14 +359,9 @@
         Dialog.confirm({
           title: '是否删除',
           message: '删除就无法回复'
-        }).then(res => {
-          if (res.confirm) {
+        }).then(() => {
             that.images.splice(index,1);
             that.$apply();
-          }
-          else {
-            console.log("用户取消删除");
-          }
         });
       },
       //编辑问卷
@@ -356,9 +373,12 @@
       },
       //提交数据
       subbmit(e) {
+
+        //判断是否能勾提交
+        //....................................................
         var canSubmmit = true;
         //判断任务名称
-        this.name_error = this.taskInfo.name === '' ? '名字不能为空' : this.name_error;
+        this.name_error = this.taskInfo.title === '' ? '名字不能为空' : this.name_error;
         canSubmmit = this.name_error != '' ? false : canSubmmit;
         //判断任务详情
         this.detail_error = this.taskInfo.detail === '' ? '详情不能为空' : this.detail_error;
@@ -380,24 +400,180 @@
             message: '问卷为空'
           });
         }
-        //提交任务并关闭页面
         this.$apply();
+        //..............................................................
+        
+        //能提交
+        //..............................................................
         if (canSubmmit) {
-          // todo
-          // 将task传入后端并得到id
-          // ...
-          var id = this.taskid;
-          var mes = JSON.stringify(["修改","删除"]);
-          if (id == TasksData.data.tasks.length) {
-            TasksData.data.tasks.push(this.taskInfo);
-          }
-          else {
-            TasksData.data.tasks[id] = this.taskInfo;
-          }
-          wepy.redirectTo({
-            url: 'taskDetail?id=' + id + '&mes=' + mes
+          // var mes = JSON.stringify(["修改","删除"]);
+          //处理问卷
+          var query = this.taskInfo.extra_content.query;
+          var questions = [];
+          var options = [];
+          var types = [];
+          query.forEach(item=>{
+            //types
+            if (item.type == '问答题' && item.limit == 'number') {
+              types.push('数字题');
+            }
+            else {
+              types.push(item.type);
+            }
+            //questions
+            questions.push(item.content.question);
+            //options
+            if (item.type == '问答题') {
+              options.push([]);
+            }
+            else {
+              var ops = [];
+              item.content.option.forEach(op=>{
+                ops.push(op.ans);
+              });
+              options.push(ops);
+            }
           });
+
+          
+          var task = {
+            id: this.taskInfo.id,
+            title: this.taskInfo.title,
+            type: this.taskInfo.type,
+            pay: this.taskInfo.pay,
+            detail: this.taskInfo.detail,
+            start_time: caculateDate.StringToDate(this.taskInfo.start_time),
+            end_time: caculateDate.StringToDate(this.taskInfo.end_time),
+            receiver_limit: this.taskInfo.receiver_limit,
+            receiver_number: 0,
+            state: 0,
+            questions: questions,
+            options: options,
+            types: types
+            // images: this.images
+          }
+          console.log(task);
+          this.task = task;
+
+          var that = this;
+          //修改问卷
+          //...............................................................
+          if (that.isEdit) {
+            console.log('修改');
+            var mes = JSON.stringify(["修改","删除"]);
+            Dialog.confirm({
+              message: '是否修改',
+            })
+            .then(function(res){
+              return wepy.request({
+                      url: that.$parent.$parent.globalData.ip + 'modify/task_info',
+                      method: 'POST',
+                      header: {
+                        'content-type': 'application/json',
+                        'session_id' : that.$parent.$parent.globalData.session_id,
+                        'user_id': that.$parent.$parent.globalData.userInfo.id
+                      },
+                      data: that.task
+                    });
+            })
+            .then(function(res){
+              console.log(res.data);
+              Toast.success({ message: '修改成功', duration: 1000 });
+              const timer2 = setInterval(() => {
+                clearInterval(timer2);
+                Toast.clear();
+                wx.redirectTo({
+                  url: 'taskDetail?id=' + that.taskid + '&mes=' + mes
+                });
+              }, 1000);
+            });
+          }
+          //.................................................................
+          //提交任务
+          else {
+            console.log('提交');
+            that.showPay = true;
+            that.$apply();
+          }
         }
+        //.......................................................
+      },
+      //支付
+      pay() {
+        var that = this;
+        var task = this.task;
+        var tid; //后端返回的任务id
+        var mes = JSON.stringify(["修改","删除"]);
+        //上传任务并得到任务id
+        //.......................................................
+        wepy.request({
+          url: this.$parent.$parent.globalData.ip + 'task/sponsor',
+          method: 'POST',
+          header: {
+            'content-type': 'application/json',
+            'session_id' : this.$parent.$parent.globalData.session_id,
+            'user_id': this.$parent.$parent.globalData.userInfo.id
+          },
+          data: task
+        })
+        .then(function(res){
+          tid = res.data;
+          console.log('任务id为', tid);
+
+          //通过任务id，上传任务图片
+          var image_length = 0;
+          //如果image为空，即跳转页面
+          if (that.images.length == image_length) {
+            Toast.success({ message: '发布成功', duration: 1000 });
+            const timer1 = setInterval(() => {
+              clearInterval(timer1);
+              Toast.clear();
+              wx.redirectTo({
+                url: 'taskDetail?id=' + tid + '&mes=' + mes
+              });
+            }, 1000);
+          }
+          //如果不为空
+          else {
+            Toast.loading({
+              mask: true,
+              message: '上传图片中'
+            });
+            for (var i = 0; i < that.images.length; ++i) {
+              wx.uploadFile({
+                url: that.$parent.$parent.globalData.ip + 'task/postImage',
+                filePath: that.images[i],
+                name: 'image',
+                header: {'content-type': 'multipart/form-data'},
+                formData: {
+                  'task_id': tid
+                },
+                success(res) {
+                  // console.log(res.data); // 返回那边的链接
+                  console.log('图片', i);
+                  //全部上传成功，跳转页面
+                  if (i == that.images.length) {
+                    Toast.clear();
+                    Toast.success({ message: '上传成功', duration: 1000 });
+                    const timer = setInterval(() => {
+                      clearInterval(timer);
+                      Toast.clear();
+                      wx.redirectTo({
+                        url: 'taskDetail?id=' + tid + '&mes=' + mes
+                      });
+                    }, 1000);
+                  }
+                }
+              });
+            }
+          }
+        })
+        //........................................................
+      },
+      //取消支付
+      onClose() {
+        this.showPay = false;
+        this.$apply();
       }
     }
   }

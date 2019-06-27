@@ -17,6 +17,12 @@ receivers = db.Table('receivers',
 # )
 
 class User(UserMixin, db.Model):
+	def __init__(self, **kwargs):
+		self.exMoney = 0
+		self.income = 0
+		self.expend = 0
+		super(User, self).__init__(**kwargs)
+	
 	#学号(账号)
 	id = db.Column(db.Integer, primary_key=True)
 	#用户名
@@ -35,8 +41,13 @@ class User(UserMixin, db.Model):
 	#兴趣爱好(修改了变量名，从hobit改为hobbit)
 	hobbit = db.Column(db.String(100))
 	# 头像图片的编码
-	profile = db.Column(db.String(125000))
+	profile = db.Column(db.String(10000))
 	
+	#钱包状态
+	exMoney = db.Column(db.Float) #余额
+	income = db.Column(db.Float) #收入
+	expend = db.Column(db.Float) #支出
+
 	def set_password(self, password):
 		self.password_hash = generate_password_hash(password)
 	def check_password(self, password):
@@ -88,19 +99,22 @@ class Task(db.Model):
 			kwargs['received_number'] = self.__table__.c.received_number.default.arg
 		if 'finished_number' not in kwargs:
 			kwargs['finished_number'] = self.__table__.c.finished_number.default.arg
+		if 'paid_number' not in kwargs:
+			kwargs['paid_number'] = self.__table__.c.paid_number.default.arg
 		self.template = Template()
+		self.images = []
 		super(Task, self).__init__(**kwargs)
 	#任务id
 	id = db.Column(db.Integer, primary_key=True)
 	#题目
 	title = db.Column(db.String(20), nullable=False)
 	#任务类型
-	type = db.Column(db.String(20), default='query')
+	type = db.Column(db.String(20), default='问卷')
 	#时间，默认结束时间为10天后
 	start_time = db.Column(db.DateTime, nullable=False, default=datetime.now())
 	end_time = db.Column(db.DateTime, nullable=False, default=datetime.now()+timedelta(days=10))
 	#报酬
-	pay = db.Column(db.Integer)
+	pay = db.Column(db.Float)
 	#任务详情
 	detail = db.Column(db.Text)
 	#任务人数上限
@@ -109,8 +123,12 @@ class Task(db.Model):
 	received_number = db.Column(db.Integer, nullable=False, default=0)
 	#目前完成人数
 	finished_number = db.Column(db.Integer, default=0)
+	#目前已支付人数
+	paid_number = db.Column(db.Integer,default=0)
 	#额外内容
 	extra_content = db.Column(db.Text)
+	#任务状态，整数
+	state = db.Column(db.Integer)
 
 	#任务发起者
 	sponsor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -125,7 +143,7 @@ class Task(db.Model):
 	template = db.relationship('Template', backref=db.backref('task', lazy=False, uselist=False))
 
 	#图片
-	images = db.Column(db.LargeBinary)
+	images = db.Column(db.PickleType)
 
 	def __repr__(self):
 		return '<Task {} {} sponsor:{}>'.format(self.id, self.title, self.sponsor_id)
@@ -146,7 +164,12 @@ class Answer(db.Model):
 	def __repr__(self):
 		return '<Answer {} {} {}>'.format(self.id, self.receiver_id, self.answers)
 
+class Session(db.Model):
+	sid = db.Column(db.Integer, primary_key=True)
+	uid = db.Column(db.Integer)
+
 #login的配置，使login生效
 @login.user_loader
 def load_user(id):
+	print('jasdkjfak')
 	return User.query.get(int(id))

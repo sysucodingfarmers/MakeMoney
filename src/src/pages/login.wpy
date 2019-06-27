@@ -122,8 +122,7 @@
         console.log('logining...');
         Toast.loading({
           mask: true,
-          message: '登录中...',
-          duration: 0
+          message: '登录中...'
         });
 
         var that = this
@@ -132,23 +131,29 @@
           password: this.password
         }
         wx.request({
-          url: 'http://makemoney.ink:5050/login',
+          url: this.$parent.globalData.ip + 'login',
           method: 'POST',
           data: _data,
           header: {
             'content-type': 'application/json'
           },
-          complete: function(res) {
-            console.log(res)
+          success: function(res) {
             Toast.clear();
-            if (res.data.id == undefined || res.data.id == null)
-            {
-              Toast(res.data.errmsg);
-            } 
+            if (res.data == undefined || res.data.id == undefined || res.data.id == null) {
+              Toast.fail("网络错误")
+            }
             else 
             {
-              Toast('登录成功');
+              Toast.success('登录成功');
+              that.$parent.globalData.loginData.studentId = ""
+              that.$parent.globalData.loginData.password = ""
+              that.$parent.globalData.session_id = res.header.session_id;
+              console.log(that.$parent.globalData.session_id);
               that.$parent.globalData.userInfo = {}
+              if (res.data.profile)
+                that.$parent.globalData.userInfo.avatar = res.data.avatar
+              else
+                that.$parent.globalData.userInfo.avatar = 'https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1560754276&di=9e6e09a4563fa27b2b4c20b7a5a58df7&src=http://pic.51yuansu.com/pic3/cover/01/69/80/595f67bf2026f_610.jpg'
               that.$parent.globalData.userInfo.username = res.data.username;
               that.$parent.globalData.userInfo.id = res.data.id;
               that.$parent.globalData.userInfo.email = res.data.email;
@@ -160,6 +165,8 @@
             }
           }
         });
+
+        
 
       },
       onClickRegister() {
