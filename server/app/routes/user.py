@@ -90,12 +90,15 @@ def login():
 #登出
 @app.route('/logout', methods=['POST'])
 def logout():
-    # print(request.)
-    se = Session.query.filter_by(sid=request.session_id, uid=request.user_id).first()
+    headers = request.headers
+    se = Session.query.filter_by(sid=int(headers['session_id']), uid=int(headers['user_id'])).first()
+    if se==None:
+        print('session is not connected')
+        return json.dumps({'errmsg': '没有建立会话或者会话信息出错'})
+    
     #删除session
-    if se!=None:
-        db.session.delete(se)
-        db.session.commit()
+    db.session.delete(se)
+    db.session.commit()
     #登出
     logout_user()
     print('logout user succeed!')
@@ -230,6 +233,7 @@ def withdraw():
         return json.dumps({'errmsg': '没有传递user_id或没有传递充值金额value'})
     return json.dumps({'errmsg': '没有使用POST请求'})
 
+#验证邮箱
 @app.route('/sendemailcode', methods=['POST'])
 def sendemailcode():
 	if (request.method == 'POST'):

@@ -99,6 +99,8 @@ class Task(db.Model):
 			kwargs['received_number'] = self.__table__.c.received_number.default.arg
 		if 'finished_number' not in kwargs:
 			kwargs['finished_number'] = self.__table__.c.finished_number.default.arg
+		if 'paid_number' not in kwargs:
+			kwargs['paid_number'] = self.__table__.c.paid_number.default.arg
 		self.template = Template()
 		self.images = []
 		super(Task, self).__init__(**kwargs)
@@ -112,7 +114,7 @@ class Task(db.Model):
 	start_time = db.Column(db.DateTime, nullable=False, default=datetime.now())
 	end_time = db.Column(db.DateTime, nullable=False, default=datetime.now()+timedelta(days=10))
 	#报酬
-	pay = db.Column(db.Integer)
+	pay = db.Column(db.Float)
 	#任务详情
 	detail = db.Column(db.Text)
 	#任务人数上限
@@ -121,6 +123,8 @@ class Task(db.Model):
 	received_number = db.Column(db.Integer, nullable=False, default=0)
 	#目前完成人数
 	finished_number = db.Column(db.Integer, default=0)
+	#目前已支付人数
+	paid_number = db.Column(db.Integer,default=0)
 	#额外内容
 	extra_content = db.Column(db.Text)
 	#任务状态，整数

@@ -28,13 +28,17 @@ def my_sponsor_task():
             return json.dumps({'errmsg': '用户不存在'})
         
         #返回
-        data = {'task_number': len(user.sponsor_tasks), 'task_id': []}
+        data = {'task_number': len(user.sponsor_tasks), 'task_id': [], 'task_title': [], 'task_detail': [], 'task_type': [], 'task_state': []}
         for task in user.sponsor_tasks:
             # print(task.id)
             # now = json.dumps(task, default=TaskToJson)
             # data[0][str(i)] = now
             # i = i+1
             data['task_id'].append(task.id)
+            data['task_title'].append(task.title)
+            data['task_detail'].append(task.detail)
+            data['task_type'].append(task.type)
+            data['task_state'].append(task.state)
 
         return json.dumps(data , sort_keys=False)
     
@@ -56,9 +60,14 @@ def my_receive_task():
             print('query error')
             return json.dumps({'errmsg': '用户不存在'})
         #返回
-        data = {'task_number': len(receivers), 'task_id': []}
+        data = {'task_number': len(receivers), 'task_id': [], 'task_title': [], 'task_detail': [], 'task_type': [], 'finished': []}
         for rec in receivers:
-            data['task_id'].append(rec.tid);
+            task = Task.query.filter_by(id=rec.tid).first()
+            data['task_id'].append(task.id)
+            data['task_title'].append(task.title)
+            data['task_detail'].append(task.detail)
+            data['task_type'].append(task.type)
+            data['finished'].append(rec.finished)
         return json.dumps(data, sort_keys=False)
 
         # return json.dumps({'errmsg': '没有传递id'})
@@ -93,14 +102,16 @@ def recommend():
 'task_id':[1,2]
 }
 '''
-
 @app.route('/search/sponsor', methods=['GET', 'POST'])
 def search_by_sponsor():
     if request.method == 'POST':
         json_data = json.loads(request.data)
         if 'sponsor' in json_data:
             # tasks = Task.query.all()
-            task_list = User.query.filter_by(username=json_data['sponsor']).first().sponsor_tasks
+            user = User.query.filter_by(username=json_data['sponsor']).first()
+            if user == None:
+                return json.dumps({'errmsg': '没有这个用户'})
+            task_list = user.sponsor_tasks
         else:
             print('no match result')
             return json.dumps({'errmsg': '没有传递sponsor'})
@@ -125,8 +136,6 @@ def search_by_sponsor():
 'task_id':[1,2]
 }
 '''
-
-
 @app.route('/search/title_key_word', methods=['GET', 'POST'])
 def search_by_title():
     if request.method == 'POST':
@@ -276,3 +285,24 @@ def getAnswer_by_id():
             return json.dumps({'errmsg': '没有传递user_id'})
         return json.dumps({'errmsg': '没有传递task_id'})
     return json.dumps({'errmsg': '没有使用POST请求'})
+
+
+'''
+根据任务接收者user_id和任务id查询任务接受者情况
+'''
+@app.route('/search/receiver', methods=['POST'])
+def getReceiver_by_id():
+    if request.method == 'POST':
+        json_data = json.loads(request.data)
+        if 'task_id' in json_data:
+            if 'user_id' in json_data:
+                rec = Receiver.query.filter_by(uid=json_data['user_id'], tid=json_data['task_id']).first()
+                if rec==None:
+                    return json.dumps({'errmsg': '没有这个任务或者该用户没有接受该任务'})
+                data = {'isfinished': rec.finished, 'isPaid': rec.paid}
+                return json.dumps(data, sort_keys=False)
+
+            return json.dumps({'errmsg': '没有传递user_id'})
+        return json.dumps({'errmsg': '没有传递task_id'})
+    return json.dumps({'errmsg': '没有使用POST请求'})
+

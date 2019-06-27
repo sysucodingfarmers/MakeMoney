@@ -55,7 +55,6 @@ def sponsor_task():
         if paySum > current_user.exMoney:
             return json.dumps({'errmsg': '账户余额不足'})
 
-        #建立任务模板
         task.template = Template()
         task.template.questions = json_data['questions'] if 'questions' in json_data else []
         task.template.options = json_data['options'] if 'options' in json_data else []
@@ -320,6 +319,7 @@ def pay():
             return json_true
         return json.dumps({'errmsg': '没有传递user_id或没有task_id'})
     return json.dumps({'errmsg': '没有使用POST请求'})
+
 
 '''修改任务，需要登录
 传入要修改的信息（必须包括task的id）
