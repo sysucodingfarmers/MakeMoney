@@ -139,8 +139,9 @@
           },
           success: function(res) {
             Toast.clear();
+            console.log(res)
             if (res.data == undefined || res.data.id == undefined || res.data.id == null) {
-              Toast.fail("网络错误")
+              Toast.fail("用户名或密码错误")
             }
             else 
             {
@@ -163,6 +164,9 @@
               that.$parent.globalData.loginData.state = true;
               wx.navigateBack()
             }
+          },
+          fail: (res) => {
+            Toast.fail('网络错误')
           }
         });
 

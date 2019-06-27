@@ -45,18 +45,30 @@
           success: function(res) {
             console.log(res);
             console.log(res.tempFilePaths);
-            var tempFilePaths = res.tempFilePaths;
-            // wx.uploadFile({
-            //   url: 'http://makemoney.ink:5050/uploadAvatar',
-            //   header: {
-            //     'Content-Type': 'multipart/form-data',
-            //     'token': wx.getStorageSync('token')
-            //   }
-            // })
-            // uploadFile上传头像
-            that.userinfo.avatar = tempFilePaths;
-            that.$parent.globalData.userInfo.avatar = tempFilePaths;
-            that.$apply();
+            var tempFilePaths = res.tempFilePaths[0];
+            wx.uploadFile({
+              url: 'http://makemoney.ink:5050/postProfile',
+              filePath: tempFilePaths,
+              name: 'image',
+              header: {
+                "Content-Type": "multipart/form-data",
+                'session_id' : that.$parent.globalData.session_id,
+                'user_id': that.$parent.globalData.userInfo.id
+              },
+              formData: {
+                'session_id' : that.$parent.globalData.session_id,
+                'user_id': that.$parent.globalData.userInfo.id
+              },
+              success: (res) => {
+                console.log(res)
+                that.userinfo.avatar = tempFilePaths;
+                that.$parent.globalData.userInfo.avatar = tempFilePaths;
+                that.$apply();
+              },
+              fail: (res) => {
+                console.log('fail')
+              }
+            })
           },
           fail: function(e) {
             console.log(e);
