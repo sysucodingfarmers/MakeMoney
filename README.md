@@ -1,6 +1,6 @@
 ### 项目文档目录
 * 1、About（项目概况）
-* 2、Team profile（团队组建与分工）
+* 2、[Team profile（团队组建与分工）](doc/Documents/team-profile.md)
 * 3、[Investigation（项目前期调研/竞品分析）](doc/Documents/Investigation.md)
 * 4、[Vision（项目愿景）](doc/Documents/Vision项目愿景.md)
 * 5、[Product Backlog（产品特性库）](doc/Documents/ProductBacklog.md)
