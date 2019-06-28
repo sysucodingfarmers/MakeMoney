@@ -15,7 +15,6 @@
     <!-- 搜索框 -->
     <van-search
       class="search"
-      label="{{searchTypeCN}}"
       value="{{ keyword }}"
       placeholder="搜索"
       shape="round"
@@ -25,11 +24,6 @@
       bind:change="onChange"
       focus
     ></van-search>
-    <van-row>
-      <van-col offset="1" span="6"><van-button class="vanbutton" size="large" type="info" bind:click="onClickSearchByTitle">按标题</van-button></van-col>
-      <van-col offset="2" span="6"><van-button class="vanbutton" size="large" type="info" bind:click="onClickSearchByDetail">按任务详情</van-button></van-col>
-      <van-col offset="2" span="6"><van-button class="vanbutton" size="large" type="info" bind:click="onClickSearchBySponsor">按发布者</van-button></van-col>
-    </van-row>
     <view class="tasklistboard" wx:if="{{issearch}}">
       <!-- 搜索结果 -->
       <van-cell title="{{resultMessage}}" label="{{keyword}}" />
@@ -63,7 +57,6 @@
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
   import TaskList from '../components/tasklist'
-  import JsonToObject from '../data/JsonToObject'
 
   export default class SearchResult extends wepy.page {
     components = {
@@ -78,27 +71,10 @@
       search_histories: [],
       history: "",
       dataIndex: 0,
-      resultMessage: "",
-      searchType: "title_key_word",
-      searchTypeCN: "按标题"
+      resultMessage: ""
     }
 
     methods = {
-      onClickSearchByTitle () {
-        this.searchType = "title_key_word",
-        this.searchTypeCN = "按标题"
-      },
-
-      onClickSearchByDetail () {
-        this.searchType = "detail_key_word",
-        this.searchTypeCN = "按详情"
-      },
-
-      onClickSearchBySponsor () {
-        this.searchType = "sponsor",
-        this.searchTypeCN = "按发布者"
-      },
-
       onChange (e) {
           this.keyword = e.detail;
       },
@@ -112,7 +88,6 @@
       },
 
       onClickHistory (e) {
-
         this.keyword = this.search_histories[e.target.id];
         this.search();
       }
@@ -122,11 +97,14 @@
       this.search_histories = wx.getStorageSync('searchHistory');
     }
 
+
+
     search () {
       // 考虑了无本地缓存的情况
       if (this.search_histories == "") {
         this.search_histories = [];
       }
+
       if (this.keyword == '') {
         // 搜索框为空时不做任何事情
       } else {
@@ -135,6 +113,8 @@
 
         // 先清空任务列表
         this.tasks = [];
+        this.resultMessage = "搜索到" + this.tasks.length + "条结果";
+        this.$apply();
 
         // 只保存6个最近记录
         var _keyword = this.keyword;
@@ -166,103 +146,89 @@
           this.search_histories
         );
 
+        var that = this;
 
-
-        //console.log(this.keyword);
-
-        // 任务列表
-        /*
-        this.tasks = [];
-        this.dataIndex = 0;
-        for (var i = 0; i < 10; i++) {
-          this.tasks.push(TasksData.data.tasks[this.dataIndex]);
-          this.tasks[this.dataIndex].itemid = "task_item_id" + this.dataIndex;
-          this.dataIndex += 1;
-          if (this.dataIndex == TasksData.data.tasks.length) break;
-        }
-        this.$apply();
-        console.log(this.dataIndex);*/
-        var fieldData = {};
-        if (this.searchType == "sponsor") {
-          fieldData = {
-            'sponsor': this.keyword
-          };
-        } else {
-          fieldData = {
-            'key_word': this.keyword
-          };
-        }
-        wx.request({
-          url: this.$parent.globalData.ip + 'search/' + this.searchType,
-          method: 'POST',
-          data: fieldData,
-          header: {
-            'content-type': 'application/json'
-          },
-          success: (res) => {
-            console.log(res.data);
-            if (res.data.hasOwnProperty('task_id')) {
-              var tasks_id = res.data.task_id;
-              for (var i = 0; i < tasks_id.length; i++) {
-                wx.request({
-                  url: this.$parent.globalData.ip + 'search/task_id',
-                  method: 'POST',
-                  data: {
-                    'task_id': tasks_id[i]
-                  },
-                  success: (res2) => {
-                    if (res2.data.hasOwnProperty('id')) {
-                      var task_item = {
-                        'id': res2.data.id,
-                        'itemid': res2.data.id,
-                        'title': res2.data.title,
-                        'detail': res2.data.detail,
-                        'type': res2.data.type,
-                        'images': res2.data.images
-                      };
-                      //添加第一张图片
-                      task_item.images = JsonToObject.JsonToUrl(task_item.images, this.$parent.globalData.ip);
-                      if (task_item.images.length == 0) {
-                        task_item.images = this.$parent.globalData.ip + 'task/makemoney.jpeg';
+        //定义函数
+        function searchByType (search_type, field_data) {
+          wx.request({
+            url: that.$parent.globalData.ip + 'search/' + search_type,
+            method: 'POST',
+            data: field_data,
+            header: {
+              'content-type': 'application/json'
+            },
+            success: (res) => {
+              console.log(res.data);
+              if (res.data.hasOwnProperty('task_id')) {
+                var tasks_id = res.data.task_id;
+                for (var i = 0; i < tasks_id.length; i++) {
+                  wx.request({
+                    url: that.$parent.globalData.ip + 'search/task_id',
+                    method: 'POST',
+                    data: {
+                      'task_id': tasks_id[i]
+                    },
+                    success: (res2) => {
+                      if (res2.data.hasOwnProperty('id')) {
+                        var id = res2.data.id;
+                        var index = that.tasks.findIndex(function (element) {
+                          return id == element;
+                        });
+                        if (index >= 0) {
+                          console.log('reduced task!');
+                          return;
+                        }
+                        var task_item = {
+                          'id': res2.data.id,
+                          'itemid': res2.data.id,
+                          'title': res2.data.title,
+                          'detail': res2.data.detail,
+                          'type': res2.data.type
+                        };
+                        that.tasks.push(task_item);
+                        that.resultMessage = "搜索到" + that.tasks.length + "条结果";
+                        that.$apply();
+                        console.log(res2);
+                        console.log('get task success');
+                      } else {
+                        console.log('get task failed');
                       }
-                      else {
-                        task_item.images = task_item.images[0];
-                      }
-                      //............
-                      this.tasks.push(task_item);
-                      this.$apply();
-                      console.log(res2);
-                      console.log('get task success');
-                    } else {
+
+                    },
+                    fail: (res2) => {
                       console.log('get task failed');
                     }
-
-                  },
-                  fail: (res2) => {
-                    console.log('get task failed');
-                  }
-                });
+                  });
+                }
+                console.log('search success!');
+              } else {
+                console.log('search failed!');
               }
-              console.log('search success!');
-            } else {
-              console.log('search failed!');
-            }
-          },
-          fail: (res) => {
-            console.log(res.data)
+            },
+            fail: (res) => {
+              console.log(res.data)
 
-          },
-          complete: (res) => {
-            if (res.data.task_number == undefined) {
-              this.resultMessage = "搜索到0条结果";
-            } else {
-              this.resultMessage = "搜索到" + res.data.task_number + "条结果";
-            }
+            },
+            complete: (res) => {
 
-            this.$apply();
-          }
-        });
+            }
+          });
+        }
+
+        var fieldData = {};
+        fieldData = {
+          'key_word': this.keyword
+        };
+        searchByType('title_key_word', fieldData);
+        searchByType('detail_key_word', fieldData);
+        fieldData = {
+          'sponsor': this.keyword
+        };
+        searchByType('sponsor', fieldData);
+
       }
     }
+
+
   }
 </script>
