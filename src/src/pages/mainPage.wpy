@@ -82,11 +82,6 @@
   import wepy from 'wepy'
   import TaskList from '../components/tasklist'
   import MyTabbar from '../components/mytabbar'
-<<<<<<< Updated upstream
-  // import AreaList from '../utility/area'
-  // import TasksData from '../data/TempTaskData'
-=======
->>>>>>> Stashed changes
   import MyNavBar from '../components/mynavbar'
   import MyMainPageTitle from '../components/myMainPageTitle'
   import MyMainPageCategoryBtn from '../components/myMainPageCategoryBtn'

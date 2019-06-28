@@ -107,6 +107,7 @@
       console.log('mytask onshow');
       var that = this;
       var id = this.$parent.globalData.userInfo.id;
+      this.tasks = [];
       //我的发布
       if (this.type == 0) {
         wepy.request({
