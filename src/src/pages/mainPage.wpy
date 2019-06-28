@@ -6,21 +6,11 @@
     <van-search
       class="search"
       value=""
-      placeholder="搜索任务，用户等"
+      placeholder="根据标题，详情，发布者等搜索任务"
       shape="round"
       disabled
       @tap="beginsearch"
     >
-<!--       <view slot="label" style="width: 70px;" @tap="selectLoc">
-        <van-row>
-          <van-col span="6">
-            <van-icon name="location-o" size="15px"></van-icon>
-          </van-col>
-          <text style="font-size: small;">{{location.city}}</text>
-        </van-row>
-        
-        
-      </view> -->
     </van-search>
     <!-- 页面主体 -->
     <view class="mainBody">
@@ -157,7 +147,8 @@
               'content-type': 'application/json'
             },
             data: {
-              batch_size: this.dataIndex + this.batch_size
+              batch_size: this.dataIndex + this.batch_size,
+              type: 'hot'
             },
             success: (res) => {
               console.log(res.data); 
@@ -265,7 +256,8 @@
           'content-type': 'application/json'
         },
         data: {
-          batch_size: this.dataIndex + this.batch_size
+          batch_size: this.dataIndex + this.batch_size,
+          type: 'new'
         },
         success: (res) => {
           console.log(res.data);
@@ -308,7 +300,7 @@
             }
             console.log(this.dataIndex)
             clearTimeout(this.$parent.globalData.refreshtimer)
-          }, 1000)
+          }, 500)
         },
         fail: (res) => {
           console.log(res)
@@ -327,8 +319,11 @@
         }
       });
     }
-    onShow() {
+    onLoad() {
       this.refresh()
+    }
+    onShow() {
+      // this.refresh()
       this.$broadcast('changeActive', "0");
     }
   }

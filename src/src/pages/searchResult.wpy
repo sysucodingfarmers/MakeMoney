@@ -57,6 +57,7 @@
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
   import TaskList from '../components/tasklist'
+  import JsonToObject from '../data/JsonToObject'
 
   export default class SearchResult extends wepy.page {
     components = {
@@ -169,6 +170,7 @@
                       'task_id': tasks_id[i]
                     },
                     success: (res2) => {
+                      console.log(res2)
                       if (res2.data.hasOwnProperty('id')) {
                         var id = res2.data.id;
                         var index = that.tasks.findIndex(function (element) {
@@ -178,12 +180,20 @@
                           console.log('reduced task!');
                           return;
                         }
+                        var imageurl;
+                        if (res2.data.images.length == 0) {
+                          imageurl = that.$parent.globalData.ip + 'task/makemoney.jpeg'
+                        }
+                        else {
+                          imageurl = JsonToObject.JsonToUrl(res2.data.images, that.$parent.globalData.ip)[0]
+                        }
                         var task_item = {
                           'id': res2.data.id,
                           'itemid': res2.data.id,
                           'title': res2.data.title,
                           'detail': res2.data.detail,
-                          'type': res2.data.type
+                          'type': res2.data.type,
+                          'images': imageurl
                         };
                         that.tasks.push(task_item);
                         that.resultMessage = "搜索到" + that.tasks.length + "条结果";

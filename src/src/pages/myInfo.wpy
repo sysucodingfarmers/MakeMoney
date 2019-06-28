@@ -49,10 +49,7 @@
       this.$broadcast('changeActive', "2");
       var that = this;
       this.userinfo = this.$parent.globalData.userInfo;
-      console.log(this.userinfo);
-      // console.log(userInfo)
       this.islogin = this.$parent.globalData.loginData.state;
-      console.log("islogin: " + this.islogin)
       this.$apply()
     }
   }  
