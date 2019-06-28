@@ -87,6 +87,7 @@
   import MyMainPageCategoryBtn from '../components/myMainPageCategoryBtn'
   import Toast from '../components/van/toast/toast'
   import Dialog from '../components/van/dialog/dialog'
+  import JsonToObject from '../data/JsonToObject'
 
   export default class MainPage extends wepy.page {
     config = {
@@ -171,6 +172,16 @@
               for (; this.dataIndex < res.data.task_number; this.dataIndex++) {
                 this.tasks.push(res.data.task_info[this.dataIndex])
                 this.tasks[this.dataIndex].itemid = "task_item_id" + this.dataIndex
+
+                //添加第一张图片
+                this.tasks[this.dataIndex].images = JsonToObject.JsonToUrl(this.tasks[this.dataIndex].images, this.$parent.globalData.ip);
+                if (this.tasks[this.dataIndex].images.length == 0) {
+                  this.tasks[this.dataIndex].images = this.$parent.globalData.ip + 'task/makemoney.jpeg';
+                }
+                else {
+                  this.tasks[this.dataIndex].images = this.tasks[this.dataIndex].images[0];
+                }
+                //.............
               }
               _this.loadingOpacity = 0
               _this.$apply()
@@ -275,6 +286,15 @@
             }
             for (; this.dataIndex < res.data.task_number; this.dataIndex++) {
               this.tasks.push(res.data.task_info[this.dataIndex])
+              //添加第一张图片
+              this.tasks[this.dataIndex].images = JsonToObject.JsonToUrl(this.tasks[this.dataIndex].images, this.$parent.globalData.ip);
+              if (this.tasks[this.dataIndex].images.length == 0) {
+                this.tasks[this.dataIndex].images = this.$parent.globalData.ip + 'task/makemoney.jpeg';
+              }
+              else {
+                this.tasks[this.dataIndex].images = this.tasks[this.dataIndex].images[0];
+              }
+              //.............
               this.tasks[this.dataIndex].itemid = "task_item_id" + this.dataIndex
             }
             _this.$apply()

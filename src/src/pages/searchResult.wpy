@@ -63,6 +63,7 @@
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
   import TaskList from '../components/tasklist'
+  import JsonToObject from '../data/JsonToObject'
 
   export default class SearchResult extends wepy.page {
     components = {
@@ -216,8 +217,18 @@
                         'itemid': res2.data.id,
                         'title': res2.data.title,
                         'detail': res2.data.detail,
-                        'type': res2.data.type
+                        'type': res2.data.type,
+                        'images': res2.data.images
                       };
+                      //添加第一张图片
+                      task_item.images = JsonToObject.JsonToUrl(task_item.images, this.$parent.globalData.ip);
+                      if (task_item.images.length == 0) {
+                        task_item.images = this.$parent.globalData.ip + 'task/makemoney.jpeg';
+                      }
+                      else {
+                        task_item.images = task_item.images[0];
+                      }
+                      //............
                       this.tasks.push(task_item);
                       this.$apply();
                       console.log(res2);
