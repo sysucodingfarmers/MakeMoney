@@ -1,11 +1,14 @@
 # -- coding:UTF-8 --
-from flask import render_template, redirect, url_for, request, json, make_response
+from flask import render_template, redirect, url_for, request, json, make_response, Response
 from flask_login import current_user,login_user,logout_user
 from app import app,db
 from app.models import Template,Answer,Session
 from app.models import User,Task,Receiver,receivers
 from app.utils.trans import UserToJson, TaskToJson
 from app.utils.email_code import send_email_code
+import os
+import uuid
+import cv2
 
 json_true = json.dumps('succeed')
 json_false = json.dumps('failed')
@@ -38,7 +41,8 @@ def register():
         major = json_data['major'] if 'major' in json_data else None, 
         phone = json_data['phone'] if 'phone' in json_data else None, 
         wx_number = json_data['wx_number'] if 'wx_number' in json_data else None, 
-        hobbit = json_data['hobbit'] if 'hobbit' in json_data else None
+        hobbit = json_data['hobbit'] if 'hobbit' in json_data else None,
+        exMoney = json_data['exMoney'] if 'exMoney' in json_data else 1000
         )
     user.set_password(json_data['password'])
     
@@ -161,6 +165,7 @@ def postProfile():
             if user==None:
                 return json.dumps({'errmsg': '用户id错误，无该用户'})
             filename = str(uuid.uuid1()) + ".jpg"
+            #存入user的profile中
             user.profile = filename
             
             #取出数据
@@ -172,11 +177,28 @@ def postProfile():
             if os.path.exists(path)==False:
                 os.makedirs(path)
             f.save(path + filename)
-            #返回
-            return send_from_directory(app.config['PROFILE_FOLDER'], filename)
+            
+            return json.dump(filename)
         return json.dumps({'errmsg': '没有传递user_id'})
     return json.dumps({'errmsg': '没有使用POST请求'})
 
+
+'''返回头像
+接受profile的图片的整个名称（包括.jpg或者.jpeg）
+如果头像存在则返回头像，不存在则返回默认的makemoney图片
+'''
+@app.route("/user/<imagename>")
+def userImg(imagename):
+    # imagename = 'Img/{}.jpeg'.format(imageid)
+    imagename = os.path.join(app.config['PROFILE_FOLDER'],imagename)
+    print(imagename)
+    if not os.path.exists(imagename):
+        imagename = os.path.join(app.config['PROFILE_FOLDER'], 'profile.jpeg')
+    with open(imagename, 'rb') as f:
+        contents = f.read()
+        resp = Response(contents, mimetype="image/jpeg")
+        return resp
+    return render_template('index.html', title='Home')
 
 '''查看钱包状态
 传入user_id
@@ -256,19 +278,15 @@ def sendemailcode():
 	return json.dump({'errmsg': '没有使用POST请求'})
 
 
-
 # 测试
 @app.route('/test', methods=['GET', 'POST'])
 def test():
-	#查询
-	user = User.query.all()
-	task = Task.query.all()
-	receiver = Receiver.query.all()
-	template = Template.query.all()
-	answer = Answer.query.all()
-	print('{}\n\n{}\n\n{}\n\n{}\n\n{}\n'.format(len(user),len(task),len(receiver),len(template),len(answer)))
-	print(1)
-	return json_true
-
-
+    #查询
+    user = User.query.all()
+    task = Task.query.all()
+    receiver = Receiver.query.all()
+    template = Template.query.all()
+    answer = Answer.query.all()
+    print('{}\n\n{}\n\n{}\n\n{}\n\n{}\n'.format(len(user),len(task),len(receiver),len(template),len(answer)))
+    return json_true
 
