@@ -27,7 +27,8 @@
     }
     data = {
       userinfo: {},
-      islogin: false
+      islogin: false,
+      test: ''
     }
     methods = {
       tap() {
@@ -47,6 +48,7 @@
     }
     onShow() {
       this.$broadcast('changeActive', "2");
+      var that = this;
       this.userinfo = this.$parent.globalData.userInfo;
       console.log(this.userinfo);
       // console.log(userInfo)
