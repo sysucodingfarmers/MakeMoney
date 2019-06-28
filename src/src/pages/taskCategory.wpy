@@ -15,10 +15,11 @@
         </van-tab>
       </repeat>
     </van-tabs>
-    <scroll-view scroll-y="true" style="height: 80%; margin-top: 5%;">
-      <repeat for="{{tasks}}" item="item">
-        <tasklist :tasks="item"></tasklist>
-      </repeat>
+    <scroll-view scroll-y="true" style="height: 82%; margin-top: 10rpx;">
+      <tasklist :tasks.sync="tasks"></tasklist>
+      <view style="width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10rpx;">
+        <van-loading type="spinner" size="20px"></van-loading>
+      </view>
     </scroll-view>
   </view>
 </template>
@@ -27,6 +28,7 @@
   import TaskCategoryList from '../data/TaskCategory'
   import TaskList from '../components/tasklist'
   import MyNavBar from '../components/mynavbar'
+  import JsonToObject from '../data/JsonToObject'
 
   export default class TaskCategory extends wepy.page {
     config = {
@@ -41,11 +43,13 @@
       type: 0,
       category: {},
       active: 0,
-      tasks: []
+      tasks: [],
+      batch_size: 10,
+      dataIndex: 0
     }
     methods = {
       onChange(e) {
-        console.log("change to " + e.detail)
+        console.log(e.detail)
         console.log("next is the function to get data back from server")
       }
     }
@@ -57,6 +61,32 @@
       else {
         this.category.list = TaskCategoryList.offline
       }
+      wx.request({
+        url: this.$parent.globalData.ip + 'recommend',
+        method: 'POST',
+        header: {
+          'content-type': 'application/json'
+        },
+        data: {
+          batch_size: this.batch_size
+        },
+        success: (res) => {
+          console.log(res.data)
+          for (; this.dataIndex < res.data.task_number; this.dataIndex++) {
+            this.tasks.push(res.data.task_info[this.dataIndex])
+            //添加第一张图片
+            this.tasks[this.dataIndex].images = JsonToObject.JsonToUrl(this.tasks[this.dataIndex].images, this.$parent.globalData.ip);
+            if (this.tasks[this.dataIndex].images.length == 0) {
+              this.tasks[this.dataIndex].images = this.$parent.globalData.ip + 'task/makemoney.jpeg';
+            }
+            else {
+              this.tasks[this.dataIndex].images = this.tasks[this.dataIndex].images[0];
+            }
+            //.............
+            this.tasks[this.dataIndex].itemid = "task_item_id" + this.dataIndex
+          }
+        }
+      })
     }
     onShow() {
       if (this.type == 0) {

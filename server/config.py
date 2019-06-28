@@ -8,4 +8,4 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     TEMPLATES_AUTO_RELOAD = True
     TASK_FOLDER = 'Img/TaskImg/'
-    PROFILE_FOLDER = 'Img/ProfileImg'
+    PROFILE_FOLDER = 'Img/ProfileImg/'

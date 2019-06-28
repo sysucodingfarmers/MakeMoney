@@ -57,7 +57,7 @@
             bindtouchmove="touch_move"
             wx:else
             >
-            <view hidden="{{hideDragUp}}" style="width: 100%; height: {{dragUpHeight}}px; background-color: #87CEFA; display: flex; justify-content: center; align-items: center">
+            <view hidden="{{hideDragUp}}" style="width: 100%; height: {{dragUpHeight}}px; display: flex; justify-content: center; align-items: center">
               <text style="font-size: 13px;">松开即可刷新</text>
             </view>
             <tasklist :tasks.sync="tasks"></tasklist>
@@ -240,7 +240,7 @@
         }
       },
       touch_move(e) {
-        this.dragUpHeight = 0.8*(e.touches[0].clientY - this.touch_down)
+        this.dragUpHeight = 1.0*(e.touches[0].clientY - this.touch_down)
       },
       beginsearch() {
         wepy.navigateTo({
