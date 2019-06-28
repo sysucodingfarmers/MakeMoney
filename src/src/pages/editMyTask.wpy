@@ -17,7 +17,7 @@
   import EditTask from '../components/editTask'
   import TemplateToQuery from '../data/TemplateToQuery'
   import caculateDate from '../data/CaculateDate'
-  // import TasksData from '../data/TempTaskData'
+  import JsonToObject from '../data/JsonToObject'
 
   export default class EditMyTask extends wepy.page {
     components = {
@@ -93,6 +93,10 @@
               }
               that.taskInfo = task;
               console.log(task);
+
+              //图片
+              that.images = JsonToObject.JsonToUrl(res.data.images, that.$parent.globalData.ip);
+              that.$apply();
             },
             fail(res) {
               console.log('fail');
