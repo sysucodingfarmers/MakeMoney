@@ -8,7 +8,6 @@ from app.utils.trans import UserToJson, TaskToJson
 from app.utils.email_code import send_email_code
 import os
 import uuid
-import cv2
 
 json_true = json.dumps('succeed')
 json_false = json.dumps('failed')
@@ -181,29 +180,26 @@ def modify_password():
 @app.route('/postProfile', methods=['POST'])
 def postProfile():
     if request.method == 'POST':
-        json_data = json.loads(request.data)
-        if 'user_id' in json_data:
-            #查找用户
-            user = User.query.filter_by(id=json_data['user_id']).first()
-            if user==None:
-                return json.dumps({'errmsg': '用户id错误，无该用户'})
-            filename = str(uuid.uuid1()) + ".jpg"
-            #存入user的profile中
-            user.profile = filename
-            
-            #取出数据
-            f = request.files['image']
-            user_input = request.form.get("task_id")
-            #获得参数path和name
-            path = os.path.join(app.config['PROFILE_FOLDER'])
-            #存入服务器
-            if os.path.exists(path)==False:
-                os.makedirs(path)
-            f.save(path + filename)
+        #取出数据
+        f = request.files['image']
+        user_id = request.form.get("task_id")
+        #查找用户
+        user = User.query.filter_by(id=json_data['user_id']).first()
+        if user==None:
+            return json.dumps({'errmsg': '用户id错误，无该用户'})
+        filename = str(uuid.uuid1()) + ".jpg"
+        #存入user的profile中
+        user.profile = filename
+        
+        #获得参数path和name
+        path = os.path.join(app.config['PROFILE_FOLDER'])
+        #存入服务器
+        if os.path.exists(path)==False:
+            os.makedirs(path)
+        f.save(path + filename)
 
-            db.session.commit()
-            return json.dump(filename)
-        return json.dumps({'errmsg': '没有传递user_id'})
+        db.session.commit()
+        return json.dump(filename)
     return json.dumps({'errmsg': '没有使用POST请求'})
 
 

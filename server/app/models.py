@@ -102,7 +102,6 @@ class Task(db.Model):
 		if 'paid_number' not in kwargs:
 			kwargs['paid_number'] = self.__table__.c.paid_number.default.arg
 		self.template = Template()
-		self.images = []
 		super(Task, self).__init__(**kwargs)
 	#任务id
 	id = db.Column(db.Integer, primary_key=True)
@@ -129,6 +128,8 @@ class Task(db.Model):
 	extra_content = db.Column(db.Text)
 	#任务状态，整数
 	state = db.Column(db.Integer)
+	#任务热度
+	hot = db.Column(db.Integer)
 
 	#任务发起者
 	sponsor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

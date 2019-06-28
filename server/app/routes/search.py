@@ -73,16 +73,32 @@ def my_receive_task():
     return json.dumps({'errmsg': '没有使用POST请求'})
 
 
-# 任务广场的推荐
+'''任务广场的推荐
+传进来的data：
+batch_size(推荐的数目),type(推荐的类型，new or hot)
+'''
 @app.route('/recommend', methods=['GET', 'POST'])
 def recommend():
+    #确定需要推荐的任务数目
     batch_size = 5
     json_data = json.loads(request.data)
     if 'batch_size' in json_data:
         batch_size = json_data['batch_size']
-    task_list = Task.query.order_by(-Task.received_number).limit(batch_size).all()
+    
+    #根据需要推荐的类型进行推荐：最新，最热
+    type = 'hot'
+    if 'type' in json_data:
+        type = json_data['type']
+
+    #获取task_list
+    task_list = []
+    if type == 'new':
+        task_list = Task.query.order_by(-Task.id).limit(batch_size).all()
+    else:
+        task_list = Task.query.order_by(-Task.hot).limit(batch_size).all()
     data = {"task_number":len(task_list), "task_info": []}
     for task in task_list:
+        print(task.id)
         current = {'id': task.id, 'title': task.title, 'detail': task.detail, 'type': task.type, 'state':task.state, 'images':task.images}
         data['task_info'].append(current)
     return json.dumps(data, sort_keys=False)
@@ -122,8 +138,8 @@ def search_by_sponsor():
 
     return json.dumps({'errmsg': '没有使用POST请求'})
 
-#按标题内容进行模糊搜索
-'''
+
+'''按标题内容进行模糊搜索
 接受一个包含'key_word'属性的json 'key_word':key_word
 根据key_word对任务标题进行模糊匹配
 返回符合条件所有任务的id
@@ -199,12 +215,13 @@ def getTask_by_id():
             task = Task.query.filter_by(id=json_data['task_id']).first()
             if task==None:
                 return json.dumps({'errmsg': '不存在该任务'})
+            task.hot = task.hot + 1
             data = {'id':task.id, 'title':task.title, 'type':task.type,
                     'start_time':task.start_time, 'end_time':task.end_time,
                     'pay':task.pay, 'detail':task.detail, 'receiver_limit':task.receiver_limit,
                     'received_number':task.received_number, 'finished_number':task.finished_number,
                     'extra_content':task.extra_content, 'sponsor_id':task.sponsor.id,
-                    'sponsor':task.sponsor.username, 'template_id':task.template.id, 'state':task.state}
+                    'sponsor':task.sponsor.username, 'template_id':task.template.id, 'state':task.state, 'images':task.images}
             receivers_id = []
             for rec in task.receivers:
                 receivers_id.append(rec.uid)
@@ -304,10 +321,10 @@ def getReceiver_by_id():
         return json.dumps({'errmsg': '没有传递task_id'})
     return json.dumps({'errmsg': '没有使用POST请求'})
 
+
 '''
 根据任务task_id查看任务接受者的状态
 '''
-
 @app.route('/search/myreceiver', methods=['POST'])
 def getMyReceiver_by_taskid():
     if request.method == 'POST':
@@ -332,3 +349,25 @@ def getMyReceiver_by_taskid():
         return json.dumps({'errmsg': '没有传递task_id'})
     return json.dumps({'errmsg': '没有使用POST请求'})
 
+
+'''按任务类型进行搜索
+接受一个包含'type'属性的json 'type':type
+根据type对任务类型进行查找
+返回符合条件所有任务的brief info
+如果没有则返回 json_false
+
+返回json的
+{'task_number': 2
+'task_id':[1,2]
+}
+'''
+@app.route('/task_type/<task_type>', methods=['GET', 'POST'])
+def search_by_type(task_type):
+    key = '%' + task_type + '%'
+    task_list = db.session.query(Task).filter(Task.type.like(key)).all()
+
+    #正确查询之后返回json
+    data = {'task_number':len(task_list), 'task_id':[]}
+    for task in task_list:
+        data['task_id'].append(task.id)
+    return json.dumps(data, sort_keys=False)

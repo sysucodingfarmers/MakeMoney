@@ -8,7 +8,6 @@ from app.utils.trans import UserToJson, TaskToJson
 from datetime import datetime, timedelta
 import os
 import uuid
-import cv2
 
 json_true = json.dumps('succeed')
 json_false = json.dumps('failed')
@@ -231,29 +230,33 @@ def task_cancel():
 @app.route('/task/postImage', methods=['POST'])
 def postImage():
     if request.method == 'POST':
-        json_data = json.loads(request.data)
-        if 'task_id' in json_data:
-            #查找任务
-            task = Task.query.filter_by(id=json_data['task_id']).first()
-            if task==None:
-                return json.dumps({'errmsg': '任务id错误，无该任务'})
-            filename = str(uuid.uuid1()) + ".jpg"
+        #取出数据
+        f = request.files['image']
+        task_id = request.form.get("task_id")
+        #查找任务
+        task = Task.query.filter_by(id=task_id).first()
+        if task==None:
+            return json.dumps({'errmsg': '任务id错误，无该任务'})
+        filename = str(uuid.uuid1()) + ".jpg"
+        print(task.images)
+        if task.images == None:
+            print(1)
+            task.images = [filename]
+        else:
+            print(2)
             task.images.append(filename)
-            
-            #取出数据
-            f = request.files['image']
-            user_input = request.form.get("task_id")
-            #获得参数path和name
-            path = os.path.join(app.config['TASK_FOLDER'])
-            #存入服务器
-            if os.path.exists(path)==False:
-                os.makedirs(path)
-            f.save(path + filename)
-            
-            db.session.commit()
-            #返回
-            return json.dumps(filename)
-        return json.dumps({'errmsg': '没有传递task_id'})
+        print(task.images)
+        #获得参数path和name
+        path = os.path.join(app.config['TASK_FOLDER'])
+        #存入服务器
+        if os.path.exists(path)==False:
+            os.makedirs(path)
+        f.save(path + filename)
+        
+        db.session.commit()
+        print(task.images)
+        #返回
+        return json.dumps(filename)
     return json.dumps({'errmsg': '没有使用POST请求'})
 
 
@@ -265,7 +268,6 @@ def postImage():
 def taskImg(imagename):
     # imagename = 'Img/{}.jpeg'.format(imageid)
     imagename = os.path.join(app.config['TASK_FOLDER'],imagename)
-    print(imagename)
     if not os.path.exists(imagename):
         imagename = os.path.join(app.config['TASK_FOLDER'], 'makemoney.jpeg')
     with open(imagename, 'rb') as f:
