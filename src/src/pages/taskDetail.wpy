@@ -50,7 +50,7 @@
     <mynavbar title="任务详情" lefttext="返回" leftarrow="true"></mynavbar>
     <view class="page">
       <scroll-view scroll-y="true" style="height: 87%;">
-        <view wx:if="{{init}}">
+        <view wx:if="{{init}}" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
           <van-loading type="spinner" size="40px"></van-loading>
         </view>
         <view wx:else>
@@ -130,7 +130,7 @@
       previewImage(item) {
           wx.previewImage({
               current: item, // 当前显示图片的http链接
-              urls: this.images // 需要预览的图片http链接列表
+              urls: this.taskInfo.images // 需要预览的图片http链接列表
           });
       },
       //查看自己问卷信息

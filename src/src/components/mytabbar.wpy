@@ -2,11 +2,13 @@
 
 </style>
 <template>
-  <van-tabbar custom-class="tabbar" style="z-index: 1" active="{{active}}" bind:change="onChange">
-    <repeat for="{{tabbars}}" item="item">
-      <van-tabbar-item icon="{{item.iconname}}">{{item.name}}</van-tabbar-item>
-    </repeat>
-  </van-tabbar>
+  <view class="tabbar">
+    <van-tabbar custom-class="tabbar" style="z-index: 1" active="{{active}}" bind:change="onChange">
+      <repeat for="{{tabbars}}" item="item">
+        <van-tabbar-item icon="{{item.iconname}}">{{item.name}}</van-tabbar-item>
+      </repeat>
+    </van-tabbar>
+  </view>
   <van-popup
     show="{{showTaskCategorySelector}}"
     position="bottom"
