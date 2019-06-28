@@ -152,6 +152,29 @@ def modify_user_info():
         return json.dumps({'errmsg': '没有指定用户'})
     return json.dumps({'errmsg': '没有使用POST请求'})
 
+'''
+修改密码，需要登录
+'''
+@app.route('/password', methods=['POST'])
+def modify_password():
+    if not current_user.is_active:
+        headers = request.headers
+        se = Session.query.filter_by(sid=int(headers['session_id']), uid=int(headers['user_id'])).first()
+        if se==None:
+            print('session is not connected')
+            return json.dumps({'errmsg': '没有建立会话或者会话信息出错'})
+        user = User.query.filter_by(id=se.uid).first()
+        login_user(user)
+
+    if request.method == 'POST':
+        json_data = json.loads(request.data)
+        if 'password' not in json_data:
+            return json.dump({'errmsg': '没有传递password'})
+        current_user.set_password(json_data['password'])
+        db.session.commit()
+        return json.dumps('修改密码成功')
+    return json.dumps({'errmsg': '没有使用POST请求'}) 
+
 '''上传头像
 接受用户的id
 '''
@@ -177,7 +200,8 @@ def postProfile():
             if os.path.exists(path)==False:
                 os.makedirs(path)
             f.save(path + filename)
-            
+
+            db.session.commit()
             return json.dump(filename)
         return json.dumps({'errmsg': '没有传递user_id'})
     return json.dumps({'errmsg': '没有使用POST请求'})
@@ -200,6 +224,7 @@ def userImg(imagename):
         return resp
     return render_template('index.html', title='Home')
 
+
 '''查看钱包状态
 传入user_id
 返回钱包的余额，收入和支出
@@ -216,6 +241,7 @@ def wallet():
             return json.dumps({'exMoney': user.exMoney, 'income': user.income, 'expend': user.expend})
         return json.dumps({'errmsg': '没有传递user_id'})
     return json.dumps({'errmsg': '没有使用POST请求'})
+
 
 '''充值
 传入user_id和value
@@ -237,6 +263,7 @@ def recharge():
             return json.dumps({'exMoney': user.exMoney})
         return json.dumps({'errmsg': '没有传递user_id或没有传递充值金额value'})
     return json.dumps({'errmsg': '没有使用POST请求'})
+
 
 '''提现
 传入user_id和value
@@ -260,6 +287,7 @@ def withdraw():
             return json.dumps({'exMoney': user.exMoney})
         return json.dumps({'errmsg': '没有传递user_id或没有传递充值金额value'})
     return json.dumps({'errmsg': '没有使用POST请求'})
+
 
 #验证邮箱
 @app.route('/sendemailcode', methods=['POST'])

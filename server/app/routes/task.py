@@ -249,8 +249,10 @@ def postImage():
             if os.path.exists(path)==False:
                 os.makedirs(path)
             f.save(path + filename)
+            
+            db.session.commit()
             #返回
-            return send_from_directory(app.config['TASK_FOLDER'], filename)
+            return json.dumps(filename)
         return json.dumps({'errmsg': '没有传递task_id'})
     return json.dumps({'errmsg': '没有使用POST请求'})
 
