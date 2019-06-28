@@ -63,7 +63,10 @@
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
   import TaskList from '../components/tasklist'
+<<<<<<< Updated upstream
   // import TasksData from '../data/TempTaskData'
+=======
+>>>>>>> Stashed changes
 
   export default class SearchResult extends wepy.page {
     components = {

@@ -34,7 +34,7 @@
       },
       logout() {
         wx.request({
-          url: 'http://makemoney.ink:5050/logout',
+          url: this.$parent.globalData.ip + 'logout',
           method: 'POST',
           header: {
             'content-type': 'application/json',

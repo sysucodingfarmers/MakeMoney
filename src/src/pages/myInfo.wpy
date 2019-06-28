@@ -18,7 +18,6 @@
   import wepy from 'wepy'
   import MyTabbar from '../components/mytabbar'
   import MyNavBar from '../components/mynavbar'
-  import userInfo from '../data/userInfo'
 
   export default class MyInfo extends wepy.page {
     components = {

@@ -82,8 +82,11 @@
   import wepy from 'wepy'
   import TaskList from '../components/tasklist'
   import MyTabbar from '../components/mytabbar'
+<<<<<<< Updated upstream
   // import AreaList from '../utility/area'
   // import TasksData from '../data/TempTaskData'
+=======
+>>>>>>> Stashed changes
   import MyNavBar from '../components/mynavbar'
   import MyMainPageTitle from '../components/myMainPageTitle'
   import MyMainPageCategoryBtn from '../components/myMainPageCategoryBtn'
@@ -140,20 +143,6 @@
 
     }
     methods = {
-      // 选择地址
-      // selectLoc() {
-      //   this.showCitySelector = true;
-      // },
-      // locConfirm(e) {
-      //   var value = e.detail.values;
-      //   this.location.province = value[0].name;
-      //   this.location.city = value[1].name;
-      //   this.location.county = value[2].name;
-      //   this.showCitySelector = false;
-      // },
-      // locCancel() {
-      //   this.showCitySelector = false;
-      // },
       // 任务数据相关
       getNewData() {
         /* 
@@ -195,10 +184,6 @@
                 _this.inner_height = rect.height;
               }).exec()
               console.log(this.dataIndex)
-              // 为了展示
-              // setTimeout((t) => {
-                
-              // }, 3000)
             },
             fail: (res) => {
               console.log(res)
@@ -266,6 +251,7 @@
       this.batch_size = 10
       this.dataIndex = 0
       this.nomore = false
+      this.init = true
       this.tasks = []
       wx.request({
         url: this.$parent.globalData.ip + 'recommend',
@@ -327,10 +313,8 @@
         }
       });
     }
-    onLoad() {
-      this.refresh()
-    }
     onShow() {
+      this.refresh()
       this.$broadcast('changeActive', "0");
     }
   }
@@ -379,6 +363,6 @@
     color: transparent;
   }
   .tasklist-view {
-    height: 87%;
+    height: 90%;
   }
 </style>

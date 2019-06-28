@@ -111,7 +111,7 @@
           _data.major = this.value;
         }
         wx.request({
-          url: 'http://makemoney.ink:5050/modify/user_info',
+          url: this.$parent.globalData.ip + 'modify/user_info',
           method: 'POST',
           data: _data,
           header: {
@@ -173,7 +173,7 @@
             console.log('邮箱地址正确')
             console.log("send email sms: " + this.send_sms)
             wx.request({
-              url: 'http://makemoney.ink:5050/emailcode',
+              url: this.$parent.globalData.ip + 'sendemailcode',
               method: 'POST',
               data: {
                 code: this.send_sms,
@@ -234,7 +234,7 @@
             _data.phone = this.value
           console.log(_data)
           wx.request({
-            url: 'http://makemoney.ink:5050/modify/user_info',
+            url: this.$parent.globalData.ip + 'modify/user_info',
             method: 'POST',
             data: _data,
             header: {
