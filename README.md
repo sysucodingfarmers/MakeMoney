@@ -14,7 +14,7 @@
 * 7、Design（设计说明书）
     * 7.1 [UI design（界面设计）](doc/Documents/UIdesign.md)
     * 7.2 Database design（数据库设计）
-    * 7.3 Interface API design（接口 API 设计）
+    * 7.3 [Interface API design（接口 API 设计）](server/API调用文档.md)
     * 7.4 [Architecture design（架构设计）](doc/Documents/Architecturedesign.md)
     * 7.5 Usecase design（用例设计）
 * 8、生产规范与指南
@@ -29,10 +29,30 @@
     * 9.2 XX短视频
 * X1 meeting-records
     * inception meeting (yy/mm/dd)
-* X2 KANBAN
+    * inception meeting (yy/mm/dd)
+    * inception meeting (yy/mm/dd)
+    * inception meeting (yy/mm/dd)
+    * inception meeting (yy/mm/dd)
+* X2 [KANBAN](https://github.com/sysucodingfarmers/MakeMoney/projects)
 * X3 auditing-records
 * X4 Tech/Work Report
-    * 学号-title
+    * 16340048-title
+    * 16340000-title
+    * 16340000-title
+    * 16340000-title
+    * 16340000-title
+    * 16340000-title
+    * 16340000-title
+    * 16340000-title
+    * 16340000-title
 * X5 Final Report
-    * 学号-title
+    * 16340048-title
+    * 16340000-title
+    * 16340000-title
+    * 16340000-title
+    * 16340000-title
+    * 16340000-title
+    * 16340000-title
+    * 16340000-title
+    * 16340000-title
     * 小组分工与贡献率说明
