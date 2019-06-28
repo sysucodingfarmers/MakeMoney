@@ -1,5 +1,5 @@
 # -- coding:UTF-8 --
-from flask import render_template, redirect, url_for, request, json, send_from_directory
+from flask import render_template, redirect, url_for, request, json, send_from_directory, Response
 from flask_login import current_user,login_user,logout_user
 from app import app,db
 from app.models import Template,Answer, Session
@@ -249,11 +249,30 @@ def postImage():
             if os.path.exists(path)==False:
                 os.makedirs(path)
             f.save(path + filename)
+            
+            db.session.commit()
             #返回
-            return send_from_directory(app.config['TASK_FOLDER'], filename)
+            return json.dumps(filename)
         return json.dumps({'errmsg': '没有传递task_id'})
     return json.dumps({'errmsg': '没有使用POST请求'})
 
+
+'''返回图片
+接受image的图片的整个名称（包括.jpg或者.jpeg）
+如果图片存在则返回图片，不存在则返回默认的makemoney图片
+'''
+@app.route("/task/<imagename>")
+def taskImg(imagename):
+    # imagename = 'Img/{}.jpeg'.format(imageid)
+    imagename = os.path.join(app.config['TASK_FOLDER'],imagename)
+    print(imagename)
+    if not os.path.exists(imagename):
+        imagename = os.path.join(app.config['TASK_FOLDER'], 'makemoney.jpeg')
+    with open(imagename, 'rb') as f:
+        contents = f.read()
+        resp = Response(contents, mimetype="image/jpeg")
+        return resp
+    return render_template('index.html', title='Home')
 
 '''任务完成
 接受者发出，接受user_id和task_id

@@ -28,17 +28,14 @@ def my_sponsor_task():
             return json.dumps({'errmsg': '用户不存在'})
         
         #返回
-        data = {'task_number': len(user.sponsor_tasks), 'task_id': [], 'task_title': [], 'task_detail': [], 'task_type': [], 'task_state': []}
+        data = {'task_number': len(user.sponsor_tasks), 'task_id': [], 'task_title': [], 'task_detail': [], 'task_type': [], 'task_state': [], 'images':[]}
         for task in user.sponsor_tasks:
-            # print(task.id)
-            # now = json.dumps(task, default=TaskToJson)
-            # data[0][str(i)] = now
-            # i = i+1
             data['task_id'].append(task.id)
             data['task_title'].append(task.title)
             data['task_detail'].append(task.detail)
             data['task_type'].append(task.type)
             data['task_state'].append(task.state)
+            data['images'].append(task.images)
 
         return json.dumps(data , sort_keys=False)
     
@@ -60,7 +57,7 @@ def my_receive_task():
             print('query error')
             return json.dumps({'errmsg': '用户不存在'})
         #返回
-        data = {'task_number': len(receivers), 'task_id': [], 'task_title': [], 'task_detail': [], 'task_type': [], 'finished': []}
+        data = {'task_number': len(receivers), 'task_id': [], 'task_title': [], 'task_detail': [], 'task_type': [], 'finished': [], 'images':[]}
         for rec in receivers:
             task = Task.query.filter_by(id=rec.tid).first()
             data['task_id'].append(task.id)
@@ -68,6 +65,7 @@ def my_receive_task():
             data['task_detail'].append(task.detail)
             data['task_type'].append(task.type)
             data['finished'].append(rec.finished)
+            data['images'].append(task.images)
         return json.dumps(data, sort_keys=False)
 
         # return json.dumps({'errmsg': '没有传递id'})
@@ -85,7 +83,7 @@ def recommend():
     task_list = Task.query.order_by(-Task.received_number).limit(batch_size).all()
     data = {"task_number":len(task_list), "task_info": []}
     for task in task_list:
-        current = {'id': task.id, 'title': task.title, 'detail': task.detail, 'type': task.type}
+        current = {'id': task.id, 'title': task.title, 'detail': task.detail, 'type': task.type, 'state':task.state, 'images':task.images}
         data['task_info'].append(current)
     return json.dumps(data, sort_keys=False)
 

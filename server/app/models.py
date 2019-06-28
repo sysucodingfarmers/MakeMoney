@@ -171,5 +171,4 @@ class Session(db.Model):
 #login的配置，使login生效
 @login.user_loader
 def load_user(id):
-	print('jasdkjfak')
 	return User.query.get(int(id))
