@@ -21,7 +21,7 @@
     * 8.1 XX 代码规范
     * 8.2 REST API 设计规范
     * 8.3 架构设计、详细设计（BCE方法）到应用程序框架映射指南
-    * 8.4 部署说明
+    * 8.4 [部署说明](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2%E8%AF%B4%E6%98%8E.md)
 * 9、成品展示
     * 9.1 XX短视频
     * 9.2 XX短视频
