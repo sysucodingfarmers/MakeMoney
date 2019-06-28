@@ -50,42 +50,47 @@
     <mynavbar title="任务详情" lefttext="返回" leftarrow="true"></mynavbar>
     <view class="page">
       <scroll-view scroll-y="true" style="height: 87%;">
-        <van-cell-group title="基本内容">
-          <van-cell-for-taskDetail title="任务名称" value="{{taskInfo.title}}" ></van-cell-for-taskDetail>
-          <van-cell-for-taskDetail title="任务详情" value="{{taskInfo.detail}}" ></van-cell-for-taskDetail>
-          <van-cell-for-taskDetail title="发起者" value="{{taskInfo.sponsor}}" is-link bind:click="ShowSponsorMessage"></van-cell-for-taskDetail>
-          <van-cell-for-taskDetail title="任务报酬" value="{{taskInfo.pay}}元" ></van-cell-for-taskDetail>
-          <van-cell-for-taskDetail title="任务限制" value="{{taskInfo.receiver_limit}}人" ></van-cell-for-taskDetail>
-          <van-cell-for-taskDetail title="开始时间" value="{{taskInfo.start_time}}" ></van-cell-for-taskDetail>
-          <van-cell-for-taskDetail title="结束时间" value="{{taskInfo.end_time}}" ></van-cell-for-taskDetail>
-          <van-cell-for-taskDetail title="任务类型" value="{{taskInfo.type}}" ></van-cell-for-taskDetail>
-        </van-cell-group>
-        <van-cell-group title="额外内容">
-          <van-cell-for-taskDetail title="任务图片"></van-cell-for-taskDetail>
-          <van-cell wx:if="{{taskInfo.images.length>0}}">
-            <repeat for="{{taskInfo.images}}" key="index" index="index" item="item">
-              <view class="img-block">
-                <image 
-                  src="{{item}}" 
-                  mode="aspectFill" 
-                  class="img-block-img"
-                  bindtap="previewImage({{item}})"
-                ></image>
-              </view>
+        <view wx:if="{{init}}">
+          <van-loading type="spinner" size="40px"></van-loading>
+        </view>
+        <view wx:else>
+          <van-cell-group title="基本内容">
+            <van-cell-for-taskDetail title="任务名称" value="{{taskInfo.title}}" ></van-cell-for-taskDetail>
+            <van-cell-for-taskDetail title="任务详情" value="{{taskInfo.detail}}" ></van-cell-for-taskDetail>
+            <van-cell-for-taskDetail title="发起者" value="{{taskInfo.sponsor}}" is-link bind:click="ShowSponsorMessage"></van-cell-for-taskDetail>
+            <van-cell-for-taskDetail title="任务报酬" value="{{taskInfo.pay}}元" ></van-cell-for-taskDetail>
+            <van-cell-for-taskDetail title="任务限制" value="{{taskInfo.receiver_limit}}人" ></van-cell-for-taskDetail>
+            <van-cell-for-taskDetail title="开始时间" value="{{taskInfo.start_time}}" ></van-cell-for-taskDetail>
+            <van-cell-for-taskDetail title="结束时间" value="{{taskInfo.end_time}}" ></van-cell-for-taskDetail>
+            <van-cell-for-taskDetail title="任务类型" value="{{taskInfo.type}}" ></van-cell-for-taskDetail>
+          </van-cell-group>
+          <van-cell-group title="额外内容">
+            <van-cell-for-taskDetail title="任务图片"></van-cell-for-taskDetail>
+            <van-cell wx:if="{{taskInfo.images.length>0}}">
+              <repeat for="{{taskInfo.images}}" key="index" index="index" item="item">
+                <view class="img-block">
+                  <image 
+                    src="{{item}}" 
+                    mode="aspectFill" 
+                    class="img-block-img"
+                    bindtap="previewImage({{item}})"
+                  ></image>
+                </view>
+              </repeat>
+            </van-cell>
+            <van-cell-for-taskDetail title="问卷链接" is-link bind:click="EditQuery" wx:if="{{taskInfo.type === '问卷调查' && (button_left === '完成' || button_left === '修改')}}"></van-cell-for-taskDetail>
+            <van-cell-for-taskDetail title="请先接受任务再进行问卷填写" wx:if="{{button_left === '接受' && taskInfo.type == '问卷调查'}}"></van-cell-for-taskDetail>
+            <van-cell-for-taskDetail title="我的问卷" wx:if="{{taskInfo.type == '问卷调查' && button_left == '已完成'}}" is-link bind:click="ShowMyQuery"></van-cell-for-taskDetail>
+          </van-cell-group> 
+          <van-cell-group title="接收者信息" wx:if="{{button_left == '修改'}}">
+            <repeat for="{{receivers_state}}" item="item" index="index">
+              <van-cell title="{{item.name}}" is-link bind:click="ShowReceiverDetail({{item}})" value="{{item.ispaid ? '已付款' : (item.isfinished ? '已完成' : '未完成')}}"></van-cell>
             </repeat>
-          </van-cell>
-          <van-cell-for-taskDetail title="问卷链接" is-link bind:click="EditQuery" wx:if="{{taskInfo.type === '问卷调查' && (button_left === '完成' || button_left === '修改')}}"></van-cell-for-taskDetail>
-          <van-cell-for-taskDetail title="请先接受任务再进行问卷填写" wx:if="{{button_left === '接受' && taskInfo.type == '问卷调查'}}"></van-cell-for-taskDetail>
-          <van-cell-for-taskDetail title="我的问卷" wx:if="{{taskInfo.type == '问卷调查' && button_left == '已完成'}}" is-link bind:click="ShowMyQuery"></van-cell-for-taskDetail>
-        </van-cell-group> 
-        <van-cell-group title="接收者信息" wx:if="{{button_left == '修改'}}">
-          <repeat for="{{receivers_state}}" item="item" index="index">
-            <van-cell title="{{item.name}}" is-link bind:click="ShowReceiverDetail({{item}})" value="{{item.ispaid ? '已付款' : (item.isfinished ? '已完成' : '未完成')}}"></van-cell>
-          </repeat>
-        </van-cell-group>
-        <view style="margin-top:30px; width:100%;">
-          <button class="button-left" bindtap="LeftSubbmit">{{button_left}}</button>
-          <button class="button-right" bindtap="RightSubbmit">{{button_right}}</button>
+          </van-cell-group>
+          <view style="margin-top:30px; width:100%;">
+            <button class="button-left" bindtap="LeftSubbmit">{{button_left}}</button>
+            <button class="button-right" bindtap="RightSubbmit">{{button_right}}</button>
+          </view>
         </view>
       </scroll-view>
     </view>
@@ -114,7 +119,8 @@
       id: 0,               //任务的编号
       query: [],           //辅助参数，进行页面之间的任务参数传递
       canEditQuery: true,  //辅助参数，判断任务的内容是否可编辑保存
-      receivers_state: []
+      receivers_state: [],
+      init: true
     }
     components = {
       mynavbar: MyNavBar
@@ -513,6 +519,7 @@
           that.receivers_state.push(rec);
         }
         console.log(that.receivers_state);
+        that.init = false
         that.$apply();
         console.log('taskDetail end');
       })
