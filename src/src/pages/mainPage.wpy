@@ -90,8 +90,7 @@
 
   export default class MainPage extends wepy.page {
     config = {
-      // "backgroundColor":"#fff",
-      // "backgroundTextStyle":"dark",
+
     }
     components = {
       tasklist: TaskList,
