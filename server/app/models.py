@@ -102,6 +102,7 @@ class Task(db.Model):
 		if 'paid_number' not in kwargs:
 			kwargs['paid_number'] = self.__table__.c.paid_number.default.arg
 		self.template = Template()
+		self.hot = 0
 		super(Task, self).__init__(**kwargs)
 	#任务id
 	id = db.Column(db.Integer, primary_key=True)
@@ -144,7 +145,7 @@ class Task(db.Model):
 	template = db.relationship('Template', backref=db.backref('task', lazy=False, uselist=False))
 
 	#图片
-	images = db.Column(db.PickleType)
+	images = db.Column(db.String(1000))
 
 	def __repr__(self):
 		return '<Task {} {} sponsor:{}>'.format(self.id, self.title, self.sponsor_id)

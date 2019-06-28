@@ -98,7 +98,6 @@ def recommend():
         task_list = Task.query.order_by(-Task.hot).limit(batch_size).all()
     data = {"task_number":len(task_list), "task_info": []}
     for task in task_list:
-        print(task.id)
         current = {'id': task.id, 'title': task.title, 'detail': task.detail, 'type': task.type, 'state':task.state, 'images':task.images}
         data['task_info'].append(current)
     return json.dumps(data, sort_keys=False)
@@ -216,6 +215,7 @@ def getTask_by_id():
             if task==None:
                 return json.dumps({'errmsg': '不存在该任务'})
             task.hot = task.hot + 1
+            db.session.commit()
             data = {'id':task.id, 'title':task.title, 'type':task.type,
                     'start_time':task.start_time, 'end_time':task.end_time,
                     'pay':task.pay, 'detail':task.detail, 'receiver_limit':task.receiver_limit,

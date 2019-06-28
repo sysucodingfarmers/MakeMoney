@@ -238,13 +238,21 @@ def postImage():
         if task==None:
             return json.dumps({'errmsg': '任务id错误，无该任务'})
         filename = str(uuid.uuid1()) + ".jpg"
+        
+        #将图片加入到images数据流中
         print(task.images)
         if task.images == None:
-            print(1)
-            task.images = [filename]
+            data = {}
+            data['0'] = filename
+            print(data)
+            task.images = json.dumps(data)
         else:
-            print(2)
-            task.images.append(filename)
+            data = json.loads(task.images)
+            data[str(len(data))] = filename
+            print(data)
+            task.images = json.dumps(data)
+
+        print(111)
         print(task.images)
         #获得参数path和name
         path = os.path.join(app.config['TASK_FOLDER'])
@@ -275,6 +283,7 @@ def taskImg(imagename):
         resp = Response(contents, mimetype="image/jpeg")
         return resp
     return render_template('index.html', title='Home')
+
 
 '''任务完成
 接受者发出，接受user_id和task_id

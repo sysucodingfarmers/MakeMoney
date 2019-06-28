@@ -18,9 +18,7 @@ json_false = json.dumps('failed')
 def index():
     return render_template('index.html', title='Home')
 
-'''
-接受账号密码和其他个人信息
-
+'''接受账号密码和其他个人信息
 验证格式（前端）
 如果未重复，存入数据库
 '''
@@ -50,10 +48,9 @@ def register():
     print('register user {}!'.format(user))
     return json_true
 
-'''
-登入
-接收账号密码,验证账户是否正确
 
+'''登入
+接收账号密码,验证账户是否正确
 正确则返回用户信息，错误则返回错误信息
 '''
 @app.route('/login', methods=['GET', 'POST'])
@@ -143,8 +140,6 @@ def modify_user_info():
                 user.wx_number = json_data['wx_number']
             if 'hobbit' in json_data:
                 user.hobbit = json_data['hobbit']
-            if 'profile' in json_data:
-                user.profile = json_data['profile']
             db.session.commit()
             return json.dumps(user, default=UserToJson, sort_keys=False) 
 
