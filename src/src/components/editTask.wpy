@@ -478,15 +478,26 @@
                     });
             })
             .then(function(res){
-              console.log(res.data);
-              Toast.success({ message: '修改成功', duration: 1000 });
-              const timer2 = setInterval(() => {
-                clearInterval(timer2);
-                Toast.clear();
-                wx.redirectTo({
-                  url: 'taskDetail?id=' + that.taskid + '&mes=' + mes
-                });
-              }, 1000);
+              if (res.data.errmsg != undefined) {
+                Toast.fail({ message: res.data.errmsg, duration: 1000 });
+                const timer2 = setInterval(() => {
+                  clearInterval(timer2);
+                  Toast.clear();
+                  wx.redirectTo({
+                    url: 'taskDetail?id=' + that.taskid + '&mes=' + mes
+                  });
+                }, 1000);
+              }
+              else {
+                Toast.success({ message: '修改成功', duration: 1000 });
+                const timer3 = setInterval(() => {
+                  clearInterval(timer3);
+                  Toast.clear();
+                  wx.redirectTo({
+                    url: 'taskDetail?id=' + that.taskid + '&mes=' + mes
+                  });
+                }, 1000);
+              }
             });
           }
           //.................................................................
