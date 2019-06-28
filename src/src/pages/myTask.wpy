@@ -90,114 +90,106 @@
     }
     onLoad(options) {
       console.log('mytask onload');
-      this.tasks = [];
-      if (options.type == "publish") {
+      if (options.type == 'publish') {
         this.type = 0;
         this.title = "我的发布";
-        var that = this;
-        this.category.list = ['进行中', '已结束']
-        
-        //通过发起者id查看taskid
-        var id = this.$root.$parent.globalData.userInfo.id;
-        wx.request({
-          url: this.$parent.globalData.ip + 'task/mysponsor',
-          method: 'POST',
-          header: {
-            'content-type': 'application/json'
-          },
-          data: {
-            id: id
-          },
-          success(res) {
-            console.log(res.data);
-            for (var i = 0; i < res.data.task_number; ++i) {
-              that.tasks.push({
-                id: res.data.task_id[i],
-                title: res.data.task_title[i],
-                detail: res.data.task_detail[i],
-                type: res.data.task_type[i],
-                state: res.data.task_state[i]
-              });
-            }
-
-            if (that.listType == 0) {
-              that.tasks.forEach(item=>{
-                if (item.state == 0 || item.state == 1) {
-                  that.showTasks.push(item);
-                }
-              })
-            }
-            else {
-              that.tasks.forEach(item=>{
-                if (item.state == 2) {
-                  that.showTasks.push(item);
-                }
-              })
-            }
-
-            that.$apply();
-          },
-          fail(res) {
-            console.log('fail');
-          }
-        });       
+        this.category.list = ['进行中', '已结束'];
       }
       else {
         this.type = 1;
         this.title = "我的接单";
-        var that = this;
-        this.category.list = ['未完成', '已完成']
-
-        //通过接受者id查看taskid
-        var id = this.$root.$parent.globalData.userInfo.id;
-        var tasks_id;
-        wx.request({
-          url: this.$parent.globalData.ip + 'task/myreceive',
+        this.category.list = ['未完成', '已完成'];
+      }
+      
+      console.log('mytask end');
+    }
+    onShow() {
+      console.log('mytask onshow');
+      var that = this;
+      var id = this.$parent.globalData.userInfo.id;
+      //我的发布
+      if (this.type == 0) {
+        wepy.request({
+          url: that.$parent.globalData.ip + 'task/mysponsor',
           method: 'POST',
           header: {
             'content-type': 'application/json'
           },
           data: {
             id: id
-          },
-          success(res) {
-            console.log(res.data);
-            for (var i = 0; i < res.data.task_number; ++i) {
-              that.tasks.push({
-                id: res.data.task_id[i],
-                title: res.data.task_title[i],
-                detail: res.data.task_detail[i],
-                type: res.data.task_type[i],
-                finished: res.data.finished[i]
-              });
-            }
-
-            if (that.listType == 0) {
-              that.tasks.forEach(item=>{
-                if (!item.finished) {
-                  that.showTasks.push(item);
-                }
-              })
-            }
-            else {
-              that.tasks.forEach(item=>{
-                if (item.finished) {
-                  that.showTasks.push(item);
-                }
-              })
-            }
-
-            that.$apply();
-          },
-          fail(res) {
-            console.log('fail');
           }
+        })
+        .then(function(res) {
+          console.log(res.data);
+          for (var i = 0; i < res.data.task_number; ++i) {
+            that.tasks.push({
+              id: res.data.task_id[i],
+              title: res.data.task_title[i],
+              detail: res.data.task_detail[i],
+              type: res.data.task_type[i],
+              state: res.data.task_state[i]
+            });
+          }
+          if (that.listType == 0) {
+            that.tasks.forEach(item=>{
+              if (item.state == 0 || item.state == 1) {
+                that.showTasks.push(item);
+              }
+            })
+          }
+          else {
+            that.tasks.forEach(item=>{
+              if (item.state == 2) {
+                that.showTasks.push(item);
+              }
+            })
+          }
+          that.$apply();
         });
       }
-      console.log('mytask end');
-    }
-    onShow() {
-      console.log('mytask onshow');
+      //我的接受
+      else {
+        wepy.request({
+          url: that.$parent.globalData.ip + 'task/myreceive',
+          method: 'POST',
+          header: {
+            'content-type': 'application/json'
+          },
+          data: {
+            id: id
+          }
+        })
+        .then(function(res) {
+          console.log(res.data);
+          for (var i = 0; i < res.data.task_number; ++i) {
+            that.tasks.push({
+              id: res.data.task_id[i],
+              title: res.data.task_title[i],
+              detail: res.data.task_detail[i],
+              type: res.data.task_type[i],
+              finished: res.data.finished[i]
+            });
+          }
+
+          if (that.listType == 0) {
+            that.tasks.forEach(item=>{
+              if (!item.finished) {
+                that.showTasks.push(item);
+              }
+            })
+          }
+          else {
+            that.tasks.forEach(item=>{
+              if (item.finished) {
+                that.showTasks.push(item);
+              }
+            })
+          }
+
+          that.$apply();
+        });
+      }
+
       this.$broadcast("setTitle", this.title);
       console.log('mytask end');
     }

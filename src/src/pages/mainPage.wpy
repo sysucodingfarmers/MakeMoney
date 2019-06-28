@@ -83,7 +83,7 @@
   import TaskList from '../components/tasklist'
   import MyTabbar from '../components/mytabbar'
   // import AreaList from '../utility/area'
-  import TasksData from '../data/TempTaskData'
+  // import TasksData from '../data/TempTaskData'
   import MyNavBar from '../components/mynavbar'
   import MyMainPageTitle from '../components/myMainPageTitle'
   import MyMainPageCategoryBtn from '../components/myMainPageCategoryBtn'

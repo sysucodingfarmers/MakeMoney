@@ -259,12 +259,18 @@
         //已完成
         else if (val === '已完成') {
           console.log('已完成');
-          wx.navigateBack();
+          Toast.success({ message: '您已成功', duration: 1000 });
+          const timer3 = setInterval(() => {
+            clearInterval(timer3);
+            Toast.clear();
+            wepy.navigateBack();
+          }, 1000);
         }
       },
       //左边button，包括取消，收藏以及删除,放弃
       RightSubbmit() {
         var val = this.button_right;
+        var that = this;
         //收藏
         if (val === '收藏') {
           console.log('收藏');
@@ -274,24 +280,34 @@
         if (val === '放弃') {
           Dialog.confirm({
             message: '是否放弃',
-          }).then(()=>{
-            wx.request({
-              url: this.$parent.globalData.ip + 'task_quit',
-              method: 'POST',
-              header: {
-                'content-type': 'application/json'
-              },
-              data: {
-                task_id: this.id,
-                user_id: this.$root.$parent.globalData.userInfo.id
-              },
-              success(res) {
-                console.log(res.data);
-                console.log('放弃成功');
-                wx.navigateBack();
-              }
-            })
           })
+          .then(()=>{
+            return wepy.request({
+                    url: that.$parent.globalData.ip + 'task_quit',
+                    method: 'POST',
+                    header: {
+                      'content-type': 'application/json'
+                    },
+                    data: {
+                      task_id: that.id,
+                      user_id: that.$root.$parent.globalData.userInfo.id
+                    }
+                  });
+          })
+          .then(function(res) {
+            if (res.data != 'succeed') {
+              var mes = res.data.errmsg;
+              Toast.fail({message: mes, duration: 1000});
+            }
+            else {
+              Toast.success({message: '放弃成功', duration: 1000});
+              const timer4 = setInterval(() => {
+                clearInterval(timer4);
+                Toast.clear();
+                wepy.navigateBack();
+              }, 1000);
+            }
+          });
         }
         //取消
         else if (val === '取消') {
@@ -312,23 +328,34 @@
             Dialog.confirm({
               title: '是否删除',
               message: '删除就无法恢复'
-            }).then(()=>{
-              wx.request({
-                url: this.$parent.globalData.ip + 'task_cancel',
-                method: 'POST',
-                header: {
-                  'content-type': 'application/json'
-                },
-                data: {
-                  task_id: this.id,
-                  user_id: this.$root.$parent.globalData.userInfo.id
-                },
-                success(res) {
-                  console.log('删除成功');
-                  wx.navigateBack();
-                }
-              })
             })
+            .then(()=>{
+              return wepy.request({
+                      url: that.$parent.globalData.ip + 'task_cancel',
+                      method: 'POST',
+                      header: {
+                        'content-type': 'application/json'
+                      },
+                      data: {
+                        task_id: that.id,
+                        user_id: that.$root.$parent.globalData.userInfo.id
+                      }
+                    });
+            })
+            .then(function(res) {
+              if (res.data != 'succeed') {
+                var mes = res.data.errmsg;
+                Toast.fail({message: mes, duration: 1000});
+              }
+              else {
+                Toast.success({message: '删除成功', duration: 1000});
+                const timer4 = setInterval(() => {
+                  clearInterval(timer4);
+                  Toast.clear();
+                  wepy.navigateBack();
+                }, 1000);
+              }
+            });
           }
         }
       },
