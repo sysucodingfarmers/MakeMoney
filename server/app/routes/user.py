@@ -163,7 +163,7 @@ def modify_password():
     if request.method == 'POST':
         json_data = json.loads(request.data)
         if 'password' not in json_data:
-            return json.dump({'errmsg': '没有传递password'})
+            return json.dumps({'errmsg': '没有传递password'})
         current_user.set_password(json_data['password'])
         db.session.commit()
         return json.dumps('修改密码成功')
@@ -177,24 +177,32 @@ def postProfile():
     if request.method == 'POST':
         #取出数据
         f = request.files['image']
-        user_id = request.form.get("task_id")
+        user_id = request.form.get("user_id")
         #查找用户
         user = User.query.filter_by(id=user_id).first()
         if user==None:
+            print(1)
             return json.dumps({'errmsg': '用户id错误，无该用户'})
         filename = str(uuid.uuid1()) + ".jpg"
-        #存入user的profile中
-        user.profile = filename
-        
+
         #获得参数path和name
         path = os.path.join(app.config['PROFILE_FOLDER'])
+        
+        #先删除原来的头像
+        if user.profile!=None and os.path.exists(path+user.profile):
+            print("删除头像成功")
+            os.remove(path+user.profile)
+        
+        #新头像存入user的profile中
+        user.profile = filename
+        
         #存入服务器
-        if os.path.exists(path)==False:
+        if not os.path.exists(path):
             os.makedirs(path)
         f.save(path + filename)
-
+        print("存入图像成功")
         db.session.commit()
-        return json.dump(filename)
+        return json.dumps(filename)
     return json.dumps({'errmsg': '没有使用POST请求'})
 
 
@@ -211,7 +219,7 @@ def userImg(imagename):
         contents = f.read()
         resp = Response(contents, mimetype="image/jpeg")
         return resp
-    return render_template('index.html', title='Home')
+    return json_false
 
 
 '''查看钱包状态
