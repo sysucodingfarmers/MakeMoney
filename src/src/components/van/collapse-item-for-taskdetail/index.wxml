@@ -1,0 +1,68 @@
+<wxs src="../wxs/utils.wxs" module="utils" />
+
+<view class="van-collapse-item custom-class {{ index !== 0 ? 'van-hairline--top' : '' }}">
+  <van-cell
+    title="{{ title }}"
+    title-class="title-class"
+    icon="{{ icon }}"
+    value="{{ value }}"
+    label="{{ label }}"
+    is-link="{{ isLink }}"
+    clickable="{{ clickable }}"
+    border="{{ border && expanded }}"
+    class="{{ utils.bem('collapse-item__title', { disabled, expanded }) }}"
+    right-icon-class="van-cell__right-icon"
+    custom-class="van-cell"
+    hover-class="van-cell--hover"
+    bind:click="onClick"
+  >
+    <slot
+      name="title"
+      slot="title"
+    />
+    <slot
+      name="icon"
+      slot="icon"
+    />
+    <slot name="value" />
+    <slot
+      name="right-icon"
+      slot="right-icon"
+    />
+  </van-cell>
+  <view
+    class="{{ utils.bem('collapse-item__wrapper', { transition }) }}"
+    style="height: {{ contentHeight }};"
+    bind:transitionend="onTransitionEnd"
+  >
+    <view
+      class="van-collapse-item__content content-class"
+    >
+      <van-cell title="用户详情" is-link url="userInfo?user_id={{userid}}"/>
+      <view wx:if="{{type == '问卷调查'}}">
+        <van-cell title="问卷详情" is-link url="queryInfo?user_id={{userid}}&task_id={{taskid}}&template_id={{tempid}}" />
+      </view>
+      <view style="width: 100%; display: flex; justify-content: flex-end; margin-top: 20rpx">
+        <van-panel title="标题" desc="描述信息" status="状态" use-footer-slot>
+          <view slot="footer" style="diaplay: flex; flex-direction: column">
+            <view wx:if="{{type == '问卷调查'}}"></view>
+            <view wx:else >
+              <van-row>
+                <van-col>
+                  <view style="padding: 10rpx;">
+                    <van-button size="small" bind:click="LeftSubbmit">{{buttonleft}}</van-button>
+                  </view>
+                </van-col>
+                <van-col>
+                  <view style="padding: 10rpx;">
+                    <van-button size="small" type="danger" bind:click="RightSubbmit">{{buttonright}}</van-button>
+                  </view>
+                </van-col>
+              </van-row>
+            </view>
+          </view>
+        </van-panel>
+      </view>
+    </view>
+  </view>
+</view>

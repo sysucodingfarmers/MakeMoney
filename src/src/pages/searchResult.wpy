@@ -26,7 +26,27 @@
     ></van-search>
     <view class="tasklistboard" wx:if="{{issearch}}">
       <!-- 搜索结果 -->
-      <van-cell title="{{resultMessage}}" label="{{keyword}}" />
+      <van-tabs active="{{ active_main }}" bind:click="onClickTabMain">
+        <van-tab title="全部"></van-tab>
+        <van-tab title="线上任务">
+          <van-tabs active="{{ active_sub }}" bind:click="onClickTabSub">
+            <van-tab title="全部"></van-tab>
+            <van-tab title="问卷调查"></van-tab>
+            <van-tab title="信息标注"></van-tab>
+            <van-tab title="其他"></van-tab>
+          </van-tabs>
+        </van-tab>
+        <van-tab title="线下任务">
+          <van-tabs active="{{ active_sub }}" bind:click="onClickTabSub">
+            <van-tab title="全部"></van-tab>
+            <van-tab title="快递代取"></van-tab>
+            <van-tab title="课程实验"></van-tab>
+            <van-tab title="跑腿"></van-tab>
+            <van-tab title="单次兼职"></van-tab>
+            <van-tab title="其他"></van-tab>
+          </van-tabs>
+        </van-tab>
+      </van-tabs>
       <scroll-view
         id="scroll-wrap"
         class="tasklist-view"
@@ -34,10 +54,16 @@
         lower-threshold="100"
       >
         <view
+          style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;"
+          wx:if="{{show_loading}}"
+        >
+          <van-loading type="spinner" size="40px"></van-loading>
+        </view>
+        <view
           id="inner-wrap"
           style="width: 100%;"
         >
-          <tasklist :tasks.sync="tasks"></tasklist>
+          <tasklist :tasks.sync="tasks_show"></tasklist>
         </view>
       </scroll-view>
     </view>
@@ -69,10 +95,13 @@
       keyword: "",
       issearch: false,
       tasks: [],
+      tasks_show: [],
       search_histories: [],
       history: "",
       dataIndex: 0,
-      resultMessage: ""
+      active_main: 0,
+      active_sub: 0,
+      show_loading: false
     }
 
     methods = {
@@ -91,14 +120,23 @@
       onClickHistory (e) {
         this.keyword = this.search_histories[e.target.id];
         this.search();
+      },
+
+      onClickTabMain (e) {
+        this.active_main = e.detail.index;
+        this.active_sub = 0;
+        this.chooseToShow();
+      },
+
+      onClickTabSub (e) {
+        this.active_sub = e.detail.index;
+        this.chooseToShow();
       }
     }
 
     onLoad () {
       this.search_histories = wx.getStorageSync('searchHistory');
     }
-
-
 
     search () {
       // 考虑了无本地缓存的情况
@@ -113,8 +151,11 @@
         this.issearch = true;
 
         // 先清空任务列表
+        this.show_loading = true;
+        this.active_main = 0;
+        this.active_sub = 0;
         this.tasks = [];
-        this.resultMessage = "搜索到" + this.tasks.length + "条结果";
+        this.tasks_show = [];
         this.$apply();
 
         // 只保存6个最近记录
@@ -181,7 +222,7 @@
                           return;
                         }
                         var imageurl;
-                        if (res2.data.images.length == 0) {
+                        if (res2.data.images == null || res2.data.images.length == 0) {
                           imageurl = that.$parent.globalData.ip + 'task/makemoney.jpeg'
                         }
                         else {
@@ -196,8 +237,8 @@
                           'images': imageurl
                         };
                         that.tasks.push(task_item);
-                        that.resultMessage = "搜索到" + that.tasks.length + "条结果";
-                        that.$apply();
+                        that.chooseToShow();
+                        that.show_loading = false;
                         console.log(res2);
                         console.log('get task success');
                       } else {
@@ -239,6 +280,117 @@
       }
     }
 
+    chooseToShow () {
+      switch (this.active_main) {
+        case 0:
+          {
+            this.tasks_show = this.tasks;
+          }
+          break;
+
+        case 1:
+          {
+            switch (this.active_sub) {
+              case 0:
+                {
+                  this.tasks_show = this.tasks.filter(function (task) {
+                    return (task.type[0] == '线' && task.type[1] == '上');
+                  });
+                }
+                break;
+
+              case 1:
+                {
+                  this.tasks_show = this.tasks.filter(function (task) {
+                    return task.type == "线上：问卷调查";
+                  });
+                }
+                break;
+
+              case 2:
+                {
+                  this.tasks_show = this.tasks.filter(function (task) {
+                    return task.type == "线上：信息标注";
+                  });
+                }
+                break;
+
+              case 3:
+                {
+                  this.tasks_show = this.tasks.filter(function (task) {
+                    return task.type == "线上：其他";
+                  });
+                }
+                break;
+
+              default:
+                break;
+            }
+          }
+          break;
+
+        case 2:
+          {
+            switch (this.active_sub) {
+              case 0:
+                {
+                  this.tasks_show = this.tasks.filter(function (task) {
+                    return (task.type[0] == '线' && task.type[1] == '下');
+                  });
+                }
+                break;
+
+              case 1:
+                {
+                  this.tasks_show = this.tasks.filter(function (task) {
+                    return task.type == "线下：快递代取";
+                  });
+                }
+                break;
+
+              case 2:
+                {
+                  this.tasks_show = this.tasks.filter(function (task) {
+                    return task.type == "线下：课程实验，访谈";
+                  });
+                }
+                break;
+
+              case 3:
+                {
+                  this.tasks_show = this.tasks.filter(function (task) {
+                    return task.type == "线下：跑腿";
+                  });
+                }
+                break;
+
+              case 4:
+                {
+                  this.tasks_show = this.tasks.filter(function (task) {
+                    return task.type == "线下：单次兼职";
+                  });
+                }
+                break;
+
+              case 5:
+                {
+                  this.tasks_show = this.tasks.filter(function (task) {
+                    return task.type == "线下：其他";
+                  });
+                }
+                break;
+
+              default:
+                break;
+            }
+          }
+          break;
+
+        default:
+          break;
+      }
+      this.$apply();
+    }
 
   }
 </script>

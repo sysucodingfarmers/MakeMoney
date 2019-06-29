@@ -29,7 +29,12 @@ VantComponent({
         },
         imgurl: String,
         type: String,
-        state: String
+        bigtype: String,
+        state: String,
+        needstate: {
+            type: Boolean,
+            value: true
+        }
     },
     methods: {
         onClick(event) {
