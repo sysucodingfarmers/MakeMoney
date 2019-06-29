@@ -44,8 +44,8 @@
           sizeType: ['original', 'compressed'],
           sourceType: ['album', 'camera'],
           success: function(res) {
-            console.log(res);
-            console.log(res.tempFilePaths);
+            // console.log(res);
+            // console.log(res.tempFilePaths);
             var tempFilePaths = res.tempFilePaths[0];
             wepy.uploadFile({
               url: that.$parent.globalData.ip + 'postProfile',
@@ -61,7 +61,7 @@
                 'user_id': that.$parent.globalData.userInfo.id
               }
             }).then((res) => {
-              console.log(res.data)
+              // console.log(res.data)
               return res.data.replace(/\"/g, "")
             }).then((res) => {
               console.log("new then")
