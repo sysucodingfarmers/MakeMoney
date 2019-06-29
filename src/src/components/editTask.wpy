@@ -351,7 +351,7 @@
       previewImage(item) {
           wx.previewImage({
               current: item, // 当前显示图片的http链接
-              urls: this.images // 需要预览的图片http链接列表
+              urls: this.taskInfo.images // 需要预览的图片http链接列表
           });
       },
       //删除上传的图片
@@ -478,15 +478,26 @@
                     });
             })
             .then(function(res){
-              console.log(res.data);
-              Toast.success({ message: '修改成功', duration: 1000 });
-              const timer2 = setInterval(() => {
-                clearInterval(timer2);
-                Toast.clear();
-                wx.redirectTo({
-                  url: 'taskDetail?id=' + that.taskid + '&mes=' + mes
-                });
-              }, 1000);
+              if (res.data.errmsg != undefined) {
+                Toast.fail({ message: res.data.errmsg, duration: 1000 });
+                const timer2 = setInterval(() => {
+                  clearInterval(timer2);
+                  Toast.clear();
+                  wx.redirectTo({
+                    url: 'taskDetail?id=' + that.taskid + '&mes=' + mes
+                  });
+                }, 1000);
+              }
+              else {
+                Toast.success({ message: '修改成功', duration: 1000 });
+                const timer3 = setInterval(() => {
+                  clearInterval(timer3);
+                  Toast.clear();
+                  wx.redirectTo({
+                    url: 'taskDetail?id=' + that.taskid + '&mes=' + mes
+                  });
+                }, 1000);
+              }
             });
           }
           //.................................................................
@@ -545,34 +556,28 @@
               mask: true,
               message: '上传图片中'
             });
-            for (var i = 0; i < that.images.length; ++i) {
-              wx.uploadFile({
-                url: that.$parent.$parent.globalData.ip + 'task/postImage',
-                filePath: that.images[i],
-                name: 'image',
-                header: {'content-type': 'multipart/form-data'},
-                formData: {
-                  'task_id': tid
-                },
-                success(res) {
-                  // console.log(res.data); // 返回那边的链接
-                  // console.log('图片', i);
-                  // that.test = 'data:image/jpeg;base64,' + JSON.parse(res.data);
-                  //全部上传成功，跳转页面
-                  if (i == that.images.length) {
-                    Toast.clear();
-                    Toast.success({ message: '上传成功', duration: 1000 });
-                    const timer = setInterval(() => {
-                      clearInterval(timer);
-                      Toast.clear();
-                      wx.redirectTo({
-                        url: 'taskDetail?id=' + tid + '&mes=' + mes
-                      });
-                    }, 1000);
-                  }
-                }
-              });
-            }
+            var url = that.$parent.$parent.globalData.ip + 'task/postImage';
+            var filePaths = that.images;
+            var name = 'image';
+            var header = {
+              'content-type': 'multipart/form-data'
+            };
+            var formData = {
+              'task_id': tid
+            };
+            var order = 0;
+            //按顺序上传图片
+            that.$parent.$parent.uploadfiles(url, filePaths, name, header, formData, order).then(()=>{
+              Toast.clear();
+              Toast.success({ message: '上传成功', duration: 1000 });
+              const timer = setInterval(() => {
+                clearInterval(timer);
+                Toast.clear();
+                wx.redirectTo({
+                  url: 'taskDetail?id=' + tid + '&mes=' + mes
+                });
+              }, 1000);
+            })
           }
         })
         //........................................................

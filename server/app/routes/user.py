@@ -204,9 +204,7 @@ def postProfile():
 '''
 @app.route("/user/<imagename>")
 def userImg(imagename):
-    # imagename = 'Img/{}.jpeg'.format(imageid)
     imagename = os.path.join(app.config['PROFILE_FOLDER'],imagename)
-    print(imagename)
     if not os.path.exists(imagename):
         imagename = os.path.join(app.config['PROFILE_FOLDER'], 'profile.jpeg')
     with open(imagename, 'rb') as f:

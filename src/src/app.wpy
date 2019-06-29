@@ -101,6 +101,7 @@ export default class extends wepy.app {
   }
 
   globalData = {
+    // ip: 'http://192.168.199.185:5000/', //test
     ip: 'http://makemoney.ink:5000/',         //最终服务器
     session_id: '',
     userInfo: {},
@@ -125,6 +126,35 @@ export default class extends wepy.app {
     super()
     this.use('requestfix')
     this.use('promisify')
+  }
+
+  uploadfilesByOrder (url, filePaths, name, header, formData, order, resolve) {
+    if (order < filePaths.length) {
+      var that = this;
+      wx.uploadFile({
+        url: url,
+        filePath: filePaths[order],
+        name: name,
+        header: header,
+        formData: formData,
+        success: function(res) {
+          console.log(order);
+          console.log(res.data);
+          that.uploadfilesByOrder(url, filePaths, name, header, formData, order+1, resolve)
+        }
+      });
+    }
+    else {
+      resolve();
+      console.log('ok');
+    }
+  }
+
+  uploadfiles (url, filePaths, name, header, formData, order) {
+    var that = this;
+    return new Promise((resolve, reject) => {
+      that.uploadfilesByOrder(url, filePaths, name, header, formData, order, resolve);
+    })
   }
 
   onLaunch() {

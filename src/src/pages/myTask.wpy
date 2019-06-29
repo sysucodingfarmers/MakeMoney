@@ -30,7 +30,7 @@
 <script>
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
-  // import TasksData from '../data/TempTaskData'
+  import JsonToObject from '../data/JsonToObject'
   import TaskList from '../components/tasklist'
 
   export default class MyTask extends wepy.page {
@@ -108,6 +108,7 @@
       var that = this;
       var id = this.$parent.globalData.userInfo.id;
       this.tasks = [];
+      this.showTasks = [];
       //我的发布
       if (this.type == 0) {
         wepy.request({
@@ -128,8 +129,19 @@
               title: res.data.task_title[i],
               detail: res.data.task_detail[i],
               type: res.data.task_type[i],
-              state: res.data.task_state[i]
+              state: res.data.task_state[i],
+              images: res.data.images[i]
             });
+
+            //添加第一张图片
+            that.tasks[i].images = JsonToObject.JsonToUrl(that.tasks[i].images, that.$parent.globalData.ip);
+            if (that.tasks[i].images.length == 0) {
+              that.tasks[i].images = that.$parent.globalData.ip + 'task/makemoney.jpeg';
+            }
+            else {
+              that.tasks[i].images = that.tasks[i].images[0];
+            }
+            //............
           }
           if (that.listType == 0) {
             that.tasks.forEach(item=>{
@@ -168,8 +180,19 @@
               title: res.data.task_title[i],
               detail: res.data.task_detail[i],
               type: res.data.task_type[i],
-              finished: res.data.finished[i]
+              finished: res.data.finished[i],
+              images: res.data.images[i]
             });
+
+            //添加第一张图片
+            that.tasks[i].images = JsonToObject.JsonToUrl(that.tasks[i].images, that.$parent.globalData.ip);
+            if (that.tasks[i].images.length == 0) {
+              that.tasks[i].images = that.$parent.globalData.ip + 'task/makemoney.jpeg';
+            }
+            else {
+              that.tasks[i].images = that.tasks[i].images[0];
+            }
+            //............
           }
 
           if (that.listType == 0) {

@@ -14,7 +14,7 @@
 </style>
 <template>
   <view id="{{titem.itemid}}" style="display: flex; flex-direction: column;">
-    <van-cell-for-taskItem title="{{titem.title}}" label="{{titem.detail}}" imgurl="http://pic.sc.chinaz.com/files/pic/pic9/201610/apic23847.jpg" type="{{titem.type}}" @tap="showDetail()"/>
+    <van-cell-for-taskItem title="{{titem.title}}" label="{{titem.detail}}" imgurl="{{titem.images}}" type="{{titem.type}}" @tap="showDetail()"/>
   </view>
 </template>
 <script>
@@ -28,7 +28,7 @@
 
     }
     data = {
-
+      
     }
     methods = {
       showDetail() {
@@ -41,7 +41,7 @@
         });
       }
     }
-    onLoad() {
+    onShow() {
 
     }
   }

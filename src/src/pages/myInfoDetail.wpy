@@ -19,6 +19,7 @@
   import wepy from 'wepy'
   import MyNavBar from '../components/mynavbar'
   import Toast from '../components/van/toast/toast'
+  import JsonToObject from '../data/JsonToObject'
 
   export default class MyInfoDetail extends wepy.page {
     data = {
@@ -46,8 +47,8 @@
             console.log(res);
             console.log(res.tempFilePaths);
             var tempFilePaths = res.tempFilePaths[0];
-            wx.uploadFile({
-              url: 'http://makemoney.ink:5050/postProfile',
+            wepy.uploadFile({
+              url: that.$parent.globalData.ip + 'postProfile',
               filePath: tempFilePaths,
               name: 'image',
               header: {
@@ -58,16 +59,20 @@
               formData: {
                 'session_id' : that.$parent.globalData.session_id,
                 'user_id': that.$parent.globalData.userInfo.id
-              },
-              success: (res) => {
-                console.log(res)
-                that.userinfo.avatar = tempFilePaths;
-                that.$parent.globalData.userInfo.avatar = tempFilePaths;
-                that.$apply();
-              },
-              fail: (res) => {
-                console.log('fail')
               }
+            }).then((res) => {
+              console.log(res.data)
+              return res.data.replace(/\"/g, "")
+            }).then((res) => {
+              console.log("new then")
+              console.log(res)
+              var avatarurl = JsonToObject.GetAvatarUrl(res, that.$parent.globalData.ip)
+              console.log(avatarurl)
+              that.userinfo.avatar = avatarurl;
+              that.$parent.globalData.userInfo.avatar = avatarurl;
+              that.$apply();
+            }).catch((res) => {
+              Toast.fail('网络错误')
             })
           },
           fail: function(e) {
