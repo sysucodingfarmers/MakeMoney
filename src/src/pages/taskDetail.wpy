@@ -89,6 +89,7 @@
                 <van-collapse-item-for-taskdetail
                   title="{{item.name}}"
                   name="{{index}}}"
+                  value="{{item.ispaid ? '已付款' : (item.isfinished ? '已完成' : '未完成')}}"
                   userid="{{item.id}}"
                   taskid="{{id}}"
                   tempid="{{taskInfo.template_id}}"
