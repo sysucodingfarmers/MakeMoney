@@ -39,6 +39,7 @@ def sponsor_task():
         task = Task(
             title = json_data['title'],
             sponsor = current_user,
+            big_type = json_data['big_type'] if 'big_type' in json_data else '线上',
             type = json_data['type'] if 'type' in json_data else '问卷',
             start_time = datetime.strptime(json_data['start_time'],'%Y-%m-%dT%H:%M:%S.%fZ') if 'start_time' in json_data else datetime.now(),
             end_time = datetime.strptime(json_data['end_time'],'%Y-%m-%dT%H:%M:%S.%fZ') if 'end_time' in json_data else datetime.now()+timedelta(days=10),
@@ -413,6 +414,7 @@ def modify_task_info():
 
             #修改基础信息
             task.title = json_data['title'] if 'title' in json_data else task.title
+            task.big_type = json_data['big_type'] if 'big_type' in json_data else task.big_type
             task.type = json_data['type'] if 'type' in json_data else task.type
             task.pay = json_data['pay'] if 'pay' in json_data else task.pay
             task.detail = json_data['detail'] if 'detail' in json_data else task.detail
