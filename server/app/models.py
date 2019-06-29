@@ -108,8 +108,6 @@ class Task(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	#题目
 	title = db.Column(db.String(20), nullable=False)
-	#任务的大类型：线上or线下
-	big_type = db.Column(db.String(20))
 	#任务类型
 	type = db.Column(db.String(20), default='问卷')
 	#时间，默认结束时间为10天后

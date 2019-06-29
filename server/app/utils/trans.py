@@ -33,16 +33,3 @@ def TaskToJson(task):
 		'state': task.state,
 		'images': task.images
 	}
-
-#'task_id': [], 'task_title': [], 'task_detail': [], 
-#'task_type': [], 'finished': [], 'images':[]
-def TaskToSimpleJson(task):
-	return {
-		'id': task.id,
-		'title': task.title,
-		'detail': task.detail,
-		'big_type': task.big_type,
-		'type': task.type,
-		'state': task.state,
-		'images': task.images
-	}

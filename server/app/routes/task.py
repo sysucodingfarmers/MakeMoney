@@ -39,7 +39,6 @@ def sponsor_task():
         task = Task(
             title = json_data['title'],
             sponsor = current_user,
-            big_type = json_data['big_type'] if 'big_type' in json_data else '线上',
             type = json_data['type'] if 'type' in json_data else '问卷',
             start_time = datetime.strptime(json_data['start_time'],'%Y-%m-%dT%H:%M:%S.%fZ') if 'start_time' in json_data else datetime.now(),
             end_time = datetime.strptime(json_data['end_time'],'%Y-%m-%dT%H:%M:%S.%fZ') if 'end_time' in json_data else datetime.now()+timedelta(days=10),
@@ -280,35 +279,6 @@ def taskImg(imagename):
     return render_template('index.html', title='Home')
 
 
-'''删除所有图片
-传入task_id
-成功则返回'删除图片成功'，失败则返回errmsg
-'''
-@app.route('/task/removeImage', methods=['POST'])
-def removeImage():
-    if request.method == 'POST':
-        #去除数据
-        json_data = json.loads(request.data)
-        if 'task_id' in json_data:
-            #查询到task
-            task = Task.query.filter_by(id=task_id).first()
-            if task==None:
-                return json.dumps({'errmsg': '任务id错误，无该任务'})
-            #将str转为json
-            images = json.loads(task.images)
-            #获得参数path和name
-            path = os.path.join(app.config['PROFILE_FOLDER'])
-            #删除图片
-            for i in len(images):
-                if os.path.exists(path+images[str(i)]):
-                    print("删除图片成功")
-                    os.remove(path+images[str(i)])
-            task.images = None
-            return json_true
-        return json.dumps({'errmsg': '没有传递task_id'})
-    return json.dumps({'errmsg': '没有使用POST请求'})
-
-
 '''任务完成
 接受者发出，接受user_id和task_id
 返回True或False
@@ -329,7 +299,7 @@ def taskFinished():
             #查找接受者
             receiver = Receiver.query.filter_by(uid=json_data['user_id'], tid=json_data['task_id']).first()
             if receiver==None:
-                return json.dumps({'errmsg': '该用户无接受该任务'})
+                return json.dump({'errmsg': '该用户无接受该任务'})
             #接受者完成
             receiver.finished = True
             #任务完成人数加一
@@ -414,7 +384,6 @@ def modify_task_info():
 
             #修改基础信息
             task.title = json_data['title'] if 'title' in json_data else task.title
-            task.big_type = json_data['big_type'] if 'big_type' in json_data else task.big_type
             task.type = json_data['type'] if 'type' in json_data else task.type
             task.pay = json_data['pay'] if 'pay' in json_data else task.pay
             task.detail = json_data['detail'] if 'detail' in json_data else task.detail
