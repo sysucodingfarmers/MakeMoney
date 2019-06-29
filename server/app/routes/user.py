@@ -298,9 +298,9 @@ def sendemailcode():
 			if (send_email_code(code, target_email)):
 				return json_true
 			else:
-				return json.dump({'errmsg': '发送错误，请检查邮箱是否正确'})
-		return json.dump({'errmsg': '没有验证码或邮箱地址'})
-	return json.dump({'errmsg': '没有使用POST请求'})
+				return json.dumps({'errmsg': '发送错误，请检查邮箱是否正确'})
+		return json.dumps({'errmsg': '没有验证码或邮箱地址'})
+	return json.dumps({'errmsg': '没有使用POST请求'})
 
 
 # 测试
