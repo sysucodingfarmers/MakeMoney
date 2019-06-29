@@ -347,7 +347,7 @@
                 that.$apply();
               },
               fail(res) {
-                console.log("fail");
+
               }
           });
       },
@@ -457,14 +457,12 @@
             types: types
             // images: this.images
           }
-          console.log(task);
           this.task = task;
 
           var that = this;
           //修改问卷
           //...............................................................
           if (that.isEdit) {
-            console.log('修改');
             var mes = JSON.stringify(["修改","删除"]);
             var message = '';
             var mon = that.originPay - that.task.pay * that.task.receiver_limit;
@@ -495,26 +493,7 @@
                       data: that.task
                     });
             })
-            // .then(function(res) {
-            //   if (res.data.errmsg != undefined) {
-            //     console.log(res.data);
-            //     return res.data.errmsg;
-            //   }
-            //   else {
-            //     return wepy.request({
-            //             url: that.$parent.$parent.globalData.ip + 'task/removeImage',
-            //             method: 'POST',
-            //             header: {
-            //               'content-type': 'application/json'
-            //             },
-            //             data: {
-            //               task_id: that.task.id
-            //             }
-            //           });
-            //   }
-            // })
             .then(function(res) {
-              console.log(res.data);
               if (res.data.errmsg != undefined) {
                 Toast.fail({ message: res.data.errmsg, duration: 1000 });
                 const timer2 = setInterval(() => {
@@ -538,18 +517,15 @@
                 };
                 var order = 0;
                 //按顺序上传图片
-                console.log(that.images);
                 if (that.images.length != 0) {
                   var temp_images = [];
                   for (var i = 0; i < that.images.length; ++i) {
-                    console.log(that.images[i].indexOf(that.$parent.$parent.globalData.ip))
                     if (that.images[i].indexOf(that.$parent.$parent.globalData.ip) == -1) {
                       temp_images.push(that.images[i]);
                     }
                   }
                   that.images = temp_images;
                 }
-                console.log(that.images);
                 var filePaths = that.images;
                 that.$parent.$parent.uploadfiles(url, filePaths, name, header, formData, order).then(()=>{
                   Toast.clear();
@@ -590,7 +566,6 @@
           //.................................................................
           //提交任务
           else {
-            console.log('提交');
             that.showPay = true;
             that.$apply();
           }
@@ -618,11 +593,9 @@
         .then(function(res){
           tid = res.data;
           if (res.data.errmsg != undefined) {
-            console.log(res.data);
             Toast.fail({ message: '余额不足', duration: 1000});
             return res.data;
           }
-          console.log('任务id为', tid);
 
           //通过任务id，上传任务图片
           var image_length = 0;

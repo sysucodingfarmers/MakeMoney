@@ -176,7 +176,6 @@
     events = {}
     //接受task页面提供的query
     onLoad(options) {
-      console.log("CreateQuery onload");
       var query = JSON.parse(options.query);
       this.query = query;
       this.len = query.length;
@@ -185,13 +184,12 @@
     onShow() {
       var pages = getCurrentPages();
       var currPage = pages[pages.length - 1];   //当前页面
-      console.log("CreateQuery onShow");
       if (currPage.data.eIndex === this.query.length) {
         this.query.push(currPage.data.eQuery);
         this.len++;
       }
       else if (currPage.data.eIndex === undefined) {
-        console.log("eIndex undefined");
+
       }
       else {
         this.query[currPage.data.eIndex] = currPage.data.eQuery;

@@ -32,7 +32,6 @@
     methods = {
       tap() {
         if (this.islogin) {
-          console.log("click");
           wepy.navigateTo({
             url: 'myInfoDetail'
           });

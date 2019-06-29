@@ -45,7 +45,6 @@
     }
     events = {}
     onLoad(options) {    
-      console.log("EditMyTask onload");
       var id = JSON.parse(options.taskid);
       this.taskid = id;
       var that = this;
@@ -72,7 +71,6 @@
               template_id: res.data.template_id
             },
             success(r) {
-              // console.log(r.data);
               var query = TemplateToQuery.change(r.data);
               var task = {
                 id: res.data.id,
@@ -93,7 +91,6 @@
                 receivers: []
               }
               that.taskInfo = task;
-              console.log(task);
 
               //原本支付
               that.originPay = task.pay * task.receiver_limit;
@@ -103,23 +100,19 @@
               that.$apply();
             },
             fail(res) {
-              console.log('fail');
+
             }
           })
         }
       })
-
-      console.log('EditMyTask end');
     }
     onShow() {
-      console.log("EditMyTask onshow");
       var pages = getCurrentPages();
       var currPage = pages[pages.length - 1];   //当前页面
       this.isQueryChange = currPage.data.isQueryChange;
       if (this.isQueryChange) {
         this.taskInfo.extra_content.query = currPage.data.query;
       }
-      console.log('EditMyTask end');
     }
   }
 </script>

@@ -123,9 +123,7 @@
         this.isRotate = !this.isRotate;
       },
       button1(index) {
-        console.log(index);
         if (this.isRotate) {
-          console.log('单选题');
           var item = {
             id: 0,
             type: '单选题',
@@ -143,7 +141,6 @@
       },
       button2(index) {
         if (this.isRotate) {
-          console.log('多选题');
           var item = {
             id: 0,
             type: '多选题',
@@ -161,7 +158,6 @@
       },
       button3(index) {
         if (this.isRotate) {
-          console.log('问答题');
           var item = {
             id: 0,
             type: '问答题',

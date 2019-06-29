@@ -35,7 +35,6 @@
         var myurl = "taskDetail"
         myurl += "?id=";
         myurl += this.titem.id;
-        console.log(myurl);
         wx.navigateTo({
           url: myurl
         });

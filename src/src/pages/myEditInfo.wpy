@@ -94,7 +94,6 @@
         this.value = e.detail
       },
       saveValue() {
-        console.log(this.value);
         Toast.clear()
         Toast.loading({
           message: "保存中"
@@ -121,7 +120,6 @@
           },
           success: (res) => {
             Toast.clear()
-            console.log(res)
             if (res.data.username || res.data.school || res.data.major) {
               if (this.type == 0) {
                 this.$parent.globalData.userInfo.username = res.data.username
@@ -151,8 +149,6 @@
         this.sms = e.detail;
       },
       sendCode() {
-        console.log("sms: " + this.value)
-        console.log(reg_detector)
         this.send_addr = this.value
         if (this.value.length == 0) {
           if (this.type == 1)
@@ -170,8 +166,6 @@
           this.generateCode()
           if (this.type == 1) {
             this.send_email = this.email
-            console.log('邮箱地址正确')
-            console.log("send email sms: " + this.send_sms)
             wx.request({
               url: this.$parent.globalData.ip + 'sendemailcode',
               method: 'POST',
@@ -183,7 +177,6 @@
                 'content-type': 'application/json'
               },
               success: (res) => {
-                console.log(res)
                 if (res.statusCode == 200) {
                   this.issend = true;
                   this.btn_msg = "已发送 " + this.cur_time
@@ -195,14 +188,12 @@
                 }
               },
               fail: (res) => {
-                console.log(res)
+
               }
             })
           }
           else if (this.type == 2) {
-            console.log('手机号码正确')
             zhenzisms.client.send((res) => {
-              console.log(res)
               this.issend = true;
               this.btn_msg = "已发送 " + this.cur_time
               this.$apply()
@@ -232,7 +223,6 @@
             _data.email = this.value
           else if (this.type == 2)
             _data.phone = this.value
-          console.log(_data)
           wx.request({
             url: this.$parent.globalData.ip + 'modify/user_info',
             method: 'POST',
@@ -244,19 +234,15 @@
             },
             success: (res) => {
               Toast.clear()
-              console.log(res)
               if (res.data.phone || res.data.email) {
                 clearTimeout(this.$parent.globalData.timer)
                 Dialog.alert({
                   message: '保存成功'
                 }).then((r) => {
-                  console.log("res.data")
-                  console.log(res.data)
                   if (this.type == 2)
                     this.$parent.globalData.userInfo.phone = res.data.phone
                   else if (this.type == 1)
                     this.$parent.globalData.userInfo.email = res.data.email
-                  console.log(this.$parent.globalData.userInfo.email)
                   wx.navigateBack()
                 })
               }
@@ -281,7 +267,6 @@
       for (var i = 0; i < this.sms_len; i++) {
         this.send_sms += Math.floor(Math.random()*10)
       }
-      console.log("生成的验证码为： " + this.send_sms)
     }
     setTimer() {
       this.$parent.globalData.timer = setTimeout((res) => {
@@ -289,14 +274,12 @@
         if (this.cur_time > 0) {
           this.btn_msg = "已发送 " + this.cur_time;
           this.$apply()
-          // console.log(this.btn_msg)
           this.setTimer()
         }
         else {
           this.issend = false;
           this.send_sms = ""
           this.btn_msg = "超时，重新发送"
-          // console.log(this.btn_msg)
           this.init = false
           this.cur_time = 120
           this.$apply()
@@ -307,7 +290,6 @@
     onLoad(options) {
       this.type = options.type;
       this.value = options.value;
-      console.log(options)
       if (this.type == 0) {
         // 更改用户名
         this.title = "更改用户名"
@@ -322,7 +304,6 @@
         // 更改手机号码
         this.title = "更改手机号码"
         this.placeholder = "请输入手机号码"
-        console.log('初始化榛子短信平台sdk')
         zhenzisms.client.init(
           'https://sms_developer.zhenzikj.com',
           '101900',
@@ -339,7 +320,6 @@
         this.title = "更改专业"
         this.placeholder = "请输入专业"
       }
-      console.log(this.title);
     }
     onShow() {
       this.$broadcast("setTitle", this.title)

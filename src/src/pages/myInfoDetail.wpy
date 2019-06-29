@@ -44,8 +44,6 @@
           sizeType: ['original', 'compressed'],
           sourceType: ['album', 'camera'],
           success: function(res) {
-            // console.log(res);
-            // console.log(res.tempFilePaths);
             var tempFilePaths = res.tempFilePaths[0];
             wepy.uploadFile({
               url: that.$parent.globalData.ip + 'postProfile',
@@ -61,13 +59,9 @@
                 'user_id': that.$parent.globalData.userInfo.id
               }
             }).then((res) => {
-              // console.log(res.data)
               return res.data.replace(/\"/g, "")
             }).then((res) => {
-              console.log("new then")
-              console.log(res)
               var avatarurl = JsonToObject.GetAvatarUrl(res, that.$parent.globalData.ip)
-              console.log(avatarurl)
               that.userinfo.avatar = avatarurl;
               that.$parent.globalData.userInfo.avatar = avatarurl;
               that.$apply();
@@ -76,10 +70,10 @@
             })
           },
           fail: function(e) {
-            console.log(e);
+
           },
           complete: function(e) {
-            console.log(e)
+
           }
         });
       },

@@ -279,7 +279,6 @@
       }
     }
     onLoad(options) {
-      console.log('QueryDetail onload');
       var query = JSON.parse(options.query);
       var fRate = JSON.parse(options.fRate);
       var finish = JSON.parse(options.finish);
@@ -288,12 +287,7 @@
       this.finish_rate = fRate;
       this.finish = finish;
       this.canEditQuery = canEditQuery;
-      // console.log(this.query);
-      // console.log(this.finish_rate);
-      // console.log(this.finish);
-      // console.log(this.canEditQuery);
       this.$apply();
-      console.log("QueryDetail end");
     }
   }
 </script>

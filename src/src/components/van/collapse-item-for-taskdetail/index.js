@@ -159,7 +159,6 @@ VantComponent({
                             task_id: that.data.taskid
                         },
                         success: (res) => {
-                            console.log(res.data);
                             that.set({
                                 isfinished: true,
                                 buttonleft: '已完成'
@@ -203,7 +202,6 @@ VantComponent({
                     task_id: that.data.taskid
                   },
                   success: (res) => {
-                    console.log(res.data);
                     that.set({
                         ispaid: true,
                         buttonright: '已收款'
@@ -214,9 +212,6 @@ VantComponent({
             }
         },
         ShowQueryMessage() {
-            console.log(this.data.userid);
-            console.log(this.task_id);
-            console.log(this.temp_id);
             wx.navigateTo({
                 url: 'queryInfo?user_id=' + this.user_id + '&task_id=' + this.task_id + '&template_id=' + this.temp_id
             })

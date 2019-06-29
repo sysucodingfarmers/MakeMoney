@@ -121,7 +121,6 @@
         this.noresult = true
         this.show_loading = true
         this.over = false
-        console.log(e.detail.index)
         if (this.active_main == 0) {
           this.search()
         }

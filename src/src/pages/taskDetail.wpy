@@ -10,22 +10,25 @@
     color: transparent;
   }
   .button-left {
-    width:50%;
-    float:left;
+    width:150rpx;
+    height: 150rpx;
+    border-radius: 100%;
     background-color:#07c160;
     color:#fff;
-    border-radius:0;
-    font-weight:bold;
-    border: 1px solid #07c160;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 100rpx;
   }
   .button-right {
-    width:50%;
-    float:right;
+    width:150rpx;
+    height: 150rpx;
+    border-radius: 100%;
     background-color:#f44;
     color:#fff;
-    border-radius:0;
-    font-weight:bold;
-    border: 1px solid #f44;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .img-block{
     float:left;
@@ -101,17 +104,16 @@
                 />
               </repeat>
             </van-collapse-for-taskdetail>
-
-
-<!--             <repeat for="{{receivers_state}}" item="item" index="index">
-              <van-cell title="{{item.name}}" is-link bind:click="ShowReceiverDetail({{item}})" value="{{item.ispaid ? '已付款' : (item.isfinished ? '已完成' : '未完成')}}"></van-cell>
-            </repeat> -->
-
-
           </van-cell-group>
-          <view style="margin-top:30px; width:100%;">
-            <button class="button-left" bindtap="LeftSubbmit">{{button_left}}</button>
-            <button class="button-right" bindtap="RightSubbmit">{{button_right}}</button>
+          <view style="width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 50rpx;">
+            <view style="display: flex; flex-direction: row">
+              <button class="button-left" bindtap="LeftSubbmit">
+                <text>{{button_left}}</text>
+              </button>
+              <button class="button-right" bindtap="RightSubbmit">
+                <text>{{button_right}}</text>
+              </button>
+            </view>
           </view>
         </view>
       </scroll-view>

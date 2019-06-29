@@ -47,7 +47,6 @@
     }
     methods = {
       gotoCategory() {
-        console.log("click!");
         var myurl = this.$root.$parent.globalData.taskCategoryUrl;
         myurl += "?type="
         if (this.text == "线上任务")

@@ -50,8 +50,6 @@
         },
         success(res) {
           that.userInfo = res.data;
-
-          console.log('end');
         }
       })
       this.$apply()

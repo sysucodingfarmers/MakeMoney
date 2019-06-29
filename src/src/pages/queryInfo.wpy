@@ -164,13 +164,9 @@
       
     }
     onLoad(options) {
-      console.log('QueryInfo onload');
       this.user_id = options.user_id;
       this.task_id = options.task_id;
       this.temp_id = options.template_id;
-      console.log(this.user_id);
-      console.log(this.task_id);
-      console.log(this.temp_id);
       //查询答案
       //.......................................
       var that = this;
@@ -187,7 +183,6 @@
       })
       .then(function(res){
         that.answers = res.data.answers;
-        console.log(that.answers);
         //查询问卷内容
         return wepy.request({
                   url: that.$parent.globalData.ip + 'search/template_id',
@@ -204,21 +199,15 @@
         that.questions = res.data.questions;
         that.options = res.data.options;
         that.types = res.data.types;
-        console.log(that.questions);
-        console.log(that.options);
-        console.log(that.types);
         if (that.answers != undefined && that.answers != null) {
           that.query = TemplateToQuery.changeAnswer(that.questions, that.options, that.answers, that.types);
         }
         else {
           that.query = TemplateToQuery.change(res.data);
         }
-        console.log(that.query);
         that.$apply();
       })
       //...................................
-      
-      console.log("QueryInfo end");
     }
   }
 </script>
