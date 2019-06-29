@@ -170,7 +170,6 @@
       },
       //查看发起者信息
       ShowSponsorMessage() {
-        console.log(this.taskInfo.sponsor_id);
         wx.navigateTo({
           url: 'userInfo?user_id=' + this.taskInfo.sponsor_id
         })
@@ -188,7 +187,6 @@
         var val = this.button_left;
         //接受
         if (val === '接受') {
-          console.log('接受');
           Dialog.confirm({
             message: '是否接受'
           })
@@ -209,10 +207,10 @@
                   task_id: task_id
                 },
                 success(res) {
-                  console.log(res.data);
+
                 },
                 fail(res) {
-                  console.log('fail');
+
                 }
               })
 
@@ -229,7 +227,6 @@
         }
         //修改
         else if (val === '修改') {
-          console.log('修改');
           var taskid = JSON.stringify(this.id);
           wx.redirectTo({
             url: "editMyTask?taskid=" + taskid
@@ -240,7 +237,6 @@
           Dialog.alert({
             message: '即将跳转登录页面'
           }).then(()=>{
-            console.log('登录');
             wx.redirectTo({
               url: 'login'
             })
@@ -253,7 +249,6 @@
             var user_id = this.$root.$parent.globalData.userInfo.id;
             var task_id = this.id;
             var answers = [];
-            console.log(this.query);
             this.query.forEach(item=>{
               if (item.type == '问答题') {
                 answers.push(item.content.answer);
@@ -284,7 +279,6 @@
             .then(function(res) {
               that.button_left = '已完成';
               that.button_right = '取消';
-              console.log("完成");
               return wepy.request({
                       url: that.$parent.globalData.ip + 'task/pay',
                       method: 'POST',
@@ -298,37 +292,32 @@
                     });
             })
             .then(function(res){
-              console.log(res.data);
               var message = '金额:' + that.taskInfo.pay + '元\n收款完成';
               Toast.success({ message: message, duration: 1000 });
               that.$apply();
-              console.log('收款完成');
             })
           }
           //无问卷，需发起者确定
           else if (this.taskInfo.type != '问卷调查') {
-            console.log('不能直接完成');
             Dialog.alert({
               title: '错误',
               message: '完成需要发起者确认'
             }).then(()=>{
-              // console.log('go');
+
             });
           }
           //未完成
           else {
-            console.log('未完成');
             Dialog.alert({
               title: '错误',
               message: '还未完成'
             }).then(()=>{
-              // console.log('go');
+
             });
           }
         }
         //已完成
         else if (val === '已完成') {
-          console.log('已完成');
           Toast.success({ message: '您已成功', duration: 1000 });
           const timer3 = setInterval(() => {
             clearInterval(timer3);
@@ -343,7 +332,6 @@
         var that = this;
         //收藏
         if (val === '收藏') {
-          console.log('收藏');
           wx.navigateBack();
         }
         //放弃
@@ -381,7 +369,6 @@
         }
         //取消
         else if (val === '取消') {
-          console.log('取消');
           wx.navigateBack();
         }
         //删除
@@ -391,7 +378,7 @@
               title: '无法删除',
               message: '任务进行中'
             }).then(()=>{
-              console.log('删除失败');
+
             });
           }
           else {
@@ -431,8 +418,6 @@
       },
       //发布者查看接受者信息
       ShowReceiverDetail(item) {
-        // console.log(this.taskInfo.receivers);
-        console.log(item);
         var tid = this.taskInfo.template_id;
         wx.navigateTo({
           url: 'receiverDetail?user_id=' + item.id + '&task_id=' + this.id + '&template_id=' + tid + '&isfinished=' + item.isfinished + '&ispaid=' + item.ispaid + '&type=' + this.taskInfo.type
@@ -441,9 +426,7 @@
     }
     //加载页面
     onLoad(options) {
-      console.log("taskDetail onLoad");
       this.id = options.id;
-      console.log('打开任务', this.id);
       //临时变量
       //....................................................
       var that = this;
@@ -471,7 +454,6 @@
         that.taskInfo.start_time = caculateDate.DateToString(that.taskInfo.start_time);
         that.taskInfo.end_time = caculateDate.DateToString(that.taskInfo.end_time);
         that.taskInfo.images = JsonToObject.JsonToUrl(that.taskInfo.images, that.$parent.globalData.ip);
-        console.log(that.taskInfo);
         if (userInfo.id == undefined) {
           mes = ['登录', '取消'];
         }
@@ -494,7 +476,6 @@
                 });
       })
       .then(function(res){
-        console.log(res.data);
         if (res.data.errmsg == undefined) {
           if (!res.data.isfinished) {
             mes = ['完成', '放弃'];
@@ -520,7 +501,6 @@
       })
       .then(function(res){
         that.query = TemplateToQuery.change(res.data);
-        console.log(that.query);
 
         //查询接受者
         data = {
@@ -535,11 +515,9 @@
       })
       .then(function(res){
         var receivers_state = res.data;
-        console.log(receivers_state);
         for (var i = 0; i < receivers_state.receivers_name.length; ++i) {
           var tbutton_left = receivers_state.receivers_isfinished[i] ? '已确认' : '确认';
           var tbutton_right = receivers_state.receivers_ispaid[i] ? '已打款' :  '打款';
-          console.log(tbutton_left + " " + tbutton_right)
           var rec = {
             id: receivers_state.receivers_id[i],
             name: receivers_state.receivers_name[i],
@@ -549,33 +527,25 @@
             btn_left: tbutton_left,
             btn_right: tbutton_right
           }
-          console.log(rec)
           that.receivers_state.push(rec);
         }
-        console.log(that.receivers_state);
         that.init = false
         that.$apply();
-        console.log('taskDetail end');
       })
 
     }
     //跳转页面
     onShow() {
-      console.log("taskDetail onShow");
-
       if (this.button_left == '修改') {
         this.canEditQuery = false;
       }
-      
       var pages = getCurrentPages();
-      // console.log(pages)
       var currPage = pages[pages.length - 1];
       if (currPage.data.query.length != 0 && this.canEditQuery) {
         this.query = currPage.data.query;
         this.finish = currPage.data.finish;
         this.finishRate = Number(currPage.data.finishRate);
       }
-      console.log('taskDetail end');
     }
   }
 </script>

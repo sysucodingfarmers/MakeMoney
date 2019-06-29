@@ -54,6 +54,8 @@
           myurl += "0"
         else if (this.text == "线下任务")
           myurl += "1"
+        else if (this.text == '其他')
+          myurl += '2'
         wepy.navigateTo({
           url: myurl
         });

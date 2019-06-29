@@ -22,6 +22,9 @@
         <view class="taskTypeButtonView">
           <CategoryBtnOffline icon="shop" text="线下任务"></CategoryBtnOffline>
         </view>
+        <view class="taskTypeButtonView">
+          <CategoryOthers icon="records" text="其他"></CategoryOthers>
+        </view>
       </view>
       <!-- 任务列表 -->
       <view class="tasklistboard">
@@ -41,20 +44,25 @@
           </view>
           <view
             id="inner-wrap"
-            style="width: 100%; height: 100%"
+            style="width: 100%; height: 100%;"
             bindtouchstart="touch_start"
             bindtouchend="touch_end"
             bindtouchmove="touch_move"
             wx:else
             >
-            <view hidden="{{hideDragUp}}" style="width: 100%; height: {{dragUpHeight}}px; display: flex; justify-content: center; align-items: center">
-              <text style="font-size: 13px;">松开即可刷新</text>
+            <view hidden="{{hideDragUp}}" style="width: 100%; height: {{dragUpHeight}}px; display: flex; justify-content: center; align-items: center; z-index: 1">
+              <text style="font-size: 13px; padding-bottom: 30rpx">松开即可刷新</text>
             </view>
-            <tasklist :tasks.sync="tasks"></tasklist>
-            <view wx:if="{{nomore}}">
+            <view wx:if="{{getdata}}">
+              <tasklist :tasks.sync="tasks"></tasklist>
+            </view>
+            <view wx:else style="width: 500rpx; height: 500rpx; display: flex; justify-content: center; align-items: center; padding-left: 125rpx; padding-top: 100rpx; z-index: 2">
+              <text style="font-size: 13px;">暂无更多内容</text>
+            </view>
+            <view wx:if="{{nomore && getdata}}">
               <BottomTitle title="已经到底啦"></BottomTitle>
             </view>
-            <view wx:else style="width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10rpx;">
+            <view wx:elif="{{getdata}}" style="width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10rpx;">
               <van-loading type="spinner" size="20px"></van-loading>
             </view>
           </view>
@@ -90,7 +98,8 @@
       TopTitle: MyMainPageTitle,
       BottomTitle: MyMainPageTitle,
       CategoryBtnOnline: MyMainPageCategoryBtn,
-      CategoryBtnOffline: MyMainPageCategoryBtn
+      CategoryBtnOffline: MyMainPageCategoryBtn,
+      CategoryOthers: MyMainPageCategoryBtn
     }
     data = {
       tasks: [],
@@ -122,7 +131,8 @@
 
       // 之后可以删去
       dataIndex: 0,
-      batch_size: 10
+      batch_size: 10,
+      getdata: false
     }
     computed = {
 
@@ -136,7 +146,6 @@
         var _this = this
         this.loadingOpacity = 1;
         if (this.canDragDown) {
-          console.log('上拉')
           this.canDragDown = false;
           this.nomore = false
           this.$apply()
@@ -151,7 +160,6 @@
               type: 'hot'
             },
             success: (res) => {
-              console.log(res.data); 
               this.canDragDown = true;
               if (res.data.task_number < this.dataIndex + this.batch_size) {
                 // 不够10个
@@ -165,7 +173,6 @@
                 this.tasks[this.dataIndex].itemid = "task_item_id" + this.dataIndex
 
                 //添加第一张图片
-                console.log(this.tasks[this.dataIndex].images);
                 this.tasks[this.dataIndex].images = JsonToObject.JsonToUrl(this.tasks[this.dataIndex].images, this.$parent.globalData.ip);
                 if (this.tasks[this.dataIndex].images.length == 0) {
                   this.tasks[this.dataIndex].images = this.$parent.globalData.ip + 'task/makemoney.jpeg';
@@ -180,15 +187,10 @@
               wx.createSelectorQuery().select('#inner-wrap').boundingClientRect((rect) => {
                 _this.inner_height = rect.height;
               }).exec()
-              console.log(this.dataIndex)
             },
             fail: (res) => {
-              console.log(res)
               this.nomore = false
               this.dragUpHeight = 0
-            },
-            complete: (res) => {
-              console.log('complete')
             }
           });
           
@@ -222,7 +224,6 @@
         this.hideDragUp = true
         // 上拉
         if ((this.end_scroll_time - this.start_scroll_time)/1000 > 0.2 && current_y > this.touch_down && current_y - this.touch_down > 20 && this.start_scroll == 0) {
-          console.log("下拉")
           this.loadingHide = false;
           this.hideDragUp = false
           _this.init = true
@@ -261,7 +262,7 @@
           type: 'new'
         },
         success: (res) => {
-          console.log(res.data);
+          _this.getdata = true
           // 为了展示
           setTimeout((t) => {
             _this.init = false
@@ -280,7 +281,6 @@
             for (; this.dataIndex < res.data.task_number; this.dataIndex++) {
               this.tasks.push(res.data.task_info[this.dataIndex])
               //添加第一张图片
-              console.log(this.tasks[this.dataIndex].images);
               this.tasks[this.dataIndex].images = JsonToObject.JsonToUrl(this.tasks[this.dataIndex].images, this.$parent.globalData.ip);
               if (this.tasks[this.dataIndex].images.length == 0) {
                 this.tasks[this.dataIndex].images = this.$parent.globalData.ip + 'task/makemoney.jpeg';
@@ -300,24 +300,24 @@
                 _this.inner_height = rect.height;
               }).exec()
             }
-            console.log(this.dataIndex)
             clearTimeout(this.$parent.globalData.refreshtimer)
-          }, 500)
+          }, 100)
         },
         fail: (res) => {
-          console.log(res)
           this.dragUpHeight = 0
-          this.nomore = false
-          Dialog.alert({
+          this.nomore = true
+          Dialog.confirm({
             message: '加载失败，请重新加载'
           }).then((res) => {
             this.$parent.globalData.refreshtimer = setTimeout((res) => {
               this.refresh()
             }, 3000)
+          }).catch((res) => {
+            clearTimeout(this.$parent.globalData.refreshtimer)
+            this.init = false
+            _this.getdata = false
+            this.$apply()
           })
-        },
-        complete: (res) => {
-          console.log('complete')
         }
       });
     }
