@@ -4,7 +4,7 @@
 * 3、[Investigation（项目前期调研/竞品分析）](doc/Documents/Investigation.md)
 * 4、[Vision（项目愿景）](doc/Documents/Vision项目愿景.md)
 * 5、[Product Backlog（产品特性库）](doc/Documents/ProductBacklog.md)
-* 6、Requirement specification（需求规格说明书）
+* 6、[Requirement specification（需求规格说明书）](/doc/Documents/Supplementary%20Requirements.md)
     * 6.1 [Usecase Diagram and UML Activity Diagram（用例图，业务过程/多泳道图）](doc/Documents/UsecaseDiagram和泳道图.md)
     * 6.2 [Use Cases（用例+活动图）](doc/Documents/UseCases用例+活动图.md)
     * 6.3 Domian Models（领域模型）
