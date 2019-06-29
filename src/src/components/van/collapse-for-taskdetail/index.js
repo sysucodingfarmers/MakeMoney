@@ -1,7 +1,7 @@
 import { VantComponent } from '../common/component';
 VantComponent({
     relation: {
-        name: 'collapse-item',
+        name: 'collapse-item-for-taskdetail',
         type: 'descendant',
         linked(child) {
             this.children.push(child);

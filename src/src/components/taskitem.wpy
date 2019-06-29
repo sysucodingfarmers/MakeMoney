@@ -14,7 +14,7 @@
 </style>
 <template>
   <view id="{{titem.itemid}}" style="display: flex; flex-direction: column;">
-    <van-cell-for-taskItem title="{{titem.title}}" label="{{titem.detail}}" imgurl="{{titem.images}}" type="{{titem.type}}" @tap="showDetail()"/>
+    <van-cell-for-taskItem title="{{titem.title}}" label="{{titem.detail}}" imgurl="{{titem.images}}" type="{{titem.type}}" state="{{titem.state}}" @tap="showDetail()"/>
   </view>
 </template>
 <script>

@@ -83,9 +83,31 @@
             <van-cell-for-taskDetail title="我的问卷" wx:if="{{taskInfo.type == '问卷调查' && button_left == '已完成'}}" is-link bind:click="ShowMyQuery"></van-cell-for-taskDetail>
           </van-cell-group> 
           <van-cell-group title="接收者信息" wx:if="{{button_left == '修改'}}">
-            <repeat for="{{receivers_state}}" item="item" index="index">
+            <!-- 接收者信息 -->
+            <van-collapse-for-taskdetail value="{{ activeName }}" bind:change="onChange" accordion>
+              <repeat for="{{receivers_state}}" item="item" index="index">
+                <van-collapse-item-for-taskdetail
+                  title="{{item.name}}"
+                  name="{{index}}}"
+                  value="{{item.ispaid ? '已付款' : (item.isfinished ? '已完成' : '未完成')}}"
+                  userid="{{item.id}}"
+                  taskid="{{id}}"
+                  tempid="{{taskInfo.template_id}}"
+                  isfinished="{{item.isfinished}}"
+                  ispaid="{{ispaid}}"
+                  type="{{taskInfo.type}}"
+                  buttonleft="{{item.btn_left}}"
+                  buttonright="{{item.btn_right}}"
+                />
+              </repeat>
+            </van-collapse-for-taskdetail>
+
+
+<!--             <repeat for="{{receivers_state}}" item="item" index="index">
               <van-cell title="{{item.name}}" is-link bind:click="ShowReceiverDetail({{item}})" value="{{item.ispaid ? '已付款' : (item.isfinished ? '已完成' : '未完成')}}"></van-cell>
-            </repeat>
+            </repeat> -->
+
+
           </van-cell-group>
           <view style="margin-top:30px; width:100%;">
             <button class="button-left" bindtap="LeftSubbmit">{{button_left}}</button>
@@ -120,12 +142,16 @@
       query: [],           //辅助参数，进行页面之间的任务参数传递
       canEditQuery: true,  //辅助参数，判断任务的内容是否可编辑保存
       receivers_state: [],
-      init: true
+      init: true,
+      activeName: '1'
     }
     components = {
       mynavbar: MyNavBar
     }
     methods = {
+      onChange(e) {
+        this.activeName = e.detail
+      },
       //预览本地图片
       previewImage(item) {
           wx.previewImage({
@@ -273,7 +299,8 @@
             })
             .then(function(res){
               console.log(res.data);
-              Toast.success({ message: '收款完成', duration: 1000 });
+              var message = '金额:' + that.taskInfo.pay + '元\n收款完成';
+              Toast.success({ message: message, duration: 1000 });
               that.$apply();
               console.log('收款完成');
             })
@@ -510,12 +537,19 @@
         var receivers_state = res.data;
         console.log(receivers_state);
         for (var i = 0; i < receivers_state.receivers_name.length; ++i) {
+          var tbutton_left = receivers_state.receivers_isfinished[i] ? '已确认' : '确认';
+          var tbutton_right = receivers_state.receivers_ispaid[i] ? '已打款' :  '打款';
+          console.log(tbutton_left + " " + tbutton_right)
           var rec = {
             id: receivers_state.receivers_id[i],
             name: receivers_state.receivers_name[i],
             ispaid: receivers_state.receivers_ispaid[i],
-            isfinished: receivers_state.receivers_isfinished[i]
+            isfinished: receivers_state.receivers_isfinished[i],
+            index: i + 1,
+            btn_left: tbutton_left,
+            btn_right: tbutton_right
           }
+          console.log(rec)
           that.receivers_state.push(rec);
         }
         console.log(that.receivers_state);

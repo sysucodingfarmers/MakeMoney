@@ -186,8 +186,8 @@
         }
       })
       .then(function(res){
-        console.log(res.data.answers);
         that.answers = res.data.answers;
+        console.log(that.answers);
         //查询问卷内容
         return wepy.request({
                   url: that.$parent.globalData.ip + 'search/template_id',
@@ -207,7 +207,12 @@
         console.log(that.questions);
         console.log(that.options);
         console.log(that.types);
-        that.query = TemplateToQuery.changeAnswer(that.questions, that.options, that.answers, that.types);
+        if (that.answers != undefined && that.answers != null) {
+          that.query = TemplateToQuery.changeAnswer(that.questions, that.options, that.answers, that.types);
+        }
+        else {
+          that.query = TemplateToQuery.change(res.data);
+        }
         console.log(that.query);
         that.$apply();
       })
