@@ -38,6 +38,7 @@
     }
     onLoad(options) {
       console.log('UserInfo onload');
+      console.log(options)
       var user_id = options.user_id;
       var that = this;
       wx.request({
