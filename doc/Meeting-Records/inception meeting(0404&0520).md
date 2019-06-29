@@ -4,7 +4,7 @@
 #### 04月04号第二次会议记录
 ![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Meeting-Records/MeetingRecording_Week2.jpg)      
 
-#### 04月10号第三次会议记录
+#### 04月10号第三次会议记录(05月20号)
 ![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Meeting-Records/MeetingRecording_Week3.jpg)
 ### 技术组会议记录    
 
