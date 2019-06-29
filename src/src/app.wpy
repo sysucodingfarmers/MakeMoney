@@ -76,13 +76,8 @@ export default class extends wepy.app {
       'van-loading': '../components/van/loading/index',
       'van-toast': '../components/van/toast/index',
       'van-action-sheet': '../components/van/action-sheet/index',
-<<<<<<< HEAD
-      "van-collapse": "../components/van/collapse/index",
-      "van-collapse-item": "../components/van/collapse-item/index"
-=======
       'van-collapse-for-taskdetail': '../components/van/collapse-for-taskdetail/index',
       'van-collapse-item-for-taskdetail': '../components/van/collapse-item-for-taskdetail/index'
->>>>>>> 8a06d020cbd138ebf6c0369ea8f3921dc9c7e4b6
     },
     tabBar: {
       backgroundColor: '#fff',
