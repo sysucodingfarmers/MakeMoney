@@ -28,11 +28,10 @@
     * 9.1 XX短视频
     * 9.2 XX短视频
 * X1 meeting-records
-    * inception meeting (yy/mm/dd)
-    * inception meeting (yy/mm/dd)
-    * inception meeting (yy/mm/dd)
-    * inception meeting (yy/mm/dd)
-    * inception meeting (yy/mm/dd)
+    - [inception meeting ( 18/03/28 ) ](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Meeting-Records/inception%20meeting(0328).md)
+    - [inception meeting ( 18/04/04&18/05/20 ) ](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Meeting-Records/inception%20meeting(0404%260520).md)
+    - [inception meeting ( 18/06/07&18/06/22 ) ](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Meeting-Records/inception%20meeting(0607%260622).md)
+    
 * X2 [KANBAN](https://github.com/sysucodingfarmers/MakeMoney/projects)
 * X3 auditing-records
 * X4 Tech/Work Report
