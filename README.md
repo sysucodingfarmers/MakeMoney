@@ -9,7 +9,7 @@
     * 6.2 [Use Cases（用例+活动图）](doc/Documents/UseCases用例+活动图.md)
     * 6.3 Domian Models（领域模型）
     * 6.4 [State Models（状态模型）](doc/Documents/StateModels.md)
-    * 6.5 [System Sequence Diagrams（功能模型）](doc/Documents/SystemSequenceDiagrams（功能模型）.md)
+    * 6.5 [System Sequence Diagrams（功能模型）](doc/Documents/SystemSequenceDiagrams.md)
     * 6.6 Supplementary Requirements（补充需求）
 * 7、Design（设计说明书）
     * 7.1 [UI design（界面设计）](doc/Documents/UIdesign.md)
