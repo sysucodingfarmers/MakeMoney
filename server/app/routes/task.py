@@ -303,7 +303,7 @@ def removeImage():
                     print("删除图片成功")
                     os.remove(path+images[str(i)])
             task.images = None
-            return json.dumps({'msg': '删除图片完成'})
+            return json_true
         return json.dumps({'errmsg': '没有传递task_id'})
     return json.dumps({'errmsg': '没有使用POST请求'})
 
