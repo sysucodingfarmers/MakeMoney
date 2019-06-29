@@ -186,8 +186,6 @@
                 that.userInfo.exMoney = res.data.exMoney;
 
                 that.$apply();
-                console.log(that.userInfo);
-                console.log('end');
               }
             })
           }
