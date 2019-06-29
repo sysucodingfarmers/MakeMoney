@@ -224,6 +224,10 @@
       isEdit: {
         type: Boolean,
         twoWay: true
+      },
+      originPay: {
+        type: Boolean,
+        twoWay: true
       }
     }
     data = {
@@ -462,8 +466,22 @@
           if (that.isEdit) {
             console.log('修改');
             var mes = JSON.stringify(["修改","删除"]);
+            var message = '';
+            var mon = that.originPay - that.task.pay * that.task.receiver_limit;
+            
+            if (mon > 0) {
+              message = '您将返还' + String(mon) + '元';
+            }
+            else if (mon == 0) {
+              message = '您无需支付';
+            }
+            else {
+              message = '您将支付' + String(-mon) + '元';
+            }
+
             Dialog.confirm({
-              message: '是否修改',
+              title: '是否修改',
+              message: message
             })
             .then(function(res){
               return wepy.request({
@@ -477,7 +495,26 @@
                       data: that.task
                     });
             })
-            .then(function(res){
+            // .then(function(res) {
+            //   if (res.data.errmsg != undefined) {
+            //     console.log(res.data);
+            //     return res.data.errmsg;
+            //   }
+            //   else {
+            //     return wepy.request({
+            //             url: that.$parent.$parent.globalData.ip + 'task/removeImage',
+            //             method: 'POST',
+            //             header: {
+            //               'content-type': 'application/json'
+            //             },
+            //             data: {
+            //               task_id: that.task.id
+            //             }
+            //           });
+            //   }
+            // })
+            .then(function(res) {
+              console.log(res.data);
               if (res.data.errmsg != undefined) {
                 Toast.fail({ message: res.data.errmsg, duration: 1000 });
                 const timer2 = setInterval(() => {
@@ -489,16 +526,66 @@
                 }, 1000);
               }
               else {
-                Toast.success({ message: '修改成功', duration: 1000 });
-                const timer3 = setInterval(() => {
-                  clearInterval(timer3);
+                var tid = that.task.id;
+                var mes = JSON.stringify(["修改","删除"]);
+                var url = that.$parent.$parent.globalData.ip + 'task/postImage';
+                var name = 'image';
+                var header = {
+                  'content-type': 'multipart/form-data'
+                };
+                var formData = {
+                  'task_id': tid
+                };
+                var order = 0;
+                //按顺序上传图片
+                console.log(that.images);
+                if (that.images.length != 0) {
+                  var temp_images = [];
+                  for (var i = 0; i < that.images.length; ++i) {
+                    console.log(that.images[i].indexOf(that.$parent.$parent.globalData.ip))
+                    if (that.images[i].indexOf(that.$parent.$parent.globalData.ip) == -1) {
+                      temp_images.push(that.images[i]);
+                    }
+                  }
+                  that.images = temp_images;
+                }
+                console.log(that.images);
+                var filePaths = that.images;
+                that.$parent.$parent.uploadfiles(url, filePaths, name, header, formData, order).then(()=>{
                   Toast.clear();
-                  wx.redirectTo({
-                    url: 'taskDetail?id=' + that.taskid + '&mes=' + mes
-                  });
-                }, 1000);
+                  Toast.success({ message: '修改成功', duration: 1000 });
+                  const timer3 = setInterval(() => {
+                    clearInterval(timer3);
+                    Toast.clear();
+                    wx.redirectTo({
+                      url: 'taskDetail?id=' + tid + '&mes=' + mes
+                    });
+                  }, 1000);
+                })
               }
-            });
+            })
+            // .then(function(res){
+            //   if (res.data.errmsg != undefined) {
+            //     Toast.fail({ message: res.data.errmsg, duration: 1000 });
+            //     const timer2 = setInterval(() => {
+            //       clearInterval(timer2);
+            //       Toast.clear();
+            //       wx.redirectTo({
+            //         url: 'taskDetail?id=' + that.taskid + '&mes=' + mes
+            //       });
+            //     }, 1000);
+            //   }
+            //   else {
+            //     Toast.success({ message: '修改成功', duration: 1000 });
+            //     const timer3 = setInterval(() => {
+            //       clearInterval(timer3);
+            //       Toast.clear();
+            //       wx.redirectTo({
+            //         url: 'taskDetail?id=' + that.taskid + '&mes=' + mes
+            //       });
+            //     }, 1000);
+            //   }
+            // });
           }
           //.................................................................
           //提交任务

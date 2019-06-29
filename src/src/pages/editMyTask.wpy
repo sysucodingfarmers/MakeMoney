@@ -6,7 +6,7 @@
     <mynavbar title="修改任务" lefttext="返回" leftarrow="true"></mynavbar> 
     <view class="page">
       <scroll-view scroll-y="true" style="height: 87%;">
-        <edittask :query.sync="query" :images.sync="images" :taskInfo.sync="taskInfo" :taskid.sync="taskid" :isEdit.sync="isEdit"></edittask>
+        <edittask :query.sync="query" :images.sync="images" :taskInfo.sync="taskInfo" :taskid.sync="taskid" :isEdit.sync="isEdit" :originPay.sync="originPay"></edittask>
       </scroll-view>
     </view>
   </view>
@@ -25,6 +25,7 @@
       edittask: EditTask
     }
     data = {
+      originPay: 0,
       //判断是否是修改
       isEdit: true,
       //任务的id
@@ -93,6 +94,9 @@
               }
               that.taskInfo = task;
               console.log(task);
+
+              //原本支付
+              that.originPay = task.pay * task.receiver_limit;
 
               //图片
               that.images = JsonToObject.JsonToUrl(res.data.images, that.$parent.globalData.ip);

@@ -165,6 +165,7 @@
                 this.tasks[this.dataIndex].itemid = "task_item_id" + this.dataIndex
 
                 //添加第一张图片
+                console.log(this.tasks[this.dataIndex].images);
                 this.tasks[this.dataIndex].images = JsonToObject.JsonToUrl(this.tasks[this.dataIndex].images, this.$parent.globalData.ip);
                 if (this.tasks[this.dataIndex].images.length == 0) {
                   this.tasks[this.dataIndex].images = this.$parent.globalData.ip + 'task/makemoney.jpeg';
@@ -279,6 +280,7 @@
             for (; this.dataIndex < res.data.task_number; this.dataIndex++) {
               this.tasks.push(res.data.task_info[this.dataIndex])
               //添加第一张图片
+              console.log(this.tasks[this.dataIndex].images);
               this.tasks[this.dataIndex].images = JsonToObject.JsonToUrl(this.tasks[this.dataIndex].images, this.$parent.globalData.ip);
               if (this.tasks[this.dataIndex].images.length == 0) {
                 this.tasks[this.dataIndex].images = this.$parent.globalData.ip + 'task/makemoney.jpeg';
