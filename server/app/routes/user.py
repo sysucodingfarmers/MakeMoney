@@ -179,7 +179,7 @@ def postProfile():
         f = request.files['image']
         user_id = request.form.get("task_id")
         #查找用户
-        user = User.query.filter_by(id=json_data['user_id']).first()
+        user = User.query.filter_by(id=user_id).first()
         if user==None:
             return json.dumps({'errmsg': '用户id错误，无该用户'})
         filename = str(uuid.uuid1()) + ".jpg"

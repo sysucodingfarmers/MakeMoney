@@ -93,9 +93,10 @@ def recommend():
     #获取task_list
     task_list = []
     if type == 'new':
-        task_list = Task.query.order_by(-Task.id).limit(batch_size).all()
+        task_list = Task.query.filter(Task.state<2).order_by(-Task.id).limit(batch_size).all()
     else:
-        task_list = Task.query.order_by(-Task.hot).limit(batch_size).all()
+        task_list = Task.query.filter(Task.state<2).order_by(-Task.hot).limit(batch_size).all()
+        # task_list = db.session.query(Task).filter(or_(Task.state==0, Task.state==1)).order_by(-Task.hot).limit(batch_size).all()
     data = {"task_number":len(task_list), "task_info": []}
     for task in task_list:
         current = {'id': task.id, 'title': task.title, 'detail': task.detail, 'type': task.type, 'state':task.state, 'images':task.images}
@@ -153,8 +154,11 @@ def search_by_sponsor():
 def search_by_title():
     if request.method == 'POST':
         json_data = json.loads(request.data)
+        task_list = []
         if 'key_word' in json_data:
             key = '%' + json_data['key_word'] + '%'
+            if 'batch_size' in json_data:
+                task_list = db.session.query(Task).filter(Task.title.like(key)).limit(json_data['batch_size']).all()
             task_list = db.session.query(Task).filter(Task.title.like(key)).all()
         else:
             print('no match result')
@@ -185,9 +189,14 @@ def search_by_title():
 def search_by_detail():
     if request.method == 'POST':
         json_data = json.loads(request.data)
+        task_list = []
         if 'key_word' in json_data:
             key = '%' + json_data['key_word'] + '%'
-            task_list = db.session.query(Task).filter(Task.detail.like(key)).all()
+            if 'batch_size' in json_data:
+                task_list = db.session.query(Task).filter(Task.detail.like(key)).limit(json_data['batch_size']).all()
+            else:
+                task_list = db.session.query(Task).filter(Task.detail.like(key)).all()
+            
         else:
             print('no match result')
             return json.dumps({'errmsg': '没有传递key_word'})
@@ -363,8 +372,13 @@ def getMyReceiver_by_taskid():
 '''
 @app.route('/task_type/<task_type>', methods=['GET', 'POST'])
 def search_by_type(task_type):
+    #确定需要任务数目
+    batch_size = 5
+    json_data = json.loads(request.data)
+    if 'batch_size' in json_data:
+        batch_size = json_data['batch_size']
     key = '%' + task_type + '%'
-    task_list = db.session.query(Task).filter(Task.type.like(key)).all()
+    task_list = db.session.query(Task).filter(Task.type.like(key)).limit(batch_size).all()
 
     #正确查询之后返回json
     data = {'task_number':len(task_list), 'task_id':[]}

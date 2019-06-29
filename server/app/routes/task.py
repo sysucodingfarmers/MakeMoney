@@ -240,20 +240,15 @@ def postImage():
         filename = str(uuid.uuid1()) + ".jpg"
         
         #将图片加入到images数据流中
-        print(task.images)
         if task.images == None:
             data = {}
             data['0'] = filename
-            print(data)
             task.images = json.dumps(data)
         else:
             data = json.loads(task.images)
             data[str(len(data))] = filename
-            print(data)
             task.images = json.dumps(data)
 
-        print(111)
-        print(task.images)
         #获得参数path和name
         path = os.path.join(app.config['TASK_FOLDER'])
         #存入服务器
@@ -262,7 +257,6 @@ def postImage():
         f.save(path + filename)
         
         db.session.commit()
-        print(task.images)
         #返回
         return json.dumps(filename)
     return json.dumps({'errmsg': '没有使用POST请求'})
