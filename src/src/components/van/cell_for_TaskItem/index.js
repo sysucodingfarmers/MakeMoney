@@ -28,7 +28,8 @@ VantComponent({
             value: true
         },
         imgurl: String,
-        type: String
+        type: String,
+        state: String
     },
     methods: {
         onClick(event) {

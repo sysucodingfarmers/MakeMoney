@@ -20,6 +20,10 @@
   <view class="van-cell__value value-class">
 <!--     <block wx:if="{{ value || value === 0 }}">{{ value }}</block>
     <slot wx:else /> -->
-    <van-tag custom-class="type-tag" type="primary" plain>{{type}}</van-tag>
+    <view><van-tag custom-class="type-tag" type="primary" plain>{{type}}</van-tag></view>
+    <view>
+    <van-tag custom-class="type-tag" type="danger" plain wx:if="{{state == 1 || state == 0}}">进行中</van-tag>
+    <van-tag custom-class="type-tag" type="danger" plain wx:if="{{state == 2}}">已结束</van-tag>
+    </view>
   </view>
 </view>

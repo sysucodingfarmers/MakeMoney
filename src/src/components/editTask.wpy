@@ -182,7 +182,7 @@
   <van-toast id="van-toast"></van-toast>
   <van-dialog id="van-dialog" />
   <van-dialog
-    title="是否支付"
+    title="是否支付{{taskInfo.pay}}元"
     use-slot
     show="{{ showPay }}"
     show-cancel-button
@@ -532,7 +532,7 @@
           tid = res.data;
           if (res.data.errmsg != undefined) {
             console.log(res.data);
-            Toast({ message: '余额不足', duration: 1000});
+            Toast.fail({ message: '余额不足', duration: 1000});
             return res.data;
           }
           console.log('任务id为', tid);
@@ -569,7 +569,7 @@
             //按顺序上传图片
             that.$parent.$parent.uploadfiles(url, filePaths, name, header, formData, order).then(()=>{
               Toast.clear();
-              Toast.success({ message: '上传成功', duration: 1000 });
+              Toast.success({ message: '发布成功', duration: 1000 });
               const timer = setInterval(() => {
                 clearInterval(timer);
                 Toast.clear();
