@@ -1,6 +1,5 @@
 # API调用文档
 
------
 [TOC]
 
 -----
@@ -437,8 +436,11 @@
 - 地址：'/search/title_key_word’ 
 - 接受POST请求
 - 接收的json格式应包含
-  - {‘key_word’: 要查询的关键字}
-
+  
+- {‘key_word’: 要查询的关键字
+  
+    'batch_size':（可选）需要获得的task个数，没有传递则返回全部}
+  
 - 查询失败返回包含‘errmsg’的json文件
 - 查询成功返回如下json：{'task_number':
 					'task_id':[]}
@@ -448,8 +450,11 @@
 - 地址：'/search/detail_key_word’ 
 - 接受POST请求
 - 接收的json格式应包含
-  - {‘key_word’: 要查询的关键字}
-
+  
+- {‘key_word’: 要查询的关键字
+  
+    'batch_size':（可选）需要获得的task个数，没有传递则返回全部}
+  
 - 查询失败返回包含‘errmsg’的json文件
 - 查询成功返回如下json：{'task_number':
 					'task_id':[]}
@@ -621,7 +626,7 @@
 
 - POST或GET
 
-- 不用在Post中传递信息，使用task_type替代task_type即可。已知的类型有
+- 不用在Post中传递信息或者传递batch_size，使用task_type替代task_type即可。已知的类型有
 
   ```
   alltype = ['线上：问卷调查',
