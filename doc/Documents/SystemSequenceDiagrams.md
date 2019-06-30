@@ -1,7 +1,7 @@
 ### 功能模型
 
 #### 用户注册  
-![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/%E7%94%A8%E6%88%B7%E6%B3%A8%E5%86%8C%E5%8A%9F%E8%83%BD%E5%9B%BE.png?raw=true) 
+![](/doc/Documents/pictures/用户注册功能图.png) 
 
 #### 用户登录  
 ![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95%E5%8A%9F%E8%83%BD%E5%9B%BE.png)  
