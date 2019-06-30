@@ -38,7 +38,7 @@
     * [16340047-title](https://hoolchen.github.io/2019/06/29/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E7%BB%8F%E9%AA%8C/)
     * [16340123-项目管理和产品设计学习体会](https://blog.csdn.net/weixin_36313766/article/details/94167196)
     * [16340119-Git的简单使用](https://blog.csdn.net/NicoleRose/article/details/93884021)
-    * 16340000-title
+    * [16340045-技术报告汇总](https://github.com/cxh666/MakeMoney/tree/master/Tech%20Report)
     * [16340048-PM第一步](https://vyychenyy.github.io/2019/06/28/WorkReport.html)
     * 16340000-title
     * 16340000-title
