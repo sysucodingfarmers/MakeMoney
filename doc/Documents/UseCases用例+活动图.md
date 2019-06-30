@@ -86,10 +86,10 @@
 *  若完成途中发布者请求取消任务，则根据完成情况和进度与发布者进行协商。如果协商未果，可申请服务平台客服介入进行纠纷调解。
 
 用例图：                      
-![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/非正式用例2.1.png)
+![](https://raw.githubusercontent.com/sysucodingfarmers/MakeMoney/master/doc/Documents/pictures/非正式用例2.1.png)
 
 活动图：                         
-![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/非正式用例2.2.png)
+![](https://raw.githubusercontent.com/sysucodingfarmers/MakeMoney/master/doc/Documents/pictures/非正式用例2.2.png)
 
 #### Use Case 2.2 任务发布者确认发布任务  
 ##### 主成功场景：  
@@ -99,9 +99,9 @@
    - 发布任务者确认发布任务成功后发现信息有问题，选择结束任务，重新编辑信息，再次发布。（对于上次发布的任务，系统会返还剩余的酬金）    
 
 用例图：  
-![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/非正式用例3.1.png)  
+![](https://raw.githubusercontent.com/sysucodingfarmers/MakeMoney/master/doc/Documents/pictures/非正式用例3.1.png)  
 活动图：  
-![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/非正式用例3.2.png)  
+![](https://raw.githubusercontent.com/sysucodingfarmers/MakeMoney/master/doc/Documents/pictures/非正式用例3.2.png)  
 ## 简述用例
 #### Use Case3.1 查看新发布任务
 *  Actor: 接单者
