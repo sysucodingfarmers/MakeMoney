@@ -27,7 +27,9 @@
 * 9、成品展示
     * 9.1 [手机注册短视频](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/%E6%89%8B%E6%9C%BA%E6%B3%A8%E5%86%8C.mov)
     * 9.2 [邮箱注册短视](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/%E9%82%AE%E7%AE%B1%E6%B3%A8%E5%86%8C.mov)
-    * 9.3 [基本页面展示](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/%E5%9F%BA%E6%9C%AC%E9%A1%B5%E9%9D%A2%E5%B1%95%E7%A4%BA.mov)
+    * 9.3 [基本页面展示短视频](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/%E5%9F%BA%E6%9C%AC%E9%A1%B5%E9%9D%A2%E5%B1%95%E7%A4%BA.mov)
+    * 9.4 [发布线下任务短视频](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/%E5%8F%91%E5%B8%83%E7%BA%BF%E4%B8%8B%E4%BB%BB%E5%8A%A1.mov)
+    
 * X1 meeting-records
     - [InceptionMeeting ( 19/03/28 ) ](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Meeting-Records/InceptionMeeting(0328).md)
     - [InceptionMeeting ( 19/04/04&19/05/20 ) ](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Meeting-Records/InceptionMeeting(0404%260520).md)
