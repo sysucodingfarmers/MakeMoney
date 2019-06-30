@@ -1,16 +1,12 @@
-
 <template>
   <view style="position: fixed; height: 100%; width: 100%;">
     <mynavbar title="明细" lefttext="返回" leftarrow="true"></mynavbar>
     <!-- 主体 -->
     <text class="money elementAlign">收入</text>
- 
     <text name="income" class="incomeNexpend elementAlign">
       ¥ {{ userInfo.income }}
     </text>
-
     <text class="money elementAlign">支出</text>
-
     <text name="expend" class="incomeNexpend elementAlign">
      ¥ {{ userInfo.expend }}
     </text>
@@ -38,7 +34,6 @@
     }
     onShow() {
       var that = this;
-
       wx.request({
         url: this.$parent.globalData.ip + 'wallet',
         method: 'POST',
@@ -50,8 +45,6 @@
         },
         success(res) {
           that.userInfo = res.data;
-
-          console.log('end');
         }
       })
       this.$apply()
