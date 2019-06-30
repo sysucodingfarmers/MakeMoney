@@ -13,7 +13,7 @@
     * 6.6 [Supplementary Requirements（补充需求）](/doc/Documents/Supplementary%20Requirements.md)
 * 7、Design（设计说明书）
     * 7.1 [UI design（界面设计）](doc/Documents/UIdesign.md)
-    * 7.2 Database design（数据库设计）
+    * 7.2 [Database design（数据库设计）]((doc/Documents/数据库设计ER图.md))
     * 7.3 [Interface API design（接口 API 设计）](server/API调用文档.md)
     * 7.4 [Architecture design（架构设计）](doc/Documents/Architecturedesign.md)
     * 7.5 [Usecase design（用例设计）](doc/Documents/BCE.md)
@@ -21,8 +21,8 @@
     * 8.1 代码规范
       - [前端代码规范](doc/Documents/前端代码规范.md)
       - [后端代码规范](doc/Documents/后端代码规范.md)
-    * 8.2 [REST API 设计规范](doc/Documents/Restful API 的设计规范.md)
-    * 8.3 [架构设计、详细设计（BCE方法）到应用程序框架映射指南](doc/Documents/框架目录设计与逻辑架构与 ECB 的关系.md)
+    * 8.2 [REST API 设计规范](doc/Documents/RestfulAPI的设计规范.md)
+    * 8.3 [架构设计、详细设计（BCE方法）到应用程序框架映射指南](doc/Documents/框架目录设计与逻辑架构与ECB的关系.md)
     * 8.4 [部署说明](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2%E8%AF%B4%E6%98%8E.md)
 * 9、成品展示
     * 9.1 XX短视频
@@ -33,7 +33,7 @@
     - [inception meeting ( 18/06/07&18/06/22 ) ](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Meeting-Records/inception%20meeting(0607%260622).md)
     
 * X2 [KANBAN](https://github.com/sysucodingfarmers/MakeMoney/projects)
-* X3 auditing-records
+* X3 [auditing-records](https://github.com/sysucodingfarmers/MakeMoney/issues)
 * X4 Tech/Work Report
     * [16340047-title](https://hoolchen.github.io/2019/06/29/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E7%BB%8F%E9%AA%8C/)
     * 16340000-title
@@ -54,4 +54,4 @@
     * 16340000-title
     * 16340000-title
     * 16340000-title
-    * 小组分工与贡献率说明
+    * [小组分工与贡献率说明](doc/Documents/小组分工与贡献率说明.md)
