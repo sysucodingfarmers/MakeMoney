@@ -49,7 +49,7 @@
     * [16340119-Git的简单使用](https://blog.csdn.net/NicoleRose/article/details/93884021)
     * [16340048-PM第一步](https://vyychenyy.github.io/2019/06/28/WorkReport.html)
     * [16340050-Python后端开发学习](https://blog.csdn.net/NNNeil_TK/article/details/94340349)
-    * [16340000-技术报告](https://blog.csdn.net/o_0_prr/article/details/94360828)
+    * [16340049-微信小程序前端开发学习](https://blasticag.github.io/2019/06/30/wepy-dev-records/)
     * 16340000-title
 * X5 Final Report
     * [16340054-final report](https://zhuanlan.zhihu.com/p/71642795) 
@@ -60,5 +60,5 @@
     * [16340050-final report](https://blog.csdn.net/NNNeil_TK/article/details/94340257)
     * [16340044-final report](https://blog.csdn.net/o_0_prr/article/details/94360816)
     * [16340047-final report](https://hoolchen.github.io/2019/06/29/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E7%BB%8F%E9%AA%8C/)
-    * 16340000-title
+    * [16340049-final report](https://blasticag.github.io/2019/06/30/16340049-Blasticag-Final-Project-Summary/)
     * [小组分工与贡献率说明](doc/Documents/小组分工与贡献率说明.md)
