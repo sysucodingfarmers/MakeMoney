@@ -41,7 +41,7 @@
     * [16340123-项目管理和产品设计学习体会](https://blog.csdn.net/weixin_36313766/article/details/94167196)
     * [16340119-Git的简单使用](https://blog.csdn.net/NicoleRose/article/details/93884021)
     * [16340048-PM第一步](https://vyychenyy.github.io/2019/06/28/WorkReport.html)
-    * 16340000-title
+    * [16340000-Python后端开发学习](https://blog.csdn.net/NNNeil_TK/article/details/94340349)
     * 16340000-title
     * 16340000-title
 * X5 Final Report
