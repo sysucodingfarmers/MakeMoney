@@ -87,7 +87,8 @@
     <view class="page">
       <scroll-view scroll-y="true" style="height: 87%;">
         <view class="page_content">
-          <view wx:for="{{query}}">
+           <!-- <view wx:for="{{query}}"> -->
+          <repeat for="{{query}}">
             <view class="block">
               <van-row>
                 <van-col span="1">
@@ -111,17 +112,25 @@
               <!-- 单选题 -->
               <view wx:if="{{item.type === '单选题'}}">
                 <!-- <radio-group bindchange="radioChange({{index}})"> -->
-                  <view wx:for="{{item.content.option}}">
-                    <radio value="{{index}}" checked="{{item.isSelected}}" color="blue" disabled="true"></radio>{{item.ans}}
-                  </view>
+                  <!-- <view wx:for="{{item.content.option}}"> -->
+                  <repeat for="{{item.content.option}}">
+                    <view>
+                      <checkbox value="{{index}}" checked="{{item.isSelected}}" color="blue" disabled="true"></checkbox>{{item.ans}}
+                    </view>
+                  </repeat>
+                  <!-- </view> -->
                 <!-- </radio-group> -->
               </view>
               <!-- 多选题 -->
               <view wx:if="{{item.type === '多选题'}}">
                 <!-- <checkbox-group bindchange="checkboxChange({{index}})"> -->
-                  <view wx:for="{{item.content.option}}">
-                    <checkbox value="{{index}}" checked="{{item.isSelected}}" color="blue" disabled="true"></checkbox>{{item.ans}}
-                  </view>
+                  <!-- <view wx:for="{{item.content.option}}"> -->
+                  <repeat for="{{item.content.option}}">
+                    <view>
+                      <checkbox value="{{index}}" checked="{{item.isSelected}}" color="blue" disabled="true"></checkbox>{{item.ans}}
+                    </view>
+                  </repeat>
+                  <!-- </view> -->
                 <!-- </checkbox-group> -->
               </view>
               <!-- 问答题 -->
@@ -134,7 +143,8 @@
                   disabled="true"></textarea>
               </view>
             </view>
-          </view>
+          <!-- </view> -->
+          </repeat>
         </view>
       </scroll-view>
     </view> 
