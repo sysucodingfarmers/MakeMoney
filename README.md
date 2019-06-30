@@ -33,7 +33,7 @@
     * 9.6 [搜索任务短视频](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/%E6%90%9C%E7%B4%A2%E6%9F%A5%E8%AF%A2%E4%BB%BB%E5%8A%A1.mov)
     * 9.7 [问卷接单短视频](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/%E9%97%AE%E5%8D%B7%E6%8E%A5%E5%8D%95.mov)
     * 9.8 [非问卷接单短视频](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/%E9%9D%9E%E9%97%AE%E5%8D%B7%E6%8E%A5%E5%8D%95.mov)
-    * 9.9
+    * 9.9 [更改用户信息](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/%E6%9B%B4%E6%94%B9%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF.mov)
 * X1 meeting-records
     - [InceptionMeeting ( 19/03/28 ) ](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Meeting-Records/InceptionMeeting(0328).md)
     - [InceptionMeeting ( 19/04/04&19/05/20 ) ](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Meeting-Records/InceptionMeeting(0404%260520).md)
