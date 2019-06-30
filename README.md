@@ -10,7 +10,7 @@
     * 6.3 [Domian Models（领域模型）](doc/Documents/domian.md)
     * 6.4 [State Models（状态模型）](doc/Documents/StateModels.md)
     * 6.5 [System Sequence Diagrams（功能模型）](doc/Documents/SystemSequenceDiagrams.md)
-    * 6.6 [Supplementary Requirements（补充需求）](/doc/Documents/Supplementary%20Requirements.md)
+    * 6.6 [Supplementary Requirements（补充需求）](/doc/Documents/SupplementaryRequirements.md)
 * 7、Design（设计说明书）
     * 7.1 [UI design（界面设计）](doc/Documents/UIdesign.md)
     * 7.2 [Database design（数据库设计）]((doc/Documents/数据库设计ER图.md))
