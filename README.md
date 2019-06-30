@@ -49,7 +49,7 @@
     * [16340119-Git的简单使用](https://blog.csdn.net/NicoleRose/article/details/93884021)
     * [16340048-PM第一步](https://vyychenyy.github.io/2019/06/28/WorkReport.html)
     * [16340050-Python后端开发学习](https://blog.csdn.net/NNNeil_TK/article/details/94340349)
-    * 16340000-title
+    * [16340000-技术报告](https://blog.csdn.net/o_0_prr/article/details/94360828)
     * 16340000-title
 * X5 Final Report
     * [16340054-final report](https://zhuanlan.zhihu.com/p/71642795) 
@@ -58,7 +58,7 @@
     * [16340119-final report](https://blog.csdn.net/NicoleRose/article/details/93890446)
     * [16340048-final report](https://vyychenyy.github.io/2019/06/28/FinalReport.html)
     * [16340050-final report](https://blog.csdn.net/NNNeil_TK/article/details/94340257)
-    * 16340000-title
+    * [16340044-final report](https://blog.csdn.net/o_0_prr/article/details/94360816)
     * 16340000-title
     * 16340000-title
     * [小组分工与贡献率说明](doc/Documents/小组分工与贡献率说明.md)
