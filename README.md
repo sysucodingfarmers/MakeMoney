@@ -7,7 +7,7 @@
 * 6、Requirement specification（需求规格说明书）
     * 6.1 [Usecase Diagram and UML Activity Diagram（用例图，业务过程/多泳道图）](doc/Documents/UsecaseDiagram和泳道图.md)
     * 6.2 [Use Cases（用例+活动图）](doc/Documents/UseCases用例+活动图.md)
-    * 6.3 Domian Models（领域模型）
+    * 6.3 [Domian Models（领域模型）](doc/Documents/domian.md)
     * 6.4 [State Models（状态模型）](doc/Documents/StateModels.md)
     * 6.5 [System Sequence Diagrams（功能模型）](doc/Documents/SystemSequenceDiagrams.md)
     * 6.6 [Supplementary Requirements（补充需求）](/doc/Documents/Supplementary%20Requirements.md)
@@ -16,7 +16,7 @@
     * 7.2 Database design（数据库设计）
     * 7.3 [Interface API design（接口 API 设计）](server/API调用文档.md)
     * 7.4 [Architecture design（架构设计）](doc/Documents/Architecturedesign.md)
-    * 7.5 Usecase design（用例设计）
+    * 7.5 [Usecase design（用例设计）](doc/Documents/BCE.md)
 * 8、生产规范与指南
     * 8.1 前后端代码规范
       - [前端代码规范](doc/Documents/前端代码规范.md)
@@ -35,7 +35,7 @@
 * X2 [KANBAN](https://github.com/sysucodingfarmers/MakeMoney/projects)
 * X3 auditing-records
 * X4 Tech/Work Report
-    * 16340048-title
+    * 16340047-title
     * 16340000-title
     * 16340000-title
     * 16340000-title
