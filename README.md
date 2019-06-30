@@ -22,7 +22,7 @@
       - [前端代码规范](doc/Documents/前端代码规范.md)
       - 后端代码规范
     * 8.2 REST API 设计规范
-    * 8.3 架构设计、详细设计（BCE方法）到应用程序框架映射指南
+    * 8.3 [架构设计、详细设计（BCE方法）到应用程序框架映射指南](doc/Documents/框架目录设计与逻辑架构与 ECB 的关系.md)
     * 8.4 [部署说明](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2%E8%AF%B4%E6%98%8E.md)
 * 9、成品展示
     * 9.1 XX短视频
@@ -35,7 +35,7 @@
 * X2 [KANBAN](https://github.com/sysucodingfarmers/MakeMoney/projects)
 * X3 auditing-records
 * X4 Tech/Work Report
-    * 16340047-title
+    * [16340047-title](https://hoolchen.github.io/2019/06/29/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E7%BB%8F%E9%AA%8C/)
     * 16340000-title
     * 16340000-title
     * 16340000-title
@@ -45,7 +45,7 @@
     * 16340000-title
     * 16340000-title
 * X5 Final Report
-    * 16340048-title
+    * 16340047-final report 
     * 16340000-title
     * 16340000-title
     * 16340000-title
