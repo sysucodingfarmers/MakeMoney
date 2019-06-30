@@ -50,7 +50,7 @@
     * [16340048-PM第一步](https://vyychenyy.github.io/2019/06/28/WorkReport.html)
     * [16340050-Python后端开发学习](https://blog.csdn.net/NNNeil_TK/article/details/94340349)
     * [16340049-微信小程序前端开发学习](https://blasticag.github.io/2019/06/30/wepy-dev-records/)
-    * 16340000-title
+    * [16340044-技术博客](https://blog.csdn.net/o_0_prr/article/details/94360828)
 * X5 Final Report
     * [16340054-final report](https://zhuanlan.zhihu.com/p/71642795) 
     * [16340123-final report](https://github.com/Breeze16/mess/blob/master/%E4%B8%AA%E4%BA%BA%E5%BF%83%E5%BE%97.md)
