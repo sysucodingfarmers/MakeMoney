@@ -162,6 +162,9 @@
       confirm-button-text="确认"
       cancel-button-text="取消"
       title="开始时间"
+      value="{{ currentDate }}"
+      min-date="{{ minDate }}"
+      max-date="{{ maxDate }}"
       bind:confirm="ConfirmStartTime"
       bind:cancel="CancelStartTime"
     ></van-datetime-picker>
@@ -175,6 +178,9 @@
       confirm-button-text="确认"
       cancel-button-text="取消"
       title="结束时间"
+      value="{{ tomorrowDate }}"
+      min-date="{{ minDate }}"
+      max-date="{{ maxDate }}"
       bind:confirm="ConfirmEndTime"
       bind:cancel="CancelEndTime"
     ></van-datetime-picker>
@@ -182,7 +188,7 @@
   <van-toast id="van-toast"></van-toast>
   <van-dialog id="van-dialog" />
   <van-dialog
-    title="是否支付{{taskInfo.pay}}元"
+    title="是否支付{{taskInfo.pay*taskInfo.receiver_limit}}元"
     use-slot
     show="{{ showPay }}"
     show-cancel-button
@@ -240,7 +246,11 @@
       showEndTimeSelector: false,   //结束时间选择
       task: {},
       showPay: false,
-      test: ''
+      test: '',
+      minDate: new Date().getTime(),
+      maxDate: new Date(2020, 10, 1).getTime(),
+      currentDate: new Date().getTime(),
+      tomorrowDate: new Date(new Date().getTime() + 24*60*60*1000).getTime()
     }
     methods = {
       //编辑任务名称
