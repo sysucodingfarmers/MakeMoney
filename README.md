@@ -23,7 +23,7 @@
       - [后端代码规范](doc/Documents/后端代码规范.md)
     * 8.2 [REST API 设计规范](doc/Documents/RestfulAPI的设计规范.md)
     * 8.3 [架构设计、详细设计（BCE方法）到应用程序框架映射指南](doc/Documents/框架目录设计与逻辑架构与ECB的关系.md)
-    * 8.4 [部署说明](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2%E8%AF%B4%E6%98%8E.md)
+    * 8.4 [部署说明](doc/Documents/安装部署说明.md)
 * 9、成品展示
     * 9.1 XX短视频
     * 9.2 XX短视频
@@ -35,17 +35,17 @@
 * X2 [KANBAN](https://github.com/sysucodingfarmers/MakeMoney/projects)
 * X3 [auditing-records](https://github.com/sysucodingfarmers/MakeMoney/issues)
 * X4 Tech/Work Report
+    * [16340045-技术报告汇总](https://github.com/cxh666/MakeMoney/tree/master/Tech%20Report)
     * [16340047-小程序开发经验](https://hoolchen.github.io/2019/06/29/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E7%BB%8F%E9%AA%8C/)
+    * [16340054-微信小程序开发踩坑实录](https://zhuanlan.zhihu.com/p/71616498)
     * [16340123-项目管理和产品设计学习体会](https://blog.csdn.net/weixin_36313766/article/details/94167196)
     * [16340119-Git的简单使用](https://blog.csdn.net/NicoleRose/article/details/93884021)
-    * [16340045-技术报告汇总](https://github.com/cxh666/MakeMoney/tree/master/Tech%20Report)
     * [16340048-PM第一步](https://vyychenyy.github.io/2019/06/28/WorkReport.html)
     * 16340000-title
     * 16340000-title
     * 16340000-title
-    * 16340000-title
 * X5 Final Report
-    * 16340047-final report 
+    * [16340054-final report](https://zhuanlan.zhihu.com/p/71642795) 
     * [16340123-final report](https://github.com/Breeze16/mess/blob/master/%E4%B8%AA%E4%BA%BA%E5%BF%83%E5%BE%97.md)
     * 16340045-final report
     * [16340119-final report](https://blog.csdn.net/NicoleRose/article/details/93890446)
