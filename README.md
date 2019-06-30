@@ -36,8 +36,8 @@
 * X3 [auditing-records](https://github.com/sysucodingfarmers/MakeMoney/issues)
 * X4 Tech/Work Report
     * [16340047-title](https://hoolchen.github.io/2019/06/29/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E7%BB%8F%E9%AA%8C/)
-    * 16340000-title
-    * 16340000-title
+    * [16340123-项目管理和产品设计学习体会](https://blog.csdn.net/weixin_36313766/article/details/94167196)
+    * 16340045-title
     * 16340000-title
     * 16340000-title
     * 16340000-title
@@ -46,8 +46,8 @@
     * 16340000-title
 * X5 Final Report
     * 16340047-final report 
-    * 16340000-title
-    * 16340000-title
+    * [16340123-final report](https://github.com/Breeze16/mess/blob/master/%E4%B8%AA%E4%BA%BA%E5%BF%83%E5%BE%97.md)
+    * 16340045-final report
     * 16340000-title
     * 16340000-title
     * 16340000-title
