@@ -4,7 +4,7 @@
 ![](/doc/Documents/pictures/用户注册功能图.png) 
 
 #### 用户登录  
-![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95%E5%8A%9F%E8%83%BD%E5%9B%BE.png)  
+![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/用户注册功能图.png)  
 
 #### 发布任务  
 ![](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/%E5%8F%91%E5%B8%83%E4%BB%BB%E5%8A%A1%E5%8A%9F%E8%83%BD%E5%9B%BE.PNG)  
