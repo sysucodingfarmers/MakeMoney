@@ -39,7 +39,7 @@
     * [16340123-项目管理和产品设计学习体会](https://blog.csdn.net/weixin_36313766/article/details/94167196)
     * [16340119-Git的简单使用](https://blog.csdn.net/NicoleRose/article/details/93884021)
     * 16340000-title
-    * 16340000-title
+    * [16340048-PM第一步](https://vyychenyy.github.io/2019/06/28/WorkReport.html)
     * 16340000-title
     * 16340000-title
     * 16340000-title
@@ -49,7 +49,7 @@
     * [16340123-final report](https://github.com/Breeze16/mess/blob/master/%E4%B8%AA%E4%BA%BA%E5%BF%83%E5%BE%97.md)
     * 16340045-final report
     * [16340119-final report](https://blog.csdn.net/NicoleRose/article/details/93890446)
-    * 16340000-title
+    * [16340048-final report](https://vyychenyy.github.io/2019/06/28/FinalReport.html)
     * 16340000-title
     * 16340000-title
     * 16340000-title
