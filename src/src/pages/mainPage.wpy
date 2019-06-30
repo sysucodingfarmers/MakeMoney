@@ -229,7 +229,7 @@
           _this.init = true
           setTimeout((res) => {
             this.refresh()
-          }, 3000)  
+          }, 500)  
         }
       },
       touch_move(e) {
