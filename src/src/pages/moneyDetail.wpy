@@ -10,7 +10,6 @@
     <text name="expend" class="incomeNexpend elementAlign">
      ¥ {{ userInfo.expend }}
     </text>
-
   </view>
 </template>
 <script>
@@ -19,7 +18,6 @@
 
   export default class MoneyDetail extends wepy.page {
     data = {
-
       userInfo: {
         exMoney: 0,
         income: 0,
@@ -30,7 +28,6 @@
       mynavbar: MyNavBar
     }
     methods = {
-      
     }
     onShow() {
       var that = this;
@@ -55,7 +52,6 @@
   .elementAlign{
     display: table; 
     vertical-align: middle;
-
   }
   .money{
     margin:5% auto 5% auto;
@@ -64,9 +60,7 @@
   .incomeNexpend{
     margin:0 auto 5% auto;
     border-bottom: 1px solid gray; 
-    
     font-size: 20px;
     font-weight: bold;
-
   }
 </style>

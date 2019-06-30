@@ -50,7 +50,6 @@
   import Dialog from '../components/van/dialog/dialog'
   export default class MyWallet extends wepy.page {
     data = {
-      
       userInfo: {
         exMoney: 0,
         expend: 0,
@@ -60,20 +59,16 @@
       isRecharge: false,
       isWithdraw: false,
       enterMoney: false
-
     }
     components = {
       mynavbar: MyNavBar
     }
     methods = {
-
       onChange(e) {
-        
         if (this.enterMoney) {
           var num = Number(e.detail.replace(/[^\d]/g,''));
           this.amount = num;
         }
-        
       },
       tap() {
         wx.navigateTo({
@@ -108,6 +103,7 @@
 
         this.amount = (this.isWithdraw 
                   && (exMoney < this.amount)) ? exMoney : this.amount;
+
         this.enterMoney = false;
         
         Dialog.confirm({
@@ -117,6 +113,7 @@
           // on confirm
           var that = this;
           if (this.isRecharge) {
+
             wx.request({
               url: this.$parent.globalData.ip + 'recharge',
               method: 'POST',
@@ -135,6 +132,7 @@
             })
           }
           else if (this.isWithdraw) {
+
             wx.request({
               url: this.$parent.globalData.ip + 'withdraw',
               method: 'POST',
@@ -192,6 +190,7 @@
             that.userInfo = res.data;
 
             that.$apply();
+
           }
         })
       } 
@@ -225,15 +224,11 @@
     margin:20% auto 5% auto;
 
   }
-
   .withdraw{
     width: 50%;
     margin:0 auto 5% auto;
-
   }
   .balanceDetail{
     margin:0 auto 5% auto;
-
   }
-
 </style>
