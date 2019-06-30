@@ -34,7 +34,6 @@ export default class extends wepy.app {
       'pages/editQuery',
       'pages/taskDetail',      
       'pages/queryDetail',
-      'pages/receiverDetail',
       'pages/userInfo',
       'pages/queryInfo',
       'pages/resetPassword'

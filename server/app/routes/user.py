@@ -289,18 +289,18 @@ def withdraw():
 #验证邮箱
 @app.route('/sendemailcode', methods=['POST'])
 def sendemailcode():
-	if (request.method == 'POST'):
-		json_data = json.loads(request.data)
-		print(json_data)
-		if 'code' in json_data and 'target_email' in json_data:
-			code = json_data['code']
-			target_email = json_data['target_email']
-			if (send_email_code(code, target_email)):
-				return json_true
-			else:
-				return json.dumps({'errmsg': '发送错误，请检查邮箱是否正确'})
-		return json.dumps({'errmsg': '没有验证码或邮箱地址'})
-	return json.dumps({'errmsg': '没有使用POST请求'})
+    if (request.method == 'POST'):
+        json_data = json.loads(request.data)
+        print(json_data)
+        if 'code' in json_data and 'target_email' in json_data:
+            code = json_data['code']
+            target_email = json_data['target_email']
+            if (send_email_code(code, target_email)):
+                return json_true
+            else:
+                return json.dumps({'errmsg': '发送错误，请检查邮箱是否正确'})
+        return json.dumps({'errmsg': '没有验证码或邮箱地址'})
+    return json.dumps({'errmsg': '没有使用POST请求'})
 
 
 # 测试

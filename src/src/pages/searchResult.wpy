@@ -1,6 +1,7 @@
 <style lang='less'>
   .tasklist-view {
-    height: 450px;
+    height: 95%;
+    margin-top: 20px;
   }
   .vanbutton {
     width: 30%;
@@ -24,48 +25,37 @@
       bind:change="onChange"
       focus
     ></van-search>
-    <view class="tasklistboard" wx:if="{{issearch}}">
+    <view style="width: 100%; height: 80%" wx:if="{{issearch}}">
       <!-- 搜索结果 -->
       <van-tabs active="{{ active_main }}" bind:click="onClickTabMain">
-        <van-tab title="全部"></van-tab>
-        <van-tab title="线上任务">
-          <van-tabs active="{{ active_sub }}" bind:click="onClickTabSub">
-            <van-tab title="全部"></van-tab>
-            <van-tab title="问卷调查"></van-tab>
-            <van-tab title="信息标注"></van-tab>
-            <van-tab title="其他"></van-tab>
-          </van-tabs>
-        </van-tab>
-        <van-tab title="线下任务">
-          <van-tabs active="{{ active_sub }}" bind:click="onClickTabSub">
-            <van-tab title="全部"></van-tab>
-            <van-tab title="快递代取"></van-tab>
-            <van-tab title="课程实验"></van-tab>
-            <van-tab title="跑腿"></van-tab>
-            <van-tab title="单次兼职"></van-tab>
-            <van-tab title="其他"></van-tab>
-          </van-tabs>
-        </van-tab>
+        <van-tab title="全部结果"></van-tab>
+        <van-tab title="按标题"></van-tab>
+        <van-tab title="按详情"></van-tab>
+        <van-tab title="按发布者"></van-tab>
       </van-tabs>
-      <scroll-view
-        id="scroll-wrap"
-        class="tasklist-view"
-        scroll-y="true"
-        lower-threshold="100"
+      <view wx:if="{{noresult && !show_loading && over}}" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
+<!--         <text style="font-size: 13px; font-family: Arial; margin-top: 20rpx;">无结果</text> -->
+      </view>
+      <view
+        style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;"
+        wx:if="{{show_loading}}"
       >
-        <view
-          style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;"
-          wx:if="{{show_loading}}"
+        <van-loading type="spinner" size="40px"></van-loading>
+      </view>
+      <view wx:else>
+        <scroll-view
+          class="tasklist-view"
+          scroll-y="true"
+          lower-threshold="100"
         >
-          <van-loading type="spinner" size="40px"></van-loading>
-        </view>
-        <view
-          id="inner-wrap"
-          style="width: 100%;"
-        >
-          <tasklist :tasks.sync="tasks_show"></tasklist>
-        </view>
-      </scroll-view>
+          <view
+            style="width: 100%;"
+            wx:if="{{!show_loading}}"
+          >
+            <tasklist :tasks.sync="tasks"></tasklist>
+          </view>
+        </scroll-view>
+      </view>
     </view>
     <view wx:else>
       <!-- 搜索历史 -->
@@ -101,7 +91,9 @@
       dataIndex: 0,
       active_main: 0,
       active_sub: 0,
-      show_loading: false
+      show_loading: false,
+      noresult: false,
+      over: false
     }
 
     methods = {
@@ -124,13 +116,39 @@
 
       onClickTabMain (e) {
         this.active_main = e.detail.index;
-        this.active_sub = 0;
-        this.chooseToShow();
+        this.tasks = []
+        this.noresult = true
+        this.show_loading = true
+        this.over = false
+        if (this.active_main == 0) {
+          this.search()
+        }
+        else if (this.active_main == 1) {
+          var fieldData = {};
+          fieldData = {
+            'key_word': this.keyword
+          };
+          this.searchByType('title_key_word', fieldData);
+        }
+        else if (this.active_main == 2) {
+          var fieldData = {};
+          fieldData = {
+            'key_word': this.keyword
+          };
+          this.searchByType('detail_key_word', fieldData);
+        }
+        else if (this.active_main == 3) {
+          var fieldData = {};
+          fieldData = {
+            'sponsor': this.keyword
+          };
+          this.searchByType('sponsor', fieldData);
+        }
       },
 
       onClickTabSub (e) {
         this.active_sub = e.detail.index;
-        this.chooseToShow();
+        // this.chooseToShow();
       }
     }
 
@@ -180,8 +198,6 @@
           }
         }
         this.search_histories.unshift(this.keyword);
-        console.log(this.search_histories);
-
         // 将历史搜索记录保存到本地缓存
         wx.setStorageSync(
           'searchHistory',
@@ -191,206 +207,98 @@
         var that = this;
 
         //定义函数
-        function searchByType (search_type, field_data) {
-          wx.request({
-            url: that.$parent.globalData.ip + 'search/' + search_type,
-            method: 'POST',
-            data: field_data,
-            header: {
-              'content-type': 'application/json'
-            },
-            success: (res) => {
-              console.log(res.data);
-              if (res.data.hasOwnProperty('task_id')) {
-                var tasks_id = res.data.task_id;
-                for (var i = 0; i < tasks_id.length; i++) {
-                  wx.request({
-                    url: that.$parent.globalData.ip + 'search/task_id',
-                    method: 'POST',
-                    data: {
-                      'task_id': tasks_id[i]
-                    },
-                    success: (res2) => {
-                      console.log(res2)
-                      if (res2.data.hasOwnProperty('id')) {
-                        var id = res2.data.id;
-                        var index = that.tasks.findIndex(function (element) {
-                          return id == element;
-                        });
-                        if (index >= 0) {
-                          console.log('reduced task!');
-                          return;
-                        }
-                        var imageurl;
-                        if (res2.data.images == null || res2.data.images.length == 0) {
-                          imageurl = that.$parent.globalData.ip + 'task/makemoney.jpeg'
-                        }
-                        else {
-                          imageurl = JsonToObject.JsonToUrl(res2.data.images, that.$parent.globalData.ip)[0]
-                        }
-                        var task_item = {
-                          'id': res2.data.id,
-                          'itemid': res2.data.id,
-                          'title': res2.data.title,
-                          'detail': res2.data.detail,
-                          'type': res2.data.type,
-                          'images': imageurl
-                        };
-                        that.tasks.push(task_item);
-                        that.chooseToShow();
-                        that.show_loading = false;
-                        console.log(res2);
-                        console.log('get task success');
-                      } else {
-                        console.log('get task failed');
-                      }
-
-                    },
-                    fail: (res2) => {
-                      console.log('get task failed');
-                    }
-                  });
-                }
-                console.log('search success!');
-              } else {
-                console.log('search failed!');
-              }
-            },
-            fail: (res) => {
-              console.log(res.data)
-
-            },
-            complete: (res) => {
-
-            }
-          });
-        }
+        
 
         var fieldData = {};
         fieldData = {
           'key_word': this.keyword
         };
-        searchByType('title_key_word', fieldData);
-        searchByType('detail_key_word', fieldData);
+        this.searchByType('title_key_word', fieldData);
+        this.searchByType('detail_key_word', fieldData);
         fieldData = {
           'sponsor': this.keyword
         };
-        searchByType('sponsor', fieldData);
+        this.searchByType('sponsor', fieldData);
 
       }
     }
+    searchByType(search_type, field_data) {
+      var that = this
+      wx.request({
+        url: that.$parent.globalData.ip + 'search/' + search_type,
+        method: 'POST',
+        data: field_data,
+        header: {
+          'content-type': 'application/json'
+        },
+        success: (res) => {
+          that.show_loading = false
+          that.$apply()
+          if (res.data.hasOwnProperty('task_id')) {
 
-    chooseToShow () {
-      switch (this.active_main) {
-        case 0:
-          {
-            this.tasks_show = this.tasks;
-          }
-          break;
+            var tasks_id = res.data.task_id;
+            for (var i = 0; i < tasks_id.length; i++) {
+              wx.request({
+                url: that.$parent.globalData.ip + 'search/task_id',
+                method: 'POST',
+                data: {
+                  'task_id': tasks_id[i]
+                },
+                success: (res2) => {
+                  if (res2.data.hasOwnProperty('id')) {
+                    var id = res2.data.id;
+                    var index = that.tasks.findIndex(function (element) {
+                      return id == element;
+                    });
+                    if (index >= 0) {
+                      return;
+                    }
+                    var imageurl;
+                    if (res2.data.images == null || res2.data.images.length == 0) {
+                      imageurl = that.$parent.globalData.ip + 'task/makemoney.jpeg'
+                    }
+                    else {
+                      imageurl = JsonToObject.JsonToUrl(res2.data.images, that.$parent.globalData.ip)[0]
+                    }
+                    var task_item = {
+                      'id': res2.data.id,
+                      'itemid': res2.data.id,
+                      'title': res2.data.title,
+                      'detail': res2.data.detail,
+                      'type': res2.data.type,
+                      'images': imageurl
+                    };
+                    var exist = false
+                    for (var i = 0; i < that.tasks.length; i++) {
+                      if (that.tasks[i].id == task_item.id) {
+                        exist = true
+                        break
+                      }
+                    }
+                    if (!exist) {
+                      that.tasks.push(task_item);
+                      that.noresult = false
+                    }
 
-        case 1:
-          {
-            switch (this.active_sub) {
-              case 0:
-                {
-                  this.tasks_show = this.tasks.filter(function (task) {
-                    return (task.type[0] == '线' && task.type[1] == '上');
-                  });
+                    that.$apply()
+                  }
+                },
+                fail: (res2) => {
+
                 }
-                break;
-
-              case 1:
-                {
-                  this.tasks_show = this.tasks.filter(function (task) {
-                    return task.type == "线上：问卷调查";
-                  });
-                }
-                break;
-
-              case 2:
-                {
-                  this.tasks_show = this.tasks.filter(function (task) {
-                    return task.type == "线上：信息标注";
-                  });
-                }
-                break;
-
-              case 3:
-                {
-                  this.tasks_show = this.tasks.filter(function (task) {
-                    return task.type == "线上：其他";
-                  });
-                }
-                break;
-
-              default:
-                break;
+              });
             }
+            that.over = true;
+            that.$apply()
           }
-          break;
+        },
+        fail: (res) => {
 
-        case 2:
-          {
-            switch (this.active_sub) {
-              case 0:
-                {
-                  this.tasks_show = this.tasks.filter(function (task) {
-                    return (task.type[0] == '线' && task.type[1] == '下');
-                  });
-                }
-                break;
+        },
+        complete: (res) => {
 
-              case 1:
-                {
-                  this.tasks_show = this.tasks.filter(function (task) {
-                    return task.type == "线下：快递代取";
-                  });
-                }
-                break;
-
-              case 2:
-                {
-                  this.tasks_show = this.tasks.filter(function (task) {
-                    return task.type == "线下：课程实验，访谈";
-                  });
-                }
-                break;
-
-              case 3:
-                {
-                  this.tasks_show = this.tasks.filter(function (task) {
-                    return task.type == "线下：跑腿";
-                  });
-                }
-                break;
-
-              case 4:
-                {
-                  this.tasks_show = this.tasks.filter(function (task) {
-                    return task.type == "线下：单次兼职";
-                  });
-                }
-                break;
-
-              case 5:
-                {
-                  this.tasks_show = this.tasks.filter(function (task) {
-                    return task.type == "线下：其他";
-                  });
-                }
-                break;
-
-              default:
-                break;
-            }
-          }
-          break;
-
-        default:
-          break;
-      }
-      this.$apply();
+        }
+      });
     }
-
   }
 </script>

@@ -22,22 +22,26 @@
         value="{{ password }}"
         required
         clearable
-        type="password"
+        type="{{pass_input_type}}"
         label="密码"
         placeholder="{{ passwordPlaceholder }}"
         errorMessage="{{ passwordErrorMessage }}"
         bind:change="onPasswordChange"
+        right-icon="{{eye_icon}}"
+        bind:click-icon="see_pass"
       />
 
       <van-field
         value="{{ passwordAgain }}"
         required
         clearable
-        type="password"
+        type="{{pass_input_type_check}}"
         label="确认密码"
         placeholder="{{ passwordAgainPlaceholder }}"
         errorMessage="{{ passwordAgainErrorMessage }}"
         bind:change="onPasswordAgainChange"
+        right-icon="{{eye_icon_check}}"
+        bind:click-icon="see_pass_check"
       />
     </van-cell-group>
     <!-- 昵称，学院，专业 -->
@@ -158,6 +162,10 @@
 
   export default class Register extends wepy.page {
     data = {
+      eye_icon: 'closed-eye',
+      pass_input_type: 'password',
+      eye_icon_check: 'closed-eye',
+      pass_input_type_check: 'password',
       // 学号
       studentId: "",
       studentIdErrorMessage: "",
@@ -217,6 +225,26 @@
     }
 
     methods = {
+      see_pass() {
+        if (this.eye_icon == 'closed-eye') {
+          this.eye_icon = 'eye-o'
+          this.pass_input_type = 'text'
+        }
+        else if (this.eye_icon == 'eye-o') {
+          this.eye_icon = 'closed-eye'
+          this.pass_input_type = 'password'
+        }
+      },
+      see_pass_check() {
+        if (this.eye_icon_check == 'closed-eye') {
+          this.eye_icon_check = 'eye-o'
+          this.pass_input_type_check = 'text'
+        }
+        else if (this.eye_icon_check == 'eye-o') {
+          this.eye_icon_check = 'closed-eye'
+          this.pass_input_type_check = 'password'
+        }
+      },
       onStudentIdChange(e) {
         this.studentId = e.detail;
       },
@@ -260,8 +288,6 @@
       sendCode() {
         if (this.isphone) {
           // 发送手机验证码
-          console.log("phone: " + this.phone)
-          console.log(phone_reg)
           this.send_addr = this.phone
           if (this.phone.length == 0) {
             Toast('请输入手机号码')
@@ -270,10 +296,8 @@
             Toast('手机号码有误，请检查后重新输入')
           }
           else {
-            console.log('手机号码正确')
             this.generateCode()
             zhenzisms.client.send((res) => {
-              console.log(res)
               this.issend = true;
               this.btn_msg = "已发送 " + this.cur_time
               this.$apply()
@@ -303,7 +327,6 @@
                 'content-type': 'application/json'
               },
               success: (res) => {
-                console.log(res)
                 if (res.statusCode == 200) {
                   this.issend = true;
                   this.btn_msg = "已发送 " + this.cur_time
@@ -315,7 +338,7 @@
                 }
               },
               fail: (res) => {
-                console.log(res)
+ 
               }
             })
           }
@@ -366,8 +389,6 @@
           }
 
           // 检查手机验证码
-          console.log(this.phone_sms + " " + this.send_phone_sms)
-          console.log(this.phone_sms == this.send_phone_sms)
           if (this.phone_sms == this.send_phone_sms) {
             this.phone_sms_error_msg = ""
           }
@@ -406,7 +427,6 @@
 
         //禁用所有按钮
         clearTimeout(this.$parent.globalData.timer)
-        console.log('registering...');
         Toast.loading({
           mask: true,
           message: '注册中...',
@@ -432,7 +452,6 @@
           },
           complete: function (res) {
             if (res.data == 'succeed') {
-              // Toast('注册成功');
               Dialog.alert({
                 title: "注册成功",
                 message: "是否前去登录？"
@@ -456,7 +475,6 @@
       for (var i = 0; i < this.sms_len; i++) {
         sms += Math.floor(Math.random()*10)
       }
-      console.log("生成的验证码为： " + sms)
       if (this.isphone) this.send_phone_sms = sms
       else this.send_email_sms = sms
     }
@@ -466,14 +484,12 @@
         if (this.cur_time > 0) {
           this.btn_msg = "已发送 " + this.cur_time;
           this.$apply()
-          console.log(this.btn_msg)
           this.setTimer()
         }
         else {
           this.issend = false;
           this.send_phone_sms = ""
           this.btn_msg = "重新发送"
-          console.log(this.btn_msg)
           this.init = false
           this.cur_time = 120
           this.$apply()
@@ -482,22 +498,11 @@
       }, 1000)
     }
     onLoad(options) {
-      // var pages = getCurrentPages();
-      // var prepage = pages[pages.length - 2]
-      // console.log("prepage")
-      // console.log(prepage)
-      // console.log("data")
-      // console.log(prepage.__data__)
-      // console.log("studentId")
-      // console.log("studentId: " + prepage.__data__.studentId)
       phone_reg = this.$parent.globalData.phone_reg;
       email_reg = this.$parent.globalData.email_reg;
       studentId_reg = this.$parent.globalData.studentId_reg;
       if (options.type == 'phone') {
         this.isphone = true
-
-        // 初始化榛子短信平台sdk
-        console.log('初始化榛子短信平台sdk')
         zhenzisms.client.init(
           'https://sms_developer.zhenzikj.com',
           '101900',

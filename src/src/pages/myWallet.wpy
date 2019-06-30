@@ -76,26 +76,26 @@
         });
       },
       onClose() {
-        // console.log("close");
+
         this.enterMoney = false;
         this.isRecharge = false;
         this.isWithdraw = false;
         this.amount = "";
       },
       recharge() {
-        // console.log("recharge");
+
         this.isRecharge = true;
         this.enterMoney = true;
 
       },
       withdraw() {
-        // console.log("withdraw");
+
         this.isWithdraw = true;
         this.enterMoney = true;
 
       },
       amountComfirm() {
-        // console.log("amountComfirm");
+
         if (this.amount == "") {
           this.amount = 0;
         }
@@ -103,7 +103,7 @@
 
         this.amount = (this.isWithdraw 
                   && (exMoney < this.amount)) ? exMoney : this.amount;
-        // console.log(this.amount);
+
         this.enterMoney = false;
         
         Dialog.confirm({
@@ -113,7 +113,7 @@
           // on confirm
           var that = this;
           if (this.isRecharge) {
-            // console.log("recharge: " + this.amount);
+
             wx.request({
               url: this.$parent.globalData.ip + 'recharge',
               method: 'POST',
@@ -132,7 +132,7 @@
             })
           }
           else if (this.isWithdraw) {
-            // console.log("withdraw: " + this.amount);
+
             wx.request({
               url: this.$parent.globalData.ip + 'withdraw',
               method: 'POST',
@@ -176,7 +176,6 @@
         })
       }
       else {
-        console.log(this.$parent.globalData);
         var that = this;
         wx.request({
           url: this.$parent.globalData.ip + 'wallet',
@@ -191,7 +190,7 @@
             that.userInfo = res.data;
 
             that.$apply();
-            // console.log('end');
+
           }
         })
       } 

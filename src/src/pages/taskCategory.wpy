@@ -15,13 +15,34 @@
         </van-tab>
       </repeat>
     </van-tabs>
-    <scroll-view scroll-y="true" style="height: 82%; margin-top: 10rpx;">
-      <tasklist :tasks.sync="tasks"></tasklist>
-      <view style="width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10rpx;">
-        <van-loading type="spinner" size="20px"></van-loading>
-      </view>
-    </scroll-view>
+    <view
+      style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;"
+      wx:if="{{init}}"
+    >
+      <van-loading type="spinner" size="40px"></van-loading>
+    </view>
+    <view wx:else>
+      <scroll-view
+        scroll-y="true"
+        style="height: 82%; margin-top: 10rpx;"
+        bindscrolltolower="getNewData"
+        lower-threshold="40"
+        >
+        <view style="height: 50rpx;" />
+        <tasklist :tasks.sync="tasks"></tasklist>
+        <view wx:if="{{nomore}}">
+          <BottomTitle title="已经到底啦"></BottomTitle>
+        </view>
+        <view 
+          style="width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10rpx;"
+          wx:else
+          >
+          <van-loading opacity="{{loadmore}}" type="spinner" size="20px"></van-loading>
+        </view>
+      </scroll-view>
+    </view>
   </view>
+  <van-toast id='van-toast' />
 </template>
 <script>
   import wepy from 'wepy'
@@ -29,6 +50,8 @@
   import TaskList from '../components/tasklist'
   import MyNavBar from '../components/mynavbar'
   import JsonToObject from '../data/JsonToObject'
+  import Toast from '../components/van/toast/toast'
+  import MyMainPageTitle from '../components/myMainPageTitle'
 
   export default class TaskCategory extends wepy.page {
     config = {
@@ -36,64 +59,109 @@
     }
     components = {
       tasklist: TaskList,
-      mynavbar: MyNavBar
+      mynavbar: MyNavBar,
+      BottomTitle: MyMainPageTitle
     }
     data = {
       title: "线上任务",
-      type: 0,
+      type: 0, // 0: 线上，1：线下 2：其他
       category: {},
       active: 0,
       tasks: [],
       batch_size: 10,
-      dataIndex: 0
+      dataIndex: 0,
+      loadmore: 0,
+      init: true,
+      now_type: "",
+      nomore: false
     }
     methods = {
       onChange(e) {
-        console.log(e.detail)
-        console.log("next is the function to get data back from server")
+        this.dataIndex = 0
+        this.tasks = []
+        this.nomore = false
+        this.getTasks(e.detail.title, true)
+      },
+      getNewData() {
+        this.getTasks(this.now_type, false)
       }
+    }
+    getTasks(type, refresh) {
+      var that = this
+      if (refresh) this.init = true
+      else this.loadmore = 1
+      wepy.request({
+        url: this.$parent.globalData.ip + 'task_type/' + type,
+        method: 'POST',
+        header: {
+          'content-type': 'application/json'
+        },
+        data: {
+          batch_size: this.dataIndex + this.batch_size
+        }
+      }).then((res) => {
+        if (!refresh) {
+          that.loadmore = 0
+          that.$apply()
+        }
+        if (!refresh && res.data.task_number <= this.dataIndex + this.batch_size) {
+          that.nomore = true;
+          that.$apply()
+        }
+        for (; this.dataIndex < res.data.task_number; this.dataIndex++) {
+          wepy.request({
+            url: this.$parent.globalData.ip + 'search/task_id',
+            method: 'POST',
+            header: {
+              'content-type': 'application/json'
+            },
+            data: {
+              task_id: res.data.task_id[this.dataIndex]
+            }
+          }).then((res) => {
+            var task = res.data
+            //添加第一张图片
+            task.images = JsonToObject.JsonToUrl(task.images, this.$parent.globalData.ip);
+            if (task.images.length == 0) {
+              task.images = that.$parent.globalData.ip + 'task/makemoney.jpeg';
+            }
+            else {
+              task.images = task.images[0];
+            }
+            that.tasks.push(task)
+            if (refresh) this.init = false
+            that.$apply()
+          })
+        }
+      }).catch((res) => {
+        Toast.fail('网络错误')
+      })
     }
     onLoad(options) {
       this.type = options.type
       if (options.type == 0) {
         this.category.list = TaskCategoryList.online
       }
-      else {
+      else if (options.type == 1) {
         this.category.list = TaskCategoryList.offline
       }
-      wx.request({
-        url: this.$parent.globalData.ip + 'recommend',
-        method: 'POST',
-        header: {
-          'content-type': 'application/json'
-        },
-        data: {
-          batch_size: this.batch_size
-        },
-        success: (res) => {
-          console.log(res.data)
-          for (; this.dataIndex < res.data.task_number; this.dataIndex++) {
-            this.tasks.push(res.data.task_info[this.dataIndex])
-            //添加第一张图片
-            this.tasks[this.dataIndex].images = JsonToObject.JsonToUrl(this.tasks[this.dataIndex].images, this.$parent.globalData.ip);
-            if (this.tasks[this.dataIndex].images.length == 0) {
-              this.tasks[this.dataIndex].images = this.$parent.globalData.ip + 'task/makemoney.jpeg';
-            }
-            else {
-              this.tasks[this.dataIndex].images = this.tasks[this.dataIndex].images[0];
-            }
-            //.............
-            this.tasks[this.dataIndex].itemid = "task_item_id" + this.dataIndex
-          }
-        }
-      })
+      else if (options.type == 2) {
+        this.category.list = TaskCategoryList.other
+      }
+      setTimeout((res) => {
+        this.getTasks(this.category.list[0], true)
+      }, 1000)
+      this.now_type = this.category.list[0]
     }
     onShow() {
       if (this.type == 0) {
         this.$broadcast("setTitle", '线上任务')
       }
-      else {
+      else if (this.type == 1) {
         this.$broadcast("setTitle", '线下任务')
+      }
+      else if (this.type == 2) {
+        this.$broadcast("setTitle", '其他')
       }
     }
   }

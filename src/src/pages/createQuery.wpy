@@ -47,7 +47,8 @@
     <mynavbar title="问卷任务" lefttext="返回" leftarrow="true"></mynavbar>
     <view class="page">
       <scroll-view scroll-y="true" style="height: 87%;">
-        <view wx:for="{{query}}" wx:for-index="idx">
+        <!-- <view wx:for="{{query}}" wx:for-index="idx"> -->
+        <repeat for="{{query}}" index="idx" item="item">
           <!-- 单选题 -->
           <view wx:if="{{item.type ==='单选题'}}" class="query-block">
             <van-row>
@@ -103,7 +104,8 @@
               <van-col>(答案格式:{{item.limit}})</van-col>
             </van-row>
           </view>
-        </view>
+        <!-- </view> -->
+        </repeat>
         <view class="subbmit-button">
           <van-button type="primary" round size="large" bindtap="subbmit">完成</van-button>
         </view>
@@ -176,7 +178,6 @@
     events = {}
     //接受task页面提供的query
     onLoad(options) {
-      console.log("CreateQuery onload");
       var query = JSON.parse(options.query);
       this.query = query;
       this.len = query.length;
@@ -185,13 +186,12 @@
     onShow() {
       var pages = getCurrentPages();
       var currPage = pages[pages.length - 1];   //当前页面
-      console.log("CreateQuery onShow");
       if (currPage.data.eIndex === this.query.length) {
         this.query.push(currPage.data.eQuery);
         this.len++;
       }
       else if (currPage.data.eIndex === undefined) {
-        console.log("eIndex undefined");
+
       }
       else {
         this.query[currPage.data.eIndex] = currPage.data.eQuery;

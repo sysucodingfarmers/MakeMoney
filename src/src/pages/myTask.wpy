@@ -50,7 +50,6 @@
     }
     methods = {
       onChange() {
-        console.log("change list")
         this.listType = this.listType == 0 ? 1 : 0;
         this.showTasks = [];
         if (this.type == 0) {
@@ -89,7 +88,6 @@
       }
     }
     onLoad(options) {
-      console.log('mytask onload');
       if (options.type == 'publish') {
         this.type = 0;
         this.title = "我的发布";
@@ -100,11 +98,8 @@
         this.title = "我的接单";
         this.category.list = ['未完成', '已完成'];
       }
-      
-      console.log('mytask end');
     }
     onShow() {
-      console.log('mytask onshow');
       var that = this;
       var id = this.$parent.globalData.userInfo.id;
       this.tasks = [];
@@ -122,7 +117,6 @@
           }
         })
         .then(function(res) {
-          console.log(res.data);
           for (var i = 0; i < res.data.task_number; ++i) {
             that.tasks.push({
               id: res.data.task_id[i],
@@ -173,7 +167,6 @@
           }
         })
         .then(function(res) {
-          console.log(res.data);
           for (var i = 0; i < res.data.task_number; ++i) {
             that.tasks.push({
               id: res.data.task_id[i],
@@ -215,7 +208,6 @@
       }
 
       this.$broadcast("setTitle", this.title);
-      console.log('mytask end');
     }
   }
 </script>

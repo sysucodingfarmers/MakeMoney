@@ -6,7 +6,7 @@
     <mynavbar title="修改任务" lefttext="返回" leftarrow="true"></mynavbar> 
     <view class="page">
       <scroll-view scroll-y="true" style="height: 87%;">
-        <edittask :query.sync="query" :images.sync="images" :taskInfo.sync="taskInfo" :taskid.sync="taskid" :isEdit.sync="isEdit"></edittask>
+        <edittask :query.sync="query" :images.sync="images" :taskInfo.sync="taskInfo" :taskid.sync="taskid" :isEdit.sync="isEdit" :originPay.sync="originPay"></edittask>
       </scroll-view>
     </view>
   </view>
@@ -25,6 +25,7 @@
       edittask: EditTask
     }
     data = {
+      originPay: 0,
       //判断是否是修改
       isEdit: true,
       //任务的id
@@ -44,7 +45,6 @@
     }
     events = {}
     onLoad(options) {    
-      console.log("EditMyTask onload");
       var id = JSON.parse(options.taskid);
       this.taskid = id;
       var that = this;
@@ -71,7 +71,6 @@
               template_id: res.data.template_id
             },
             success(r) {
-              // console.log(r.data);
               var query = TemplateToQuery.change(r.data);
               var task = {
                 id: res.data.id,
@@ -92,30 +91,28 @@
                 receivers: []
               }
               that.taskInfo = task;
-              console.log(task);
+
+              //原本支付
+              that.originPay = task.pay * task.receiver_limit;
 
               //图片
               that.images = JsonToObject.JsonToUrl(res.data.images, that.$parent.globalData.ip);
               that.$apply();
             },
             fail(res) {
-              console.log('fail');
+
             }
           })
         }
       })
-
-      console.log('EditMyTask end');
     }
     onShow() {
-      console.log("EditMyTask onshow");
       var pages = getCurrentPages();
       var currPage = pages[pages.length - 1];   //当前页面
       this.isQueryChange = currPage.data.isQueryChange;
       if (this.isQueryChange) {
         this.taskInfo.extra_content.query = currPage.data.query;
       }
-      console.log('EditMyTask end');
     }
   }
 </script>

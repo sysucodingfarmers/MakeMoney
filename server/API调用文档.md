@@ -1,9 +1,5 @@
 # API调用文档
 
-[TOC]
-
------
-
 > 注意：每次“需要登录”的api在使用的过程中，都需要在headers里面加入session_id和user_id，作为身份验证的一个辅助手段。session_id在每次登陆的时候都会返回。
 
 ## User

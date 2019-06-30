@@ -218,7 +218,6 @@
       }
     }
     onLoad(options) {
-      console.log("EditQuery onload");
       var query = JSON.parse(options.query);
       var index = JSON.parse(options.index);
       this.query = query;

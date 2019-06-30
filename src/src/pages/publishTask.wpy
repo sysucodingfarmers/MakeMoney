@@ -6,7 +6,7 @@
     <mynavbar title="发布任务" lefttext="返回" leftarrow="true"></mynavbar> 
     <view class="page">
       <scroll-view scroll-y="true" style="height: 87%;">
-        <edittask :query.sync="query" :images.sync="images" :taskInfo.sync="taskInfo" :taskid.sync="taskid" :isEdit.sync="isEdit"></edittask>
+        <edittask :query.sync="query" :images.sync="images" :taskInfo.sync="taskInfo" :taskid.sync="taskid" :isEdit.sync="isEdit" :originPay.sync="originPay"></edittask>
       </scroll-view>
     </view>
   </view>
@@ -23,6 +23,7 @@
       edittask: EditTask
     }
     data = {
+      originPay: 0,
       //判断是否是修改
       isEdit: false,
       //任务的id
@@ -58,23 +59,15 @@
     }
     events = {}
     onLoad(options) {    
-      console.log("PublishTask onload");
       this.taskInfo.type = options.type;
-      // this.taskInfo.publisher = this.$root.$parent.globalData.userInfo.username;
-      // var len = TasksData.data.tasks.length;
-      // this.taskid = len;
-      // this.taskInfo.id = len;
-      console.log('publishtask end');
     }
     onShow() {
-      console.log("PublishTask onshow");
       var pages = getCurrentPages();
       var currPage = pages[pages.length - 1];   //当前页面
       this.isQueryChange = currPage.data.isQueryChange;
       if (this.isQueryChange) {
         this.taskInfo.extra_content.query = currPage.data.query;
       }
-      console.log('publishtask end');
     }
   }
 </script>

@@ -162,6 +162,9 @@
       confirm-button-text="确认"
       cancel-button-text="取消"
       title="开始时间"
+      value="{{ currentDate }}"
+      min-date="{{ minDate }}"
+      max-date="{{ maxDate }}"
       bind:confirm="ConfirmStartTime"
       bind:cancel="CancelStartTime"
     ></van-datetime-picker>
@@ -175,6 +178,9 @@
       confirm-button-text="确认"
       cancel-button-text="取消"
       title="结束时间"
+      value="{{ tomorrowDate }}"
+      min-date="{{ minDate }}"
+      max-date="{{ maxDate }}"
       bind:confirm="ConfirmEndTime"
       bind:cancel="CancelEndTime"
     ></van-datetime-picker>
@@ -182,7 +188,7 @@
   <van-toast id="van-toast"></van-toast>
   <van-dialog id="van-dialog" />
   <van-dialog
-    title="是否支付{{taskInfo.pay}}元"
+    title="是否支付{{taskInfo.pay*taskInfo.receiver_limit}}元"
     use-slot
     show="{{ showPay }}"
     show-cancel-button
@@ -224,6 +230,10 @@
       isEdit: {
         type: Boolean,
         twoWay: true
+      },
+      originPay: {
+        type: Boolean,
+        twoWay: true
       }
     }
     data = {
@@ -236,7 +246,11 @@
       showEndTimeSelector: false,   //结束时间选择
       task: {},
       showPay: false,
-      test: ''
+      test: '',
+      minDate: new Date().getTime(),
+      maxDate: new Date(2020, 10, 1).getTime(),
+      currentDate: new Date().getTime(),
+      tomorrowDate: new Date(new Date().getTime() + 24*60*60*1000).getTime()
     }
     methods = {
       //编辑任务名称
@@ -343,7 +357,7 @@
                 that.$apply();
               },
               fail(res) {
-                console.log("fail");
+
               }
           });
       },
@@ -453,17 +467,29 @@
             types: types
             // images: this.images
           }
-          console.log(task);
           this.task = task;
 
           var that = this;
           //修改问卷
           //...............................................................
           if (that.isEdit) {
-            console.log('修改');
             var mes = JSON.stringify(["修改","删除"]);
+            var message = '';
+            var mon = that.originPay - that.task.pay * that.task.receiver_limit;
+            
+            if (mon > 0) {
+              message = '您将返还' + String(mon) + '元';
+            }
+            else if (mon == 0) {
+              message = '您无需支付';
+            }
+            else {
+              message = '您将支付' + String(-mon) + '元';
+            }
+
             Dialog.confirm({
-              message: '是否修改',
+              title: '是否修改',
+              message: message
             })
             .then(function(res){
               return wepy.request({
@@ -477,7 +503,7 @@
                       data: that.task
                     });
             })
-            .then(function(res){
+            .then(function(res) {
               if (res.data.errmsg != undefined) {
                 Toast.fail({ message: res.data.errmsg, duration: 1000 });
                 const timer2 = setInterval(() => {
@@ -489,21 +515,67 @@
                 }, 1000);
               }
               else {
-                Toast.success({ message: '修改成功', duration: 1000 });
-                const timer3 = setInterval(() => {
-                  clearInterval(timer3);
+                var tid = that.task.id;
+                var mes = JSON.stringify(["修改","删除"]);
+                var url = that.$parent.$parent.globalData.ip + 'task/postImage';
+                var name = 'image';
+                var header = {
+                  'content-type': 'multipart/form-data'
+                };
+                var formData = {
+                  'task_id': tid
+                };
+                var order = 0;
+                //按顺序上传图片
+                if (that.images.length != 0) {
+                  var temp_images = [];
+                  for (var i = 0; i < that.images.length; ++i) {
+                    if (that.images[i].indexOf(that.$parent.$parent.globalData.ip) == -1) {
+                      temp_images.push(that.images[i]);
+                    }
+                  }
+                  that.images = temp_images;
+                }
+                var filePaths = that.images;
+                that.$parent.$parent.uploadfiles(url, filePaths, name, header, formData, order).then(()=>{
                   Toast.clear();
-                  wx.redirectTo({
-                    url: 'taskDetail?id=' + that.taskid + '&mes=' + mes
-                  });
-                }, 1000);
+                  Toast.success({ message: '修改成功', duration: 1000 });
+                  const timer3 = setInterval(() => {
+                    clearInterval(timer3);
+                    Toast.clear();
+                    wx.redirectTo({
+                      url: 'taskDetail?id=' + tid + '&mes=' + mes
+                    });
+                  }, 1000);
+                })
               }
-            });
+            })
+            // .then(function(res){
+            //   if (res.data.errmsg != undefined) {
+            //     Toast.fail({ message: res.data.errmsg, duration: 1000 });
+            //     const timer2 = setInterval(() => {
+            //       clearInterval(timer2);
+            //       Toast.clear();
+            //       wx.redirectTo({
+            //         url: 'taskDetail?id=' + that.taskid + '&mes=' + mes
+            //       });
+            //     }, 1000);
+            //   }
+            //   else {
+            //     Toast.success({ message: '修改成功', duration: 1000 });
+            //     const timer3 = setInterval(() => {
+            //       clearInterval(timer3);
+            //       Toast.clear();
+            //       wx.redirectTo({
+            //         url: 'taskDetail?id=' + that.taskid + '&mes=' + mes
+            //       });
+            //     }, 1000);
+            //   }
+            // });
           }
           //.................................................................
           //提交任务
           else {
-            console.log('提交');
             that.showPay = true;
             that.$apply();
           }
@@ -531,11 +603,9 @@
         .then(function(res){
           tid = res.data;
           if (res.data.errmsg != undefined) {
-            console.log(res.data);
             Toast.fail({ message: '余额不足', duration: 1000});
             return res.data;
           }
-          console.log('任务id为', tid);
 
           //通过任务id，上传任务图片
           var image_length = 0;
