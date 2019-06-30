@@ -13,7 +13,7 @@
     * 6.6 [Supplementary Requirements（补充需求）](/doc/Documents/SupplementaryRequirements.md)
 * 7、Design（设计说明书）
     * 7.1 [UI design（界面设计）](doc/Documents/UIdesign.md)
-    * 7.2 [Database design（数据库设计）]((doc/Documents/数据库设计ER图.md))
+    * 7.2 [Database design（数据库设计）](doc/Documents/数据库设计ER图.md)
     * 7.3 [Interface API design（接口 API 设计）](server/API调用文档.md)
     * 7.4 [Architecture design（架构设计）](doc/Documents/Architecturedesign.md)
     * 7.5 [Usecase design（用例设计）](doc/Documents/BCE.md)
