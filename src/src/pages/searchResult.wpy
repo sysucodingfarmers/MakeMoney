@@ -1,6 +1,7 @@
 <style lang='less'>
   .tasklist-view {
     height: 95%;
+    margin-top: 20px;
   }
   .vanbutton {
     width: 30%;
@@ -33,7 +34,7 @@
         <van-tab title="按发布者"></van-tab>
       </van-tabs>
       <view wx:if="{{noresult && !show_loading && over}}" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
-        <text style="font-size: 13px; font-family: Arial; margin-top: 20rpx;">无结果</text>
+<!--         <text style="font-size: 13px; font-family: Arial; margin-top: 20rpx;">无结果</text> -->
       </view>
       <view
         style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;"
@@ -43,13 +44,11 @@
       </view>
       <view wx:else>
         <scroll-view
-          id="scroll-wrap"
           class="tasklist-view"
           scroll-y="true"
           lower-threshold="100"
         >
           <view
-            id="inner-wrap"
             style="width: 100%;"
             wx:if="{{!show_loading}}"
           >
