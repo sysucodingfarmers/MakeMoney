@@ -18,10 +18,10 @@
     * 7.4 [Architecture design（架构设计）](doc/Documents/Architecturedesign.md)
     * 7.5 [Usecase design（用例设计）](doc/Documents/BCE.md)
 * 8、生产规范与指南
-    * 8.1 前后端代码规范
+    * 8.1 代码规范
       - [前端代码规范](doc/Documents/前端代码规范.md)
-      - 后端代码规范
-    * 8.2 REST API 设计规范
+      - [后端代码规范](doc/Documents/后端代码规范.md)
+    * 8.2 [REST API 设计规范](doc/Documents/Restful API 的设计规范.md)
     * 8.3 [架构设计、详细设计（BCE方法）到应用程序框架映射指南](doc/Documents/框架目录设计与逻辑架构与 ECB 的关系.md)
     * 8.4 [部署说明](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2%E8%AF%B4%E6%98%8E.md)
 * 9、成品展示
