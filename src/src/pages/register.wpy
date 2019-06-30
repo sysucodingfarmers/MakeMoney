@@ -22,22 +22,26 @@
         value="{{ password }}"
         required
         clearable
-        type="password"
+        type="{{pass_input_type}}"
         label="密码"
         placeholder="{{ passwordPlaceholder }}"
         errorMessage="{{ passwordErrorMessage }}"
         bind:change="onPasswordChange"
+        right-icon="{{eye_icon}}"
+        bind:click-icon="see_pass"
       />
 
       <van-field
         value="{{ passwordAgain }}"
         required
         clearable
-        type="password"
+        type="{{pass_input_type_check}}"
         label="确认密码"
         placeholder="{{ passwordAgainPlaceholder }}"
         errorMessage="{{ passwordAgainErrorMessage }}"
         bind:change="onPasswordAgainChange"
+        right-icon="{{eye_icon_check}}"
+        bind:click-icon="see_pass_check"
       />
     </van-cell-group>
     <!-- 昵称，学院，专业 -->
@@ -158,6 +162,10 @@
 
   export default class Register extends wepy.page {
     data = {
+      eye_icon: 'closed-eye',
+      pass_input_type: 'password',
+      eye_icon_check: 'closed-eye',
+      pass_input_type_check: 'password',
       // 学号
       studentId: "",
       studentIdErrorMessage: "",
@@ -217,6 +225,26 @@
     }
 
     methods = {
+      see_pass() {
+        if (this.eye_icon == 'closed-eye') {
+          this.eye_icon = 'eye-o'
+          this.pass_input_type = 'text'
+        }
+        else if (this.eye_icon == 'eye-o') {
+          this.eye_icon = 'closed-eye'
+          this.pass_input_type = 'password'
+        }
+      },
+      see_pass_check() {
+        if (this.eye_icon_check == 'closed-eye') {
+          this.eye_icon_check = 'eye-o'
+          this.pass_input_type_check = 'text'
+        }
+        else if (this.eye_icon_check == 'eye-o') {
+          this.eye_icon_check = 'closed-eye'
+          this.pass_input_type_check = 'password'
+        }
+      },
       onStudentIdChange(e) {
         this.studentId = e.detail;
       },

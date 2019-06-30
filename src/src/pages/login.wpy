@@ -14,15 +14,22 @@
         errorMessage="{{ studentIdErrorMessage }}"
         placeholder="{{ studentIdPlaceholder }}"
         bind:change="onStudentIdChange"
+        focus="{{true}}"
+        left-icon="user-o"
       />
 
       <van-field
         value="{{ password }}"
-        type="password"
+        type="{{pass_input_type}}"
         label="密码"
+        clearable
         placeholder="{{ passwordPlaceholder }}"
         errorMessage="{{ passwordErrorMessage }}"
         bind:change="onPasswordChange"
+        left-icon="ellipsis"
+        right-icon="{{eye_icon}}"
+        bind:click-icon="see_pass"
+        bind:confirm="onClickLogin"
       />
     </van-cell-group>
     <view class="button">
@@ -59,6 +66,8 @@
 
   export default class Login extends wepy.page {
     data = {
+      eye_icon: 'closed-eye',
+      pass_input_type: 'password',
       studentId: "",
       studentIdErrorMessage: "",
       studentIdPlaceholder: "请输入学号",
@@ -84,6 +93,16 @@
     }
 
     methods = {
+      see_pass() {
+        if (this.eye_icon == 'closed-eye') {
+          this.eye_icon = 'eye-o'
+          this.pass_input_type = 'text'
+        }
+        else if (this.eye_icon == 'eye-o') {
+          this.eye_icon = 'closed-eye'
+          this.pass_input_type = 'password'
+        }
+      },
       onStudentIdChange(e) {
         this.studentId = e.detail;
       },
@@ -93,83 +112,7 @@
       },
 
       onClickLogin() {
-        var isEverythingGood = true;
-        // 检查学号是否为空
-        if (this.studentId.length == 0) {
-          this.studentIdErrorMessage = "学号不能为空";
-          isEverythingGood = false;
-        } else if (!studentId_reg.test(this.studentId)) {
-          this.studentIdErrorMessage = "学号格式错误";
-          isEverythingGood = false;
-        } else {
-          this.studentIdErrorMessage = "";
-        }
-
-        //检查密码是否为空
-        if (this.password.length == 0) {
-          this.passwordErrorMessage = "密码不能为空";
-          isEverythingGood = false;
-        } else {
-          this.passwordErrorMessage = "";
-        }
-
-        //只有检查通过才向后端提交学号密码
-        if (!isEverythingGood) {
-          return;
-        }
-
-        // 将学号和密码交给后端检验, 期间所有按钮不可用
-        Toast.loading({
-          mask: true,
-          message: '登录中...'
-        });
-
-        var that = this
-        var _data = {
-          id: parseInt(this.studentId),
-          password: this.password
-        }
-        wx.request({
-          url: this.$parent.globalData.ip + 'login',
-          method: 'POST',
-          data: _data,
-          header: {
-            'content-type': 'application/json'
-          },
-          success: function(res) {
-            Toast.clear();
-            if (res.data == undefined || res.data.id == undefined || res.data.id == null) {
-              Toast.fail("学号或密码错误")
-            }
-            else 
-            {
-              Toast.success('登录成功');
-              that.$parent.globalData.loginData.studentId = ""
-              that.$parent.globalData.loginData.password = ""
-              that.$parent.globalData.session_id = res.header.session_id;
-              that.$parent.globalData.userInfo = {}
-              if (res.data.profile) {
-                that.$parent.globalData.userInfo.avatar = JsonToObject.GetAvatarUrl(res.data.profile.replace(/\"/g, ""), that.$parent.globalData.ip)
-              }
-              else
-                that.$parent.globalData.userInfo.avatar = 'https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1560754276&di=9e6e09a4563fa27b2b4c20b7a5a58df7&src=http://pic.51yuansu.com/pic3/cover/01/69/80/595f67bf2026f_610.jpg'
-              that.$parent.globalData.userInfo.username = res.data.username;
-              that.$parent.globalData.userInfo.id = res.data.id;
-              that.$parent.globalData.userInfo.email = res.data.email;
-              that.$parent.globalData.userInfo.phone = res.data.phone;
-              that.$parent.globalData.userInfo.school = res.data.school;
-              that.$parent.globalData.userInfo.major = res.data.major;
-              that.$parent.globalData.loginData.state = true;
-              wx.navigateBack()
-            }
-          },
-          fail: (res) => {
-            Toast.fail('网络错误')
-          }
-        });
-
-        
-
+        this.login()
       },
       onClickRegister() {
         // this.$navigate('./register');
@@ -190,7 +133,82 @@
         this.logintypeshow = false;
       }
     }
+    login() {
+      var isEverythingGood = true;
+      // 检查学号是否为空
+      if (this.studentId.length == 0) {
+        this.studentIdErrorMessage = "学号不能为空";
+        isEverythingGood = false;
+      } else if (!studentId_reg.test(this.studentId)) {
+        this.studentIdErrorMessage = "学号格式错误";
+        isEverythingGood = false;
+      } else {
+        this.studentIdErrorMessage = "";
+      }
 
+      //检查密码是否为空
+      if (this.password.length == 0) {
+        this.passwordErrorMessage = "密码不能为空";
+        isEverythingGood = false;
+      } else {
+        this.passwordErrorMessage = "";
+      }
+
+      //只有检查通过才向后端提交学号密码
+      if (!isEverythingGood) {
+        return;
+      }
+
+      // 将学号和密码交给后端检验, 期间所有按钮不可用
+      Toast.loading({
+        mask: true,
+        message: '登录中...'
+      });
+
+      var that = this
+      var _data = {
+        id: parseInt(this.studentId),
+        password: this.password
+      }
+      wx.request({
+        url: this.$parent.globalData.ip + 'login',
+        method: 'POST',
+        data: _data,
+        header: {
+          'content-type': 'application/json'
+        },
+        success: function(res) {
+          Toast.clear();
+          if (res.data == undefined || res.data.id == undefined || res.data.id == null) {
+            Toast.fail("学号或密码错误")
+          }
+          else 
+          {
+            Toast.success('登录成功');
+            that.$parent.globalData.loginData.studentId = ""
+            that.$parent.globalData.loginData.password = ""
+            that.$parent.globalData.session_id = res.header.session_id;
+            that.$parent.globalData.userInfo = {}
+            if (res.data.profile) {
+              that.$parent.globalData.userInfo.avatar = JsonToObject.GetAvatarUrl(res.data.profile.replace(/\"/g, ""), that.$parent.globalData.ip)
+            }
+            else
+              that.$parent.globalData.userInfo.avatar = 'https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1560754276&di=9e6e09a4563fa27b2b4c20b7a5a58df7&src=http://pic.51yuansu.com/pic3/cover/01/69/80/595f67bf2026f_610.jpg'
+            that.$parent.globalData.userInfo.username = res.data.username;
+            that.$parent.globalData.userInfo.id = res.data.id;
+            that.$parent.globalData.userInfo.email = res.data.email;
+            that.$parent.globalData.userInfo.phone = res.data.phone;
+            that.$parent.globalData.userInfo.school = res.data.school;
+            that.$parent.globalData.userInfo.major = res.data.major;
+            that.$parent.globalData.loginData.state = true;
+            wx.navigateBack()
+          }
+        },
+        fail: (res) => {
+          Toast.fail('网络错误')
+        }
+      });
+    }
     onLoad(options) {
       if (this.$parent.globalData.userInfo == undefined) {
         this.$parent.globalData.userInfo = {};

@@ -10,6 +10,7 @@
     color: transparent;
   }
   .button-left {
+    font-size: 17px;
     width:150rpx;
     height: 150rpx;
     border-radius: 100%;
@@ -21,6 +22,7 @@
     margin-right: 100rpx;
   }
   .button-right {
+    font-size: 17px;
     width:150rpx;
     height: 150rpx;
     border-radius: 100%;
