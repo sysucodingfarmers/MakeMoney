@@ -25,7 +25,7 @@
     * 8.3 [架构设计、详细设计（BCE方法）到应用程序框架映射指南](doc/Documents/框架目录设计与逻辑架构与ECB的关系.md)
     * 8.4 [部署说明](doc/Documents/安装部署说明.md)
 * 9、成品展示
-    * 9.1 XX短视频
+    * 9.1 [手机注册短视频](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Documents/pictures/%E6%89%8B%E6%9C%BA%E6%B3%A8%E5%86%8C.mov)
     * 9.2 XX短视频
 * X1 meeting-records
     - [InceptionMeeting ( 19/03/28 ) ](https://github.com/sysucodingfarmers/MakeMoney/blob/master/doc/Meeting-Records/InceptionMeeting(0328).md)
