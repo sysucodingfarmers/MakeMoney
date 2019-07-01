@@ -42,7 +42,7 @@
 * X2 [KANBAN](https://github.com/sysucodingfarmers/MakeMoney/projects)
 * X3 [auditing-records](https://github.com/sysucodingfarmers/MakeMoney/issues)
 * X4 Tech/Work Report
-    * [16340045-技术报告汇总](https://github.com/cxh666/MakeMoney/tree/master/Tech%20Report)
+    * [16340045-技术报告汇总](https://github.com/cxh666/MakeMoney/tree/master/Tech_Report)
     * [16340047-小程序开发经验](https://hoolchen.github.io/2019/06/29/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E7%BB%8F%E9%AA%8C/)
     * [16340054-微信小程序开发踩坑实录](https://zhuanlan.zhihu.com/p/71616498)
     * [16340123-项目管理和产品设计学习体会](https://blog.csdn.net/weixin_36313766/article/details/94167196)
