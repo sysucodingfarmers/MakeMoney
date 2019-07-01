@@ -38,15 +38,15 @@
 
 * 9、成品展示
   
-  * 9.1 [手机注册短视频]([https://www.bilibili.com/video/av57505061/?p=6](https://www.bilibili.com/video/av57505061/?p=6))
-  * 9.2 [邮箱注册短视]([https://www.bilibili.com/video/av57505061/?p=9](https://www.bilibili.com/video/av57505061/?p=9))
-  * 9.3 [基本页面展示短视频]([https://www.bilibili.com/video/av57505061/?p=4](https://www.bilibili.com/video/av57505061/?p=4))
-  * 9.4 [发布非问卷任务&等待有人接单后确认打款短视频]([https://www.bilibili.com/video/av57505061/?p=1](https://www.bilibili.com/video/av57505061/?p=1))
-  * 9.5 [发布问卷任务短视频]([https://www.bilibili.com/video/av57505061/?p=2](https://www.bilibili.com/video/av57505061/?p=2))
-  * 9.6 [搜索任务短视频]([https://www.bilibili.com/video/av57505061/?p=7](https://www.bilibili.com/video/av57505061/?p=7))
-  * 9.7 [问卷接单短视频]([https://www.bilibili.com/video/av57505061/?p=8](https://www.bilibili.com/video/av57505061/?p=8))
-  * 9.8 [非问卷接单短视频]([https://www.bilibili.com/video/av57505061/?p=5](https://www.bilibili.com/video/av57505061/?p=5))
-  * 9.9 [更改用户信息]([https://www.bilibili.com/video/av57505061/?p=3](https://www.bilibili.com/video/av57505061/?p=3))
+  * 9.1 [手机注册短视频](https://www.bilibili.com/video/av57505061/?p=6)
+  * 9.2 [邮箱注册短视](https://www.bilibili.com/video/av57505061/?p=9)
+  * 9.3 [基本页面展示短视频](https://www.bilibili.com/video/av57505061/?p=4)
+  * 9.4 [发布非问卷任务&等待有人接单后确认打款短视频](https://www.bilibili.com/video/av57505061/?p=1)
+  * 9.5 [发布问卷任务短视频](https://www.bilibili.com/video/av57505061/?p=2)
+  * 9.6 [搜索任务短视频](https://www.bilibili.com/video/av57505061/?p=7)
+  * 9.7 [问卷接单短视频](https://www.bilibili.com/video/av57505061/?p=8)
+  * 9.8 [非问卷接单短视频](https://www.bilibili.com/video/av57505061/?p=5)
+  * 9.9 [更改用户信息](https://www.bilibili.com/video/av57505061/?p=3)
 
 * X1 meeting-records
   
