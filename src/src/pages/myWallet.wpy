@@ -1,7 +1,7 @@
 
 <template>
   <view style="position: fixed; height: 100%; width: 100%;">
-    <mynavbar title="" lefttext="返回" leftarrow="true"></mynavbar>
+    <mynavbar title="我的钱包" lefttext="返回" leftarrow="true"></mynavbar>
     <!-- 主体 -->
     <van-dialog id="van-dialog"/>
     <div class="WalletDiv elementAlign">
@@ -15,7 +15,7 @@
       <van-button round class="withdraw elementAlign" size = "large" type="danger" @tap="withdraw()">
         提现
       </van-button>
-      <van-button square class="balanceDetail elementAlign" size = "small" type="warning" @tap="tap()" >
+      <van-button round class="balanceDetail elementAlign" size = "small" type="warning" @tap="tap()" >
         明细
       </van-button>
 

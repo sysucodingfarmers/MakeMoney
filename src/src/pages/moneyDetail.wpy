@@ -42,9 +42,9 @@
         },
         success(res) {
           that.userInfo = res.data;
+          that.$apply()
         }
       })
-      this.$apply()
     }
   }
 </script>

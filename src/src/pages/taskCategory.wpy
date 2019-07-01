@@ -21,23 +21,25 @@
     >
       <van-loading type="spinner" size="40px"></van-loading>
     </view>
-    <view wx:else>
+    <view wx:else style="height: 100%; width: 100%">
       <scroll-view
         scroll-y="true"
-        style="height: 82%; margin-top: 10rpx;"
+        style="height: 80%; margin-top: 10rpx;"
         bindscrolltolower="getNewData"
         lower-threshold="40"
+        class="tasklist-view"
         >
-        <view style="height: 50rpx;" />
-        <tasklist :tasks.sync="tasks"></tasklist>
-        <view wx:if="{{nomore}}">
-          <BottomTitle title="已经到底啦"></BottomTitle>
-        </view>
-        <view 
-          style="width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10rpx;"
-          wx:else
-          >
-          <van-loading opacity="{{loadmore}}" type="spinner" size="20px"></van-loading>
+        <view>
+          <tasklist :tasks.sync="tasks"></tasklist>
+          <view wx:if="{{nomore}}">
+            <BottomTitle title="已经到底啦"></BottomTitle>
+          </view>
+          <view 
+            style="width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10rpx;"
+            wx:else
+            >
+            <van-loading opacity="{{loadmore}}" type="spinner" size="20px"></van-loading>
+          </view>
         </view>
       </scroll-view>
     </view>

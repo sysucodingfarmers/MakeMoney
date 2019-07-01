@@ -233,7 +233,8 @@
         }
       },
       touch_move(e) {
-        this.dragUpHeight = 1.0*(e.touches[0].clientY - this.touch_down)
+        if (this.start_scroll == 0)
+          this.dragUpHeight = 1.0*(e.touches[0].clientY - this.touch_down)
       },
       beginsearch() {
         wepy.navigateTo({
