@@ -62,7 +62,7 @@ VantComponent({
         },
         reqeusturl: {
             type: String,
-            value: 'http://makemoney.ink:5000/'
+            value: 'http://www.ourmakemoney.xyz:5000/'
         }
     },
     data: {

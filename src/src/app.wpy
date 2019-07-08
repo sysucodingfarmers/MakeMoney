@@ -102,8 +102,7 @@ export default class extends wepy.app {
   }
 
   globalData = {
-    // ip: 'http://192.168.199.185:5000/', //test
-    ip: 'http://makemoney.ink:5000/',         //最终服务器
+    ip: 'http://www.ourmakemoney.xyz:5000/',         //最终服务器
     session_id: '',
     userInfo: {},
     mainPageUrl: 'mainPage',
